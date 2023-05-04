@@ -1,0 +1,4 @@
+wordpress 타입FTP 요청건
+
+www -> wp-content -> themes -> 주요폴더명 -> footer or header 파일
+

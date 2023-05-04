@@ -1,0 +1,77 @@
+<!-- 장바구니 추가 2022-01-17 TripleHM-->
+<script>
+	let btnCart = document.querySelector("#cartBtn");
+	function gtag_report_conversion(url) {
+		var callback = function () {
+			if (typeof(url) != 'undefined') {
+				window.location = url;
+			}
+		};
+		gtag('event', 'conversion', {
+			'send_to': 'AW-10835828496/TZINCOimtI4DEJC-9q4o',
+			'event_callback': callback
+		});
+		return false;
+	}
+	btnCart.addEventListener('click', event => {
+		gtag_report_conversion();
+	});
+</script>
+
+
+
+
+
+<!-- 구매완료 2022-01-17 TripleHM -->
+<!-- Event snippet for 결제완료 conversion page -->
+<script>
+	  gtag('event', 'conversion', {
+      'send_to': 'AW-10835828496/7RLYCP2RtI4DEJC-9q4o',
+      'value': "{=gd_currency_display(gd_isset(orderInfo.settlePrice))}".replace(/[원,\D ]/g, ''),
+      'currency': 'KRW',
+      'transaction_id': '{orderInfo.orderNo}'
+  });
+</script>
+
+
+
+
+<!-- N-Pay 2022-01-17 TripleHM -->
+<!-- Event snippet for 결제완료-Npay conversion page
+In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+<script>
+	let btnNpay = document.querySelector('.npay_btn_item > a');
+	console.log(btnNpay);
+	
+	function gtag_report_conversion2(url) {
+	  var callback = function () {
+		if (typeof(url) != 'undefined') {
+		  window.location = url;
+		}
+	  };
+	  gtag('event', 'conversion', {
+		  'send_to': 'AW-10835828496/KnmwCIKatI4DEJC-9q4o',
+		  'value': parseInt('{goodsView.goodsPrice}'),
+		  'currency': 'KRW',
+		  'transaction_id': '{goodsView.goodsNo}',
+		  'event_callback': callback
+	  });
+	  return false;
+	}
+
+	console.log(parseInt('{goodsView.goodsPrice}'));
+	console.log('{goodsView.goodsNo}');
+	
+	btnNpay.addEventListener('click', event => {
+		gtag_report_conversion2();
+	});
+</script>
+
+
+
+<!-- 2022-01-17 TripleHM -->
+<!-- Event snippet for 회원가입 conversion page -->
+<script>
+  gtag('event', 'conversion', {'send_to': 'AW-10835828496/foeDCPjt4Y4DEJC-9q4o'});
+</script>
+

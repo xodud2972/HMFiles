@@ -1,0 +1,135 @@
+{*** 하단레이아웃 | main/index.php ***}
+<div style="width:0;height:0;font-size:0"></div></td>
+<!--{ ? this->tpl_['side_inc'] && _cfg['outline_sidefloat'] == 'right' }-->
+<td valign=top width={_cfg['shopSideSize']} nowrap>{ # side_inc // 측면디자인 }</td>
+<!--{ / }-->
+<!--{? todayshop_cfg['shopMode'] != 'todayshop' && !todayshop_cfg['isTodayShopPage'] // 투데이샵 전용일경우 스크롤배너 사용안함}-->
+<td width=0 id=pos_scroll valign=top>
+
+<!-- 스크롤 배너 -->
+
+	<div id=scroll style="position:absolute; padding-top:0; margin-top: 32px; padding-left:22px;">
+<!--{? setState == 'Y' && Banner != ''}-->
+<div style="text-align:left;">{Banner}</div>
+<!--{ : }-->
+<div style="margin-bottom: 9px;"><!-- 맨오른쪽_스크롤배너 (배너관리에서 수정가능) --><!--{ @ dataBanner( 17 ) }-->{.tag}<!--{ / }--></div>
+<span style="width: 90px; height: 148px;"><img src="../img/common/no1.jpg" alt="" border="0" /></span><!--{ / }-->
+<!--{ ? _viewPageMoveList }-->
+<script src="/shop/lib/js/prototype.js"></script>
+<script language="JavaScript">
+addOnloadEvent(function() { scrollCateList_ajax('{__SERVER['QUERY_STRING']}') });
+</script>
+<!--{ / }-->
+
+<div style="width:90px;">
+	<div style="width: 90px; height: 28px;"><img src="../img/common/sky_btn_todayview.gif" border=0></div>
+	<table width=100% border=0 cellpadding=0 cellspacing=0 style="border-style:solid;border-color:#E3E3E3;border-width:0 1px; border-bottom: 1px solid #e3e3e3;">
+	<tr>
+		<td align=center>
+		<div id=gdscroll style="height:180px;overflow:hidden">
+		<!--{ @ _todayGoodsList }-->
+		<div><a href="../goods/goods_view.php?goodsno={.goodsno}">{=goodsimg(.img,56)}</a></div>
+		<!--{ ? .index_!=.size_-1 }--><div style="height:5px;font-size:0"></div><!--{ / }-->
+		<!--{ / }-->
+		</div>
+		</td>
+	</tr>
+	<tr><td style="text-align:center;padding:5px 0">
+		<a href="javascript:gdscroll(-61)" onfocus=blur()><img src="../img/common/sky_btn_up.gif" border=0></a>
+		<a href="javascript:gdscroll(61)" onfocus=blur()><img src="../img/common/sky_btn_down.gif" border='0'></a>
+		</td></tr>
+	</table>
+</div>
+
+</div>
+
+<!-- 스크롤 배너 활성화 -->
+<script>scrollBanner();</script>
+
+</td>
+<!--{/ // 투데이샵 전용일경우 스크롤배너 사용안함}-->
+</tr>
+</table>
+
+</td>
+</tr>
+<!--{ ? this->tpl_['footer_inc'] }-->
+<tr>
+<td>{ # footer_inc // 하단디자인 }</td>
+</tr>
+<!--{ / }-->
+</table>
+
+<!-- LOGGER(TM) TRACKING SCRIPT V.40 FOR logger.co.kr / 51720 : COMBINE TYPE / DO NOT ALTER THIS SCRIPT. -->
+<script type="text/javascript">var _TRK_LID="51720";var _L_TD="ssl.logger.co.kr";var _TRK_CDMN=".picco.co.kr";</script>
+<script type="text/javascript">var _CDN_DOMAIN = location.protocol == "https:" ? "https://fs.bizspring.net" : "http://fs.bizspring.net";
+(function(b,s){var f=b.getElementsByTagName(s)[0],j=b.createElement(s);j.async=true;j.src='//fs.bizspring.net/fs4/bstrk.1.js';f.parentNode.insertBefore(j,f);})(document,'script');</script>
+<noscript><img alt="Logger Script" width="1" height="1" src="http://ssl.logger.co.kr/tracker.tsp?u=51720&amp;js=N" /></noscript>
+<!-- END OF LOGGER TRACKING SCRIPT -->
+
+<!-- 절대! 지우지마세요 : Start -->
+<iframe name="ifrmHidden" src='{_cfg.rootDir}/blank.php' style="display:none;width:100%;height:600"></iframe>
+<!-- 절대! 지우지마세요 : End -->
+
+<script>
+if (typeof nsGodo_cartTab == 'object' && '{_cfg.cartTabUse}' == 'y' && '{todayshop_cfg['shopMode']}' != 'todayshop') {
+	nsGodo_cartTab.init({
+		logged: { ? !_sess }false{:}true{/},
+		skin  : '{_cfg.tplSkin}',
+		tpl  : '{_cfg.cartTabTpl}',
+		dir	: 'horizon',	// horizon or vertical
+		width:'{_cfg.shopSize}'
+	});
+}
+{? _cfg.preventContentsCopy == '1' }
+addOnloadEvent(function(){ preventContentsCopy() });
+{ / }
+</script>
+
+<script type="text/javascript">
+    var roosevelt_params = {
+        retargeting_id:'_kkwXcFMyHsI-aH_V7mcww00',
+        tag_label:'DE7RR3vQR6uSM8ogEyLDvA'
+    };
+</script>
+<script type="text/javascript" src="//adimg.daumcdn.net/rt/roosevelt.js" async></script>
+
+
+
+<!-- 타게팅게이츠 트레킹태그 -->
+<!-- WIDERPLANET  SCRIPT START 2017.11.10 -->
+<div id="wp_tg_cts" style="display:none;"></div>
+<script type="text/javascript">
+var wptg_tagscript_vars = wptg_tagscript_vars || [];
+wptg_tagscript_vars.push(
+(function() {
+	return {
+		wp_hcuid:"",   /*고객넘버 등 Unique ID (ex. 로그인  ID, 고객넘버 등 )를 암호화하여 대입.
+				*주의 : 로그인 하지 않은 사용자는 어떠한 값도 대입하지 않습니다.*/
+		ti:"38380",	/*광고주 코드 */
+		ty:"Home",	/*트래킹태그 타입 */
+		device:"web"	/*디바이스 종류  (web 또는  mobile)*/
+		
+	};
+}));
+</script>
+<script type="text/javascript" async src="//cdn-aitg.widerplanet.com/js/wp_astg_4.0.js"></script>
+<!-- // WIDERPLANET  SCRIPT END 2017.11.10 -->
+
+<!-- Enliple Tracker Start -->
+<script type="text/javascript">
+		(function(a,g,e,n,t){a.enp=a.enp||function(){(a.enp.q=a.enp.q||[]).push(arguments)};n=g.createElement(e);n.async=!0;n.defer=!0;n.src="https://cdn.megadata.co.kr/dist/prod/enp_tracker_godomall_self.min.js";t=g.getElementsByTagName(e)[0];t.parentNode.insertBefore(n,t)})(window,document,"script");
+    enp('create', 'common', 'kdb2002', { device: 'W' });    
+    enp('send', 'common', 'kdb2002');
+</script>
+<!-- Enliple Tracker End -->
+
+<!-- Enliple Insite breakAway Popup start
+<script type="text/javascript">
+(function(m,b,r,i,s){m.mbris=m.mbris||function(){(m.mbris.q=m.mbris.q||[]).push(arguments)};i=b.createElement(r);i.async=!0;i.defer=!0;i.src="https://cdn.megadata.co.kr/dist/prod/enp_mbris.min.js";0<b.querySelectorAll("script[src*=enp_mbris]").length&&m.ENP_MBRIS_INVOKE?m.ENP_MBRIS_INVOKE():(s=b.getElementsByTagName(r)[0],s.parentNode.insertBefore(i,s))})(window,document,"script");
+mbris("202110280101958201_kdb2002_3_01,202110280101958201_kdb2002_3_02");
+</script>
+Enliple Insite breakAway Popup end -->
+
+</body>
+</html>

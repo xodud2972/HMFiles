@@ -1,0 +1,37 @@
+여기는 거의 공통일거니
+rms 소스랑 비교해보면서
+쿼리 짜보세요
+저게 뭘 뜻하는지
+
+
+
+SELECT pay_date, 
+	SUM(CASE WHEN m_nm='41' OR good_type2='957' THEN pay_price ELSE 0 END) AS '카카오',  /*rms 카카오+카카오모먼트k-쇼핑박스*/
+	SUM(CASE WHEN m_nm='496' THEN pay_price ELSE 0 END) AS '이베이',
+	SUM(CASE WHEN m_nm='265' THEN pay_price ELSE 0 END) AS '구글',
+	SUM(CASE WHEN m_nm='264' THEN pay_price ELSE 0 END) AS '네이버', /*rms 네이버+파워컨텐츠*/
+	SUM(CASE WHEN m_nm='845' THEN pay_price ELSE 0 END) AS '페이스북',
+	SUM(CASE WHEN good_type2='438' THEN pay_price ELSE 0 END) AS 'TG',
+	SUM(CASE WHEN m_nm='808' THEN pay_price ELSE 0 END) AS '11st'
+FROM t_contract 
+WHERE del_date IS NULL 
+AND (m_nm IN (41,496,265,264,845,808) OR good_type2 IN (438,957) )
+AND sales_type='1'
+AND agree_state='3'
+AND pay_date BETWEEN '2020-08-01' AND '2020-08-12'
+GROUP BY pay_date
+WHERE del_date IS NULL 
+AND sales_type='1'
+AND agree_state='3'
+AND pay_date BETWEEN '2020-08-01' AND '2020-08-12'
+
+
+
+
+
+
+SELECT YEAR, MONTH, getcskrname(cs_seq), getcomkrname(m_nm1), getcomkrname(m_nm), getcomkrname(good_type2), cs_m_id, getcomkrname(division1),getcomkrname(getemdivision(em_seq)), getemkrname(em_seq) ,  pay_price FROM (
+SELECT LEFT(pay_date,4) AS YEAR, LEFT(pay_date,7) AS MONTH, cs_seq, IF(m_nm='302',good_type2,m_nm) AS m_nm1, m_nm, good_type2, cs_m_id, division1, em_seq, SUM(pay_price) AS  pay_price
+FROM t_contract WHERE del_date IS NULL AND pay_date BETWEEN '2019-08-01' AND '2020-08-31' AND sales_type IN ('1','3') AND agree_state='3' 
+GROUP BY LEFT(pay_date,7),m_nm, good_type2, cs_m_id, em_seq
+) AS aa

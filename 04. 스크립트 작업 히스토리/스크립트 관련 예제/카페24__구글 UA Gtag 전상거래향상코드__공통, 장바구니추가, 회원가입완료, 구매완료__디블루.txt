@@ -1,0 +1,115 @@
+디블루 카페24 UA Gtag 전상거래향상코드 공통, 장바구니추가, 회원가입완료, 구매완료
+
+
+
+
+카페24 SEO공통코드에 PC,MO 삽입완료
+<!-- Gtag 공통 20220713 TripleHM -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-234334448-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-234334448-1');
+</script>
+
+카페24 회원가입완료 PC,MO 삽입완료
+<!-- Gtag 회원가입완료 스크립트 TripleHM 20220713 -->
+<script>
+  gtag('event', '진입', {
+    'event_category': '회원가입',
+    'event_label': '회원가입_진입'
+  });
+</script>
+
+카페24 장바구니추가 PC 
+<!-- Gtag 장바구니추가 TripleHM 20220713 -->
+<script type="text/javascript">
+	var cartBtnId = document.querySelector('#cartBtn');
+
+	function addCartFunc(){
+        gtag('event', 'add_to_cart', {
+              "items": [
+                {
+                    "product_id": '{$product_no}',
+                    "id" : '{$product_no}',
+                    "product_name": '{$name}',
+                    "name" :'{$name}',
+                    "value": '{$product_price}',
+                    "price" :'{$product_price}'
+                    }
+                  ]
+                });
+        }
+	cartBtnId.addEventListener('click', event => {
+		addCartFunc();
+		console.log(1);
+	})
+</script>
+
+카페24 장바구니추가 MO (모바일은 이상하게 아래코드 동일하게 넣어야만 작동했음 이유는 모르곘음 console만 지워도 작동이 안했음..)
+<!-- Gtag 장바구니추가 TripleHM 20220713 -->
+<script type="text/javascript">
+	var cartBtnId = document.querySelector('#actionCartClone');
+    if(!echo_products) var echo_products=[];
+        echo_products.push({
+            "product_id": '{$product_no}',
+            "id" : '{$product_no}',
+            "product_name": '{$name}',
+            "name" :'{$name}',
+            "value": '{$product_price}',
+            "price" :'{$product_price}'
+        });
+</script>  
+<!-- Gtag 장바구니추가 TripleHM 20220713 -->
+<script>
+    cartBtnId.addEventListener('click', event => {
+          gtag('event', 'add_to_cart', {
+          	"items": echo_products
+          });
+          console.log(echo_products);
+          console.log(cartBtnId);
+    })
+
+
+
+
+카페24 구매완료 PC ( UI랑 코드는 MO같았음), MO 둘 다 동일한 코드여서 동일하게 진행
+
+                                        </li>
+                                        <li title="배송">기본배송 <span class="{$oversea_able_display|display}">(해외배송가능)</span></li>
+                                        <li class="{$product_weight_display|display}">상품중량 : {$product_weight}kg * {$product_quantity}개 = {$total_product_weight}kg</li>
+                                    </ul>
+                                </div>
+위코드는 연달아서 2개 있는데 2개 모두 아래쪽에 아래코드를 넣어준다.
+<script>
+if(!echo_products) var echo_products=[];
+if('{$product_name}'!='' && !'{$product_name}'.includes("샘플")){  // 디자인편집창에 예시로 있는 상품은 제외하기 위한 if문
+echo_products.push({
+'id' : '{$param}'.split('product_no=')[1].split('&cate_no=')[0],
+'name' : '{$product_name}',
+'quantity' : '{$product_quantity}',
+'price' : '{$product_price}'.replace(',','').replace('원',''),
+});
+}
+</script>
+
+최종 호출코드
+<!-- 구글UA 구매전환 및 결제단계 측정TripleHM 20220713 -->
+<div module="Order_result" style="display:none">    
+<script>
+gtag('event', 'purchase', {
+  "transaction_id": '{$order_id}',
+  "currency": "KRW",
+  "items" : echo_products
+});
+gtag('event', 'begin_checkout', {
+  "items": echo_products
+});    
+    console.log(echo_products);
+</script>  
+</div>
+
+

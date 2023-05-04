@@ -1,0 +1,8 @@
+2022-04-11
+AMS -> 페이지 Title 수정 작업 파일
+
+1. www/resources/views/layouts/header.blade.php (workDesk, Management, TOOL), (매체SIDE)
+2. www/resources/views/layouts/mediaside_header.blade.php (mediaSide)
+3. www/resources/views/layouts/popup_blade.php (ViewList)
+4. www/public/ci_ams/app/views/include/view_header.php (Report)
+5. www/resource/views/layouts/mediaside_popup.php (매체SIDE)

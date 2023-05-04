@@ -1,0 +1,21 @@
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-V9X8D4PXRK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-V9X8D4PXRK');
+</script>.
+
+<!-- Event snippet for 결제완료 conversion page -->
+<script>
+	console.log(1);
+	  gtag('event', 'conversion', {
+      'send_to': 'G-V9X8D4PXRK',
+      'value': "{=gd_currency_display(gd_isset(orderInfo.settlePrice))}".replace(/[원,\D ]/g, ''),
+      'currency': 'KRW',
+      'transaction_id': '{orderInfo.orderNo}'
+  });
+	console.log(1);
+</script>

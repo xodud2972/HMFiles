@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <!-- ****img를 제외한 모든 SEO 설정은 admin에서 할 것!!!!!**** -->
+        <meta property="og:image" content="https://boohgle.co.kr/boohgle/img/bo_kakao_url.jpg"/> <!--상품 상세페이지에는 선언되면 안됨-->
+
+        <!--@css(/layout/basic/css/common.css)--> <!--기본정의 css -->
+        <!--@css(/layout/basic/css/layout.css)--> <!--주요 css 모아놓은 곳 -->
+        <!--@css(/layout/basic/css/ec-base-ui.css)-->
+        <!--@css(/layout/basic/css/ec-base-paginate.css)-->
+        <!--@css(/layout/basic/css/ec-base-help.css)-->
+        <!--@css(/layout/basic/css/ec-base-product.css)-->
+        <!--@css(/layout/basic/css/ec-base-button.css)-->
+        <!--@css(/layout/basic/css/ec-base-box.css)-->
+        <!--@css(/layout/basic/css/ec-base-layer.css)-->
+        <!--@css(/layout/basic/css/ec-base-table.css)-->
+        <!--@css(/layout/basic/css/ec-base-tab.css)-->
+        <!--@css(/layout/basic/css/ec-base-tooltip.css)-->
+        <!--@css(/layout/basic/css/ec-base-desc.css)-->
+
+        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+        <!-- ie css 변수적용 -->
+        <script> window.MSInputMethodContext && document.documentMode && document.write('<script src="https://cdn.jsdelivr.net/gh/nuxodin/ie11CustomProperties@4.1.0/ie11CustomProperties.min.js"><\/script><p class="ieWarn">Chrome브라우저에 최적화 되어있습니다.</p>'); </script>
+       
+        <!--@js(/js/common.js)-->
+        <!--@js(/layout/basic/js/basic.js)-->
+        <!--@js(/js/module/layout/quick_view.js)-->
+
+        <!-- 210624 등급에 따른 이미지 노출 -->
+        <!--@css(/css/module/layout/210624MemberSecret.css)-->
+        <!--@js(/js/module/layout/210624MemberSecret.js)-->
+
+        <!-- 스크롤 스크립트 -->
+        <!--@js(/js/module/layout/scrollToggle.js)-->
+
+        <!--@import(/marketing/standard/divers/headerMarketing.html)-->
+        <!--@import(/marketing/standard/adn/headerMarketing.html)-->
+        <!--@import(/marketing/standard/dable/headerMarketing.html)-->
+        <!--@import(/marketing/standard/googleTag/headerMarketing.html)-->
+    </head>
+    <body id="main">
+        <!--@import(/marketing/standard/keepgrow/headerMarketing.html)-->
+        <!--@import(/marketing/standard/snappush/headerMarketing.html)-->
+        <!--@import(/marketing/standard/googleTag/bodyMarketing.html)-->
+
+        <div class="bannerWrap">
+            <!-- <div module="Layout_statelogon" class="memberWrap displaynone"><img class="memberimg" src="" alt=""></div> -->
+            <div module="Layout_statelogoff" class="noneMemberWrap"><img class="nonememberimg" src="/boohgle/header/b_nonemember.png" alt="회원을 위한 첫 구매 쿠폰팩"></div>
+        </div>
+
+        <div id="wrap">
+            <!--@import(/layout/basic/bo_header.html)-->
+            <div id="container">
+                <div id="contents">
+                    <!--@contents-->
+                    <!--@import(/layout/basic/scrollTalk.html)-->
+                </div>
+            </div>
+            <!--@import(/layout/basic/footer.html)-->
+        </div>
+
+        <!-- s: 결제를 위한 필수 영역 -->
+        <div id="progressPaybar" style="display:none;">
+            <!-- 배경 -->
+            <div id="progressPaybarBackground" class="layerProgress"></div>
+            <!-- 진행바 -->
+            <div id="progressPaybarView">
+                <p class="graph">현재 결제가 진행중입니다.</p>
+                <p class="txt">
+                    본 결제 창은 결제완료 후 자동으로 닫히며, <br>
+                    결제 진행 중에 본 결제 창을 닫으시면<br>
+                    주문이 되지 않으니 <br>
+                    결제 완료 될 때 까지 닫지 마시기 바랍니다.
+                </p>
+            </div>
+        </div>
+        <!-- e: 결제를 위한 필수 영역 -->
+
+        <!--@import(/marketing/standard/enliple/footerMarketing.html)-->
+        <!--@import(/marketing/standard/ifdo/loginMarketing.html)-->
+        <!--@import(/marketing/standard/ifdo/footerMarketing.html)-->
+        <!--@import(/marketing/standard/logger/footerMarketing.html)-->
+        <!--@import(/marketing/standard/widerPlanet/footerMarketing.html)-->
+    </body>
+</html>

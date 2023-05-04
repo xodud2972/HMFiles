@@ -1,0 +1,11 @@
+1. 메일로 첨부파일 확인
+2. 메일 발신 직원번호 확인
+3. t_cutomer_mg에 insert 진행
+3-1) 광고주 고유번호는 cs_seq
+3-2) 변경 후 담당자 고유번호는 em_seq
+3-3) 등록날짜와 시간은 curdate(), curtime()을 사용
+3-4) reg_emp 에는 메일 발신 직원 고유번호 ex)611 - 총무팀 이지혜 PM
+
+빠르게 진행하려면 vscode에 엑셀 한 컬럼내용을 전부 복사 붙여넣기해서 진행
+local에서 테스트 insert 진행 후 RMS DB에 insert 할 것
+	

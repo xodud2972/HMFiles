@@ -1,0 +1,45 @@
+echo_products 만들기 
+<script>   
+    if(!echo_products) var echo_products=[];
+    echo_products.push({
+    'item_id': '{$product_no}',
+    'name' : '{$name}',
+    'price' : '{$product_price}'.replace(',','').replace('원','')
+    });
+    console.log(echo_products);
+</script>
+
+
+
+1. 공통소스
+
+2. 상품상세보기
+gtag("event", "view_item", {
+	items: echo_products
+});
+
+3. 결제단계측정
+gtag('event', 'begin_checkout', {
+	"items": echo_products
+});
+
+4. 장바구니 추가
+5. 네이버폐이
+gtag("event", "add_to_cart", {
+	items: echo_products
+});
+
+6. 회원가입 완료
+gtag('event', '진입', {
+    'event_category': '회원가입',
+    'event_label': '회원가입_진입'
+});
+
+7. 주문완료
+gtag('event', 'purchase', {
+	"transaction_id": order_id,
+	"currency": "KRW",
+	"items": echo_products
+});
+
+0. PC / MO 둘 다 

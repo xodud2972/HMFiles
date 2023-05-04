@@ -1,0 +1,79 @@
+<!--@layout(/layout/basic/layout.html)-->
+<div class="path">
+    <h2>현재 위치</h2>
+    <ol>
+        <li><a href="/">홈</a></li>
+        <li title="현재 위치"><strong>회원 가입 완료</strong></li>
+    </ol>
+</div>
+
+<div class="titleArea">
+    <h2>회원 가입 완료</h2>
+</div>
+
+<div module="member_joinComplete">
+    <!--@css(/css/module/member/joincomplete.css)-->
+    <div class="joinComplete">
+        <h3><img src="http://img.echosting.cafe24.com/skin/base_ko_KR/member/h3_join_complete.gif" alt="회원가입" /></h3>
+        <p class="desc">회원가입이 완료 되었습니다.</p>
+        <div class="memberInfo">
+            <p class="info">저희 쇼핑몰을 이용해 주셔서 감사합니다.</p>
+            <p class="thumb"><img src="{$group_image}" alt="{$group_name}" onerror="this.src='http://img.echosting.cafe24.com/skin/base_ko_KR/member/img_member_default.gif';" /></p>
+            <ul>
+                <li><strong>아이디</strong><span>{$member_id}</span></li>
+                <li><strong>이름</strong><span>{$member_name}</span></li>
+                <li><strong>이메일</strong><span>{$member_email}</span></li>
+            </ul>
+        </div>
+        <div class="memberSpecial" module="member_BenefitJoin">
+            <p><strong>{$member_name} 님</strong>은 [{$group_name}] 회원이십니다.</p>
+            <p class="{$display_no_benefit|display}"><strong>{$dc_pay} {$dc_min_price}</strong> 구매시 <strong>{$dc_price}{$dc_type}</strong>을 {$use_dc} 받으실 수 있습니다. {$dc_max_percent}</p>
+            <p class="{$display_with_all|display}"><strong>{$dc_pay} {$dc_min_price_mileage}</strong> 구매시 <strong>{$dc_price_mileage}{$dc_type_mileage}</strong>을 {$use_dc_mileage} 받으실 수 있습니다. {$dc_max_mileage_percent}</p>
+        </div>
+        <p class="memberEmail {$display_email_auth|display}">이메일 주소로 발송된 인증 메일을 통해 인증하신 후에 로그인이 가능합니다.</p>
+        <p class="memberAge {$under_fourteen_display|display}">
+            <strong>{$member_name} 님</strong>은 14세 미만 회원이므로 <br />관리자 인증 후 아이디 사용이 가능합니다.
+        </p>
+        <p class="button">
+            <a href="/member/login.html"><img src="http://img.echosting.cafe24.com/skin/base_ko_KR/member/btn_complete_login.gif" alt="로그인" /></a>
+            <a href="/index.html"><img src="http://img.echosting.cafe24.com/skin/base_ko_KR/member/btn_complete_main.gif" alt="메인으로 이동" /></a>
+        </p>
+    </div>
+</div>
+
+<div module="coupon_join">
+    <!--@css(/css/module/coupon/join.css)-->
+    <div class="couponSkinArea">
+        <ul class="grid3">
+            <li>
+                <div class="coupon {$background_class}" style="background-image:url('{$background_url}')">
+                    <strong class="title" style="color:#483b1b; font-family:Arial; font-size:11px;">{$coupon_name}</strong>
+                    <p class="discount" style="color:#d07b01; font-family:Dotum;"><span style="font-family:Verdana;">{$coupon_content}</span></p>
+                    <p class="period" style="color:#685219; font-family:Dotum;">{$coupon_period}</p>
+                </div>
+            </li>
+            <li>
+                <div class="coupon {$background_class}" style="background-image:url('{$background_url}')">
+                    <strong class="title" style="color:#483b1b; font-family:Arial; font-size:11px;">{$coupon_name}</strong>
+                    <p class="discount" style="color:#d07b01; font-family:Dotum;"><span style="font-family:Verdana;">{$coupon_content}</span></p>
+                    <p class="period" style="color:#685219; font-family:Dotum;">{$coupon_period}</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Start Script for IFDO (회원가입분석) -->
+<div module='member_joinComplete' style='display:none;'>
+	<div class='memberArea'>
+		<div id='ifdo_detail_member_id'>{$member_id}</div>
+	</div>	
+</div>
+<script type='text/javascript'>
+// cafe24 : 회원가입완료
+if( document.getElementById('ifdo_detail_member_id') ){
+ var _NB_JID =document.getElementById('ifdo_detail_member_id').textContent;	
+ var _NB_JN = 'join'; // 회원가입구분
+}
+</script>	
+<!-- End Script for IFDO -->

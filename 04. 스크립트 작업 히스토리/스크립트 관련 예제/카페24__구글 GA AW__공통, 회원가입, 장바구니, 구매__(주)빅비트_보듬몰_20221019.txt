@@ -1,0 +1,81 @@
+
+----------------------------------------※공통코드※----------------------------------------------
+공통코드가 없어서 임의로 넣었음
+MO,PC 동일
+
+<!-- GoogleAds 공통스크립트 20221019 TripleHM -->
+<!-- Global site tag (gtag.js) - Google Ads: 395305311 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-10946335992"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-10946335992');
+</script>
+--------------------------------------------------------------------------------------------------
+----------------------------------------※회원가입※----------------------------------------------
+MO,PC 동일
+
+<!-- Event snippet for 회원가입 conversion page -->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-10946335992/35l2CK3vhoAYEPipz-Mo'
+  });
+</script>
+--------------------------------------------------------------------------------------------------
+
+----------------------------------------※장바구니※----------------------------------------------
+MO,PC 동일하지만 버튼변수만 재설정해주면 된다.
+<!-- Event snippet for 장바구니 conversion page
+In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+<script>
+function gtag_report_conversion(url) {
+  var callback = function () {
+    if (typeof(url) != 'undefined') {
+      window.location = url;
+    }
+  };
+  gtag('event', 'conversion', {
+      'send_to': 'AW-10946335992/YrmICLPvhoAYEPipz-Mo',
+      'value': 1.0,
+      'currency': 'KRW',
+      'event_callback': callback
+  });
+  return false;
+}
+</script>
+----------------------------------------※네이버폐이버튼※----------------------------------------------
+MO,PC 동일
+<!-- Event snippet for 네이버페이(버튼 클릭) conversion page	TripleHM 20221019 -->
+<script>
+    window.onload = function(){
+        const nPayBtn = document.querySelector('.npay_btn_item');
+        nPayBtn.addEventListener('click', event => {
+            gtag('event', 'conversion', {
+                'send_to': 'AW-10946335992/SdoYCLDvhoAYEPipz-Mo',
+                'value': _TRK_PR,
+                'currency': 'KRW',
+                'transaction_id': _TRK_PN
+            });
+        });
+    };
+</script>
+------------------------------------------------------------------------
+상단에 oderinfo 혹은 resultinfo div안에다가 아래 주문번호를 변수처리해주고 
+	<script>
+        // 주문번호
+	    const order_id = '{$order_id}';
+	</script>  
+아래에서 order_id를 사용.
+<!-- Event snippet for 구매_결제완료 conversion page TripleHM 20221019-->
+    <script>
+      gtag('event', 'conversion', {
+          'send_to': 'AW-10946335992/TkTxCKrvhoAYEPipz-Mo',
+          'value': _TRK_OA,
+          'currency': 'KRW',
+          'transaction_id': order_id
+      });
+    </script>
+
+------------------------------------------------------------------------

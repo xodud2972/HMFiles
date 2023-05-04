@@ -1,0 +1,146 @@
+20221114월 특이사항 : purchase에서 value값을 넣지 않으니 전자상거래GA데이터에서 수익 데이터가 집계되지 않음
+purchase이벤트에 value값에 최종 결제금액 필수 기입.
+
+
+<!-- Google tag (gtag.js) TripleHM 20221107 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-233256444-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-233256444-1');
+</script>
+
+bizos.co.kr
+triplehighm
+getup9907@
+-------------------------------------------------------PC--------------------------------------------------------------
+공통태그 완료
+<!-- Google tag (gtag.js) TripleHM 20221107 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-233256444-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-233256444-1');
+</script>
+---------------------------------------------------------------------------------------------------------------------
+회원가입 완료
+<!-- Gtag 회원가입완료 스크립트 TripleHM 20221107-->
+<script>
+  gtag('event', '진입', {
+    'event_category': '회원가입',
+    'event_label': '회원가입_진입'
+  });
+</script>
+---------------------------------------------------------------------------------------------------------------------
+장바구니추가
+<!-- Gtag 장바구니추가 TripleHM 20221107-->
+<script type="text/javascript">
+  if(!echo_products) var echo_products=[];
+    echo_products.push({
+      "id" : "<!--/number/-->",
+      "name": '<!--/name/-->'.replace(/(<([^>]+)>)/ig,""),
+      "price" :"<!--/price_sell/-->".replace(/[^0-9.]/g,'')
+     });
+   var cartBtn = document.querySelector('#cartBtn');
+   cartBtn.addEventListener('click', event => {
+      gtag('event', 'add_to_cart', {
+      	"items": echo_products
+       });
+       console.log(echo_products);
+   })
+</script>
+---------------------------------------------------------------------------------------------------------------------
+결제측정,주문완료
+<!-- Gtag 주문측정 및 결제완료TripleHM 20221107-->
+<script>   
+    if(!echo_products) var echo_products=[];
+    echo_products.push({
+    'item_id': "<!--/order_product@product_id/-->",
+    'name' : '<!--/order_product@name(100)/-->',
+    'price' : "<!--/order_product@price/-->".replace('원','')
+    });
+</script>
+
+<!-- Gtag 주문측정 및 결제완료TripleHM 20221107-->
+<script>
+   gtag('event', 'begin_checkout', {
+	"items": echo_products
+   });
+   gtag('event', 'purchase', {
+	"transaction_id": "<!--/order_num/-->",
+	"currency": "KRW",
+	"items": echo_products,
+	"value": '<!--/pay_price/-->'
+   });
+console.log("<!--/order_num/-->");
+</script>
+
+
+
+-------------------------------------------------------MO--------------------------------------------------------------
+공통태그 완료
+<!-- Google tag (gtag.js) TripleHM 20221107 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-233256444-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-233256444-1');
+</script>
+---------------------------------------------------------------------------------------------------------------------
+회원가입 완료
+<!-- Gtag 회원가입완료 스크립트 TripleHM 20221107-->
+<script>
+  gtag('event', '진입', {
+    'event_category': '회원가입',
+    'event_label': '회원가입_진입'
+  });
+</script>
+---------------------------------------------------------------------------------------------------------------------
+장바구니추가
+<!-- Gtag 장바구니추가 TripleHM 20221107-->
+<script type="text/javascript">
+  if(!echo_products) var echo_products=[];
+    echo_products.push({
+      "id" : "<!--/number/-->",
+      "name": '<!--/name/-->'.replace(/(<([^>]+)>)/ig,""),
+      "price" :"<!--/price_sell/-->".replace(/[^0-9.]/g,'')
+     });
+   var cartBtn = document.querySelector('#cartBtn');
+   cartBtn.addEventListener('click', event => {
+      gtag('event', 'add_to_cart', {
+      	"items": echo_products
+       });
+       console.log(echo_products);
+   })
+</script>
+---------------------------------------------------------------------------------------------------------------------
+결제측정,주문완료
+<!-- Gtag 주문측정 및 결제완료TripleHM 20221107-->
+<script>   
+    if(!echo_products) var echo_products=[];
+    echo_products.push({
+    'item_id': "<!--/order_product@product_id/-->",
+    'name' : '<!--/order_product@name(100)/-->',
+    'price' : "<!--/order_product@price/-->".replace('원','')
+    });
+</script>
+
+<!-- Gtag 주문측정 및 결제완료TripleHM 20221107-->
+<script>
+   gtag('event', 'begin_checkout', {
+	"items": echo_products
+   });
+   gtag('event', 'purchase', {
+	"transaction_id": "<!--/order_num/-->",
+	"currency": "KRW",
+	"items": echo_products,
+	"value": '<!--/pay_price/-->'
+   });
+console.log("<!--/order_num/-->");
+</script>

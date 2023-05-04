@@ -1,0 +1,24 @@
+디그리뷔 카페24 공통페이지 구글 GTM 작업 
+
+layout.html > head 안쪽
+        <!-- Google Tag Manager 20220629 TripleHM-->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-WDX2CC9');</script>
+        <!-- End Google Tag Manager -->      
+
+layout.html > body 가장 앞쪽
+        <!-- Google Tag Manager (noscript) TripleHM 20220629 -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WDX2CC9"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+위는 28일 작업 진행한내용
+------------------------------------------------------------------
+아래는 29일 추가 작업진행한 내용
+
+상품상세페이지는 소스코드 삽입이 안되있다고해서 
+해당페이지 inc되는 파일 보니까 layout.html이 아닌 layout_scroll.html이여서
+layout_scroll.html 파일에 위코드 동일하게 추가작업 진행함.
+상품상세페이지에 정상적으로 반영 완료

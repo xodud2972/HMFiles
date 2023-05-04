@@ -1,0 +1,25 @@
+가맹문의 완료시 : 		https://salady.com/superboard/process/online/online_update.php
+가맹설명회 완료시 : 	https://salady.com/superboard/process/online/online_update.php
+
+위 페이지는 inc파일이 없어서header의 영향을 받지 않는다 때문에 아래와같이 head태그를 생성해서
+공통태그를 따로 넣어주었다.
+<head>
+	<!-- Google tag (gtag.js) 구글애즈 공통 tripleHM 20221202 시작-->
+	<script async src='https://www.googletagmanager.com/gtag/js?id=AW-11035237030'></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'AW-11035237030');
+	</script>
+	<!-- Google tag (gtag.js) 구글애즈 공통 tripleHM 20221202 시작-->
+</head>
+
+ 전환코드는 <?php 가 시작하기 직전 윗 줄에 아래 코드를 삽입하였다.
+
+<!-- 구글애즈 상담신청완료 전환이벤트 TripleHM 20221202 시작-->
+<script>
+	gtag('event', 'conversion', {'send_to': 'AW-11035237030/SWcVCKnp7IMYEKa1gY4p'});
+</script>
+<!-- 구글애즈 상담신청완료 전환이벤트 TripleHM 20221202 끝-->

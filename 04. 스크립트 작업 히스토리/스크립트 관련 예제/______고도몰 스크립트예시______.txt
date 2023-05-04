@@ -1,0 +1,266 @@
+★★★★★★★★★★ 고도몰 ★★★★★★★★★★★★★
+
+＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠ PC ＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 장바구니 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 구글 이벤트 스니펫 -- 페이지 최하단에 삽입
+<!-- Event snippet for 장바구니측정 conversion page -->
+<script>
+  gtag('event', 'conversion', {'send_to': 'AW-648120555/qObGCJrbs88BEOuRhrUC'});
+</script>
+
+▶▶▶ 네이버 네이버페이 이벤트 스니펫 -- 페이지 최하단에 삽입
+	<!-- Event snippet for 네이버페이(버튼 클릭) conversion page	2021.03.09 STR -->
+	<script>
+	function gtag_report_conversion(url) {
+	  var callback = function () {
+		if (typeof(url) != 'undefined') {
+		  window.location = url;
+		}
+	  };
+	  gtag('event', 'conversion', {
+		  'send_to': 'AW-648120555/FOXCCIz7ofoBEOuRhrUC',
+		  'value': 1,
+		  'currency': 'KRW',
+		  'event_callback': callback
+	  });
+	  return false;
+	}
+	</script>
+
+▶▶▶ 네이버 스크립트 -- 페이지 최하단에 삽입
+<!-- NAVER Script -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script> 
+<script type="text/javascript">
+if (!wcs_add) var wcs_add={};
+wcs_add["wa"] = "s_1e22992e34c5";
+if (!_nasa) var _nasa={};
+_nasa["cnv"] = wcs.cnv("3","1"); 
+wcs_do(_nasa);
+</script>
+<!-- NAVER Script End -->
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 주문완료 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 로거 스크립트 -- footer 위쪽 확인버튼 밑에 삽입
+<!-- LOGGER SCRIPT FOR SETTING ENVIRONMENT V.27 : / FILL THE VALUE TO SET. --> 
+<script type="text/javascript"> 
+_TRK_PI = "ODR"; 
+_TRK_OA = "{=gd_currency_display(gd_isset(orderInfo.settlePrice))}"; 
+_TRK_OA = _TRK_OA.replace(/[원,\D ]/g,'');
+</script> 
+<!-- END OF ENVIRONMENT SCRIPT -->
+
+▶▶▶ 구글 스크립트 -- footer 위쪽 삽입
+<!-- Event snippet for 구매측정 conversion page -->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-648120555/BimiCPrYs88BEOuRhrUC',
+      'value': "{=number_format(orderInfo.totalGoodsPrice)}".replace(/,|원/g,''),
+      'currency': 'KRW',
+      'transaction_id': {orderInfo.orderNo}
+  });
+</script>
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 상품상세 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 네이버페이 버튼 이벤트 스크립트 -- 상단 스크립트 부분 삽입(헤더 밑)
+	<!-- Event snippet for 네이버페이(버튼 클릭) conversion page	2021.03.09 START -->
+	function gtag_report_conversion(url) {
+	  var callback = function () {
+		if (typeof(url) != 'undefined') {
+		  window.location = url;
+		}
+	  };
+	  gtag('event', 'conversion', {
+		  'send_to': 'AW-648120555/FOXCCIz7ofoBEOuRhrUC',
+		  'value': 1,
+		  'currency': 'KRW',
+		  'event_callback': callback
+	  });
+	  return false;
+	}
+	<!-- Event snippet for 네이버페이(버튼 클릭) conversion page 2021.03.09 END -->
+
+▶▶▶ 로거 스크립트 -- 하단 스크립트 부분 삽입
+<!-- LOGGER SCRIPT FOR SETTING ENVIRONMENT V.27 :  / FILL THE VALUE TO SET. -->
+<script type="text/javascript">
+var _TRK_PI;
+var _TRK_PN;
+var _TRK_MF;
+var objReg = new RegExp(); // 정규 표현식 객체를 생성한다
+objReg = /[<][^>]*[>]/gi;
+
+_TRK_PI="PDV";
+_TRK_PN = "{goodsView['goodsNo']}";
+_TRK_PND_TMP = "{goodsView['goodsNmDetail']}";
+_TRK_PND = _TRK_PND_TMP.replace(objReg, "");
+</script>
+<!-- END OF ENVIRONMENT SCRIPT -->
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 회원가입 결과 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 네이버 스크립트 -- 하단 footer 위 삽입
+<!-- NAVER Script -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script> 
+<script type="text/javascript">
+if (!wcs_add) var wcs_add={};
+wcs_add["wa"] = "s_1e22992e34c5";
+if (!_nasa) var _nasa={};
+_nasa["cnv"] = wcs.cnv("2","1"); 
+wcs_do(_nasa);
+</script>
+<!-- NAVER Script End -->
+
+▶▶▶ 구글 스니펫 -- 하단 footer 위 삽입
+<!-- Event snippet for 회원가입 conversion page -->
+<script>
+  gtag('event', 'conversion', {'send_to': 'AW-648120555/wIelCKDups8BEOuRhrUC'});
+</script>
+
+▶▶▶ 로거 스크립트 -- 하단 footer 위 삽입
+<!-- LOGGER SCRIPT FOR SETTING ENVIRONMENT V.27 : / FILL THE VALUE TO SET. --> 
+<script type="text/javascript"> 
+_TRK_PI = "RGR"; 
+_TRK_SX = "U"; 
+</script> 
+<!-- END OF ENVIRONMENT SCRIPT -->
+
+＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠ 모바일 ＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 공통 레이아웃 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 구글 GA 공통 스크립트 -- 상단 head 내 삽입
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-159120860-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-159120860-2');
+</script>
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 장바구니 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 네이버페이 이벤트 스크립트 -- 네이버페이 버튼 밑 form 끝나는 지점 삽입
+	<!-- Event snippet for 네이버페이(버튼 클릭) conversion page	2021.03.09 START-->
+	<script>
+	function gtag_report_conversion(url) {
+	  var callback = function () {
+		if (typeof(url) != 'undefined') {
+		  window.location = url;
+		}
+	  };
+	  gtag('event', 'conversion', {
+		  'send_to': 'AW-648120555/FOXCCIz7ofoBEOuRhrUC',
+			'value': 1,
+			'currency': 'KRW',
+		  'event_callback': callback
+	  });
+	  return false;
+	}
+	</script>
+	<!-- Event snippet for 네이버페이(버튼 클릭) conversion page 2021.03.09 END -->
+
+▶▶▶ 네이버 스크립트 -- 최하단 footer 위 삽입
+<!-- NAVER Script -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script> 
+<script type="text/javascript">
+if (!wcs_add) var wcs_add={};
+wcs_add["wa"] = "s_1e22992e34c5";
+if (!_nasa) var _nasa={};
+_nasa["cnv"] = wcs.cnv("3","1"); 
+wcs_do(_nasa);
+</script>
+<!-- NAVER Script End -->
+
+▶▶▶ 구글 스니펫 스크립트 -- 최하단 footer 위 삽입
+<!-- Event snippet for 장바구니측정 conversion page -->
+<script>
+  gtag('event', 'conversion', {'send_to': 'AW-648120555/qObGCJrbs88BEOuRhrUC'});
+</script>
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 주문완료 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 로거 스크립트 -- 최하단 footer 위 삽입
+<!-- LOGGER SCRIPT FOR SETTING ENVIRONMENT V.27 : / FILL THE VALUE TO SET. --> 
+<script type="text/javascript"> 
+_TRK_PI = "ODR"; 
+_TRK_OA = "{=gd_currency_display(gd_isset(orderInfo.settlePrice))}"; 
+_TRK_OA = _TRK_OA.replace(/[원,\D ]/g,'');
+</script> 
+<!-- END OF ENVIRONMENT SCRIPT -->
+
+▶▶▶ 구글 스니펫 스크립트 -- 최하단 footer 위 삽입
+<!-- Event snippet for 구글쇼핑 구매측정 conversion page -->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-648120555/BimiCPrYs88BEOuRhrUC',
+      'value': "{=number_format(orderInfo.totalGoodsPrice)}".replace(/,|원/g,''),
+      'currency': 'KRW',
+      'transaction_id': {orderInfo.orderNo}
+  });
+</script>
+<!-- // Event snippet for 구글쇼핑 구매측정 conversion page -->
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 상품상세 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 네이버페이 이벤트 스크립트 -- 네이버페이 버튼 밑 form 끝나는 지점 삽입
+	<!-- Event snippet for 네이버페이(버튼 클릭) conversion page	2021.03.09 START -->
+	<script>
+	function gtag_report_conversion(url) {
+	  var callback = function () {
+		if (typeof(url) != 'undefined') {
+		  window.location = url;
+		}
+	  };
+	  gtag('event', 'conversion', {
+		  'send_to': 'AW-648120555/FOXCCIz7ofoBEOuRhrUC',
+		  'value': 1,
+		  'currency': 'KRW',
+		  'event_callback': callback
+	  });
+	  return false;
+	}
+	</script>
+	<!-- Event snippet for 네이버페이(버튼 클릭) conversion page 2021.03.09 END -->
+
+▶▶▶ 로거 스크립트 -- 최하단 footer 위 삽입
+<!-- LOGGER SCRIPT FOR SETTING ENVIRONMENT V.27 :  / FILL THE VALUE TO SET. -->
+<script type="text/javascript">
+var _TRK_PI;
+var _TRK_PN;
+var _TRK_MF;
+var objReg = new RegExp(); // 정규 표현식 객체를 생성한다
+objReg = /[<][^>]*[>]/gi;
+
+_TRK_PI="PDV";
+_TRK_PN = "{goodsView['goodsNo']}";
+_TRK_PND_TMP = "{goodsView['goodsNmDetail']}";
+_TRK_PND = _TRK_PND_TMP.replace(objReg, "");
+</script>
+<!-- END OF ENVIRONMENT SCRIPT -->
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 회원가입 결과 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 네이버 스크립트 -- 최하단 footer 위 삽입
+<!-- NAVER Script -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script> 
+<script type="text/javascript">
+if (!wcs_add) var wcs_add={};
+wcs_add["wa"] = "s_1e22992e34c5";
+if (!_nasa) var _nasa={};
+_nasa["cnv"] = wcs.cnv("2","1"); 
+wcs_do(_nasa);
+</script>
+<!-- NAVER Script End -->
+
+▶▶▶ 구글 스니펫 스크립트 -- 최하단 footer 위 삽입
+<!-- Event snippet for 회원가입 conversion page -->
+<script>
+  gtag('event', 'conversion', {'send_to': 'AW-648120555/wIelCKDups8BEOuRhrUC'});
+</script>
+
+
+

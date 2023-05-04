@@ -1,0 +1,49 @@
+구글에서 테마 검색기 사이트 열고 작업 URL 검색하면 테마나오는데 해당 테마로 폴더 들어가서
+header파일에 작업하면 됨.
+
+CDN개발자 <-> CDN서버담당자 <-> 마케터 <-> 나 
+소통이 계속 불편해서 서버담당자랑 메일로 주고받으면서 해결함.
+워드프레스였는데 코드작업이 바로 반영되지 않아서 확인해보니, 
+실제 URL 주소인
+https://www.cdnetworks.com/ko
+https://www.cdnetworks.com/ko/contact-thank-you/
+작업내용을 확인하려면
+http://66.114.61.100/ko
+http://66.114.61.100/ko/contact-thank-you/
+에서 확인이 가능했고, 작업이 완료되었을경우 담당자한테 이야기해서
+퍼지 ? 를 진행해서 실서버에 반영하는 형태로 진행하였다.
+
+
+
+header파일 (공통파일) 만 수정할 수 있어서 공통파일에 아래코드를 넣었음
+
+
+<!-- 네이버 공통스크립트 -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"> </script> 
+<script type="text/javascript"> 
+if (!wcs_add) var wcs_add={};
+wcs_add["wa"] = "s_282afa40be50";
+if (!_nasa) var _nasa={};
+if(window.wcs){
+wcs.inflow();
+wcs_do(_nasa);
+}
+</script>
+<!-- 카카오 공통스크립트 -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('6760696886242752534').pageView();
+</script>
+
+<script type="text/javascript">
+
+	if(window.location.href.indexOf("thank") != -1){
+		console.log(1);
+		// 네이버 전환
+		var _nasa={};
+		if(window.wcs) _nasa["cnv"] = wcs.cnv("1","10"); // 전환유형, 전환가치 설정해야함. 설치매뉴얼 참고
+		// 카카오 전환
+		kakaoPixel('6760696886242752534').purchase();
+	}
+
+</script>

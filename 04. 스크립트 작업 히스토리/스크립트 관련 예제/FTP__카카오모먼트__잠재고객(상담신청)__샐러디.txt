@@ -1,0 +1,3 @@
+FTP 샐러디 카카오모먼트 잠재고객(상담신청) 스크립트 추가
+www/superboard/process/online/online_update.php
+해당파일에 kakaoPixel('4953097790915494053').participation(Consulting); 부분을 추가.

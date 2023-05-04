@@ -1,0 +1,409 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2023-03-17 02:46:43",
+    "containerVersion": {
+        "path": "accounts/6073058057/containers/104789406/versions/0",
+        "accountId": "6073058057",
+        "containerId": "104789406",
+        "containerVersionId": "0",
+        "container": {
+            "path": "accounts/6073058057/containers/104789406",
+            "accountId": "6073058057",
+            "containerId": "104789406",
+            "name": "변수모음",
+            "publicId": "GTM-NQJRN2C",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1679020497558",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6073058057/containers/104789406/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true
+            },
+            "tagIds": [
+                "GTM-NQJRN2C"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "tagId": "9",
+                "name": "GA4 네이버변수 활용방법",
+                "type": "gaawc",
+                "parameter": [
+                    {
+                        "type": "LIST",
+                        "key": "fieldsToSet",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "name",
+                                        "value": "naver_rank"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "{{순위별 성과측정}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "name",
+                                        "value": "naver_blog"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "{{네이버블로그추적}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "name",
+                                        "value": "blog_keyword"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "{{블로그 키워드}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "name",
+                                        "value": "pre_search"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "{{이전 검색어}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendPageView",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableSendToServerContainer",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementId",
+                        "value": "G-XXXXXXX"
+                    }
+                ],
+                "fingerprint": "1679020772966",
+                "firingTriggerId": [
+                    "2147479553"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "tagId": "12",
+                "name": "GA4_페이지로드시간",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "page_load_time"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventParameters",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "name",
+                                        "value": "loading_time_sec"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "{{Page Load Time}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementId",
+                        "value": "none"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-XXXXXXX"
+                    }
+                ],
+                "fingerprint": "1679020859754",
+                "firingTriggerId": [
+                    "11"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "triggerId": "11",
+                "name": "Page Loaded",
+                "type": "WINDOW_LOADED",
+                "fingerprint": "1679020857033"
+            },
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "triggerId": "13",
+                "name": "Page Load Time Less Than 0",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": ".*"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "LESS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page Load Time}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1679020892812"
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "variableId": "3",
+                "name": "네이버블로그추적",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n    var referrer_hostname = {{referrerHost}};\n\tvar url_string = {{Referrer}};\n\tvar url = new URL(url_string);\n\tif (referrer_hostname == \"blog.naver.com\"){\n      \tvar blogId = url.searchParams.get('blogId');\n\t\tvar logNo = url.searchParams.get('logNo');\n\t\tvar result = blogId + \"/\" + logNo;\n\t\treturn result;\n    } else if (referrer_hostname == \"m.blog.naver.com\" && url.pathname == \"/PostView.nhn\"){\n      \tvar blogId = url.searchParams.get('blogId');\n\t\tvar logNo = url.searchParams.get('logNo');\n\t\tvar result = blogId + \"/\" + logNo;\n\t\treturn result;\n    } else if (referrer_hostname == \"m.blog.naver.com\"){\n      \tvar result = url[\"pathname\"].substring(1);\n      \treturn result;\n    }\n}"
+                    }
+                ],
+                "fingerprint": "1679020630133",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "variableId": "4",
+                "name": "블로그 키워드",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n    var referrer_hostname = {{referrerHost}};\n\tif (referrer_hostname == \"blog.naver.com\"){\n\t\tvar url_string = {{Referrer}};\n\t\tvar url = new URL(url_string);\n\t\tvar topReferer = url.searchParams.get('topReferer');\n\t\tvar url2 = new URL(topReferer);\n\t\tvar result = url2.searchParams.get('query');\n\t\treturn result;\n    } else if (referrer_hostname == \"m.blog.naver.com\"){\n        var url_string = {{Referrer}};\n\t\tvar url = new URL(url_string);\n\t\tvar topReferer = url.searchParams.get('proxyReferer');\n\t\tvar url2 = new URL(topReferer);\n\t\tvar result = url2.searchParams.get('query');\n\t\treturn result;\n    }\n}"
+                    }
+                ],
+                "fingerprint": "1679020638338",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "variableId": "5",
+                "name": "get_url_params",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n    var url = {{Page URL}};\n \tvar params = {};\n  \tif (url.length){\n  \t\tvar paramStr = url.split('?');\n  \t\tif (paramStr.length > 1) {\n  \t\t\tparamStr[1].split('&').forEach(function(item) {params[item.split(\"=\")[0]] = item.split(\"=\")[1]});\n    \t}\n  \t}\n\n  \treturn params;\n}\n"
+                    }
+                ],
+                "fingerprint": "1679020665307",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "variableId": "6",
+                "name": "referrerHost",
+                "type": "f",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "stripWww",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "component",
+                        "value": "HOST"
+                    }
+                ],
+                "fingerprint": "1679020680741",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "variableId": "7",
+                "name": "순위별 성과측정",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function(){\n  var params = {{get_url_params}}, nRank;\n  \n  if (params.hasOwnProperty(\"n_rank\")) nRank = params.n_rank;\n  \n  return nRank;\n}"
+                    }
+                ],
+                "fingerprint": "1679020694819",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "variableId": "8",
+                "name": "이전 검색어",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n    var referrer_hostname = {{referrerHost}};\n\tvar ref_url = {{Referrer}};\n\tif (referrer_hostname == \"search.naver.com\" || referrer_hostname ==\"m.search.naver.com\"){\n    \tvar pattern = new RegExp('[\\\\?&]oquery=([^&#]*)');\n\t\tvar query = ref_url.match(pattern);\n\t\tvar keyword = query[1].replace( /\\+/gi, \"%20\");\n\t\tvar result = decodeURI(keyword);\n\t\treturn result;\n    }\n}"
+                    }
+                ],
+                "fingerprint": "1679020705650",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "variableId": "10",
+                "name": "Page Load Time",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n \n  var time = window.performance.timing;\n  var pageLoadTime = time.loadEventEnd - time.navigationStart;\n  \n  return Math.round(pageLoadTime / 100) / 10;\n  \n}"
+                    }
+                ],
+                "fingerprint": "1679020826074",
+                "formatValue": {}
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "type": "PAGE_URL",
+                "name": "Page URL"
+            },
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "type": "PAGE_HOSTNAME",
+                "name": "Page Hostname"
+            },
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "type": "PAGE_PATH",
+                "name": "Page Path"
+            },
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "type": "REFERRER",
+                "name": "Referrer"
+            },
+            {
+                "accountId": "6073058057",
+                "containerId": "104789406",
+                "type": "EVENT",
+                "name": "Event"
+            }
+        ],
+        "fingerprint": "1679021202976",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6073058057/containers/104789406/versions/0?apiLink=version"
+    }
+}

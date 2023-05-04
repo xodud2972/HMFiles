@@ -1,0 +1,53 @@
+카페24 (보오글, 레드닥터, 라라생활) 카카오픽셀 설치 3건
+카페24 측에서 제공하는 서비스로 마케팅스크립트가 설치되어 디자인수정 페이지에서
+어떤 코드를 삽입해도 항상 먼저 실행되기때문에 문제가 되는 상황
+또한, 해당 상품번호를 가지고오는 변수를 사용할 수 없어서
+아래 함수를 통해 url의 GET방식으로 가져오는 product_no를 가져옴
+그리고 3초뒤 실행으로 기존 서비스보다 3초뒤에 실행되게끔 설정
+
+<!-- 카카오픽셀 tripleHM 2022.03.07 -->
+<script type="text/javascript">
+    function getHttpParam(name) {
+	    var regexS = "[\\?&]" + name + "=([^&#]*)";
+	    var regex = new RegExp(regexS);
+	    var results = regex.exec(window.location.href);
+	    if (results == null) {
+		return 2;
+	    } else {
+		return decodeURIComponent(results[1]);
+	    }
+	}
+setTimeout(function() {
+    if(getHttpParam('product_no') == '8862') {
+        kakaoPixel('4245162859126212819').viewContent({
+            tag: '보오글풀세트랜딩'
+        });
+        console.log('보오글풀세트랜딩');
+    }else if(getHttpParam('product_no') == '8768') {
+        kakaoPixel('4245162859126212819').viewContent({
+            tag: ' 네모 5종 더블세트'
+        });
+    }else if(getHttpParam('product_no') == '8711') {
+        kakaoPixel('4245162859126212819').viewContent({
+            tag: '강화유리뚜껑'
+        });
+        console.log('강화유리뚜껑');
+    }else if(getHttpParam('product_no') == '8730') {
+        kakaoPixel('4245162859126212819').viewContent({
+            tag: '멀티세이프핸들'
+        });
+    }else if(getHttpParam('product_no') == '9021') {
+        kakaoPixel('4245162859126212819').viewContent({
+            tag: '캠핑백'
+        });
+    }else if(getHttpParam('product_no') == '8942') {
+        kakaoPixel('4245162859126212819').viewContent({
+            tag: '인덕션매트'
+        });
+    }else if(getHttpParam('product_no') == '8956') {
+        kakaoPixel('4245162859126212819').viewContent({
+            tag: '행주&수세미'
+        });
+    }
+}, 3000);
+</script>

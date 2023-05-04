@@ -1,0 +1,234 @@
+카페24__GA전자상거래__장바구니,결제측정,결제단계측정__MO,PC__디그리뷔_재팬__20220808
+
+장바구니에서 여러 개의 제품 추가
+
+gtag('event', 'add_to_cart', {
+  "items": [
+    {
+      "id": "P12345",
+      "name": "Android Warhol T-Shirt",
+      "list_name": "Search Results",
+      "brand": "Google",
+      "category": "Apparel/T-Shirts",
+      "variant": "Black",
+      "list_position": 1,
+      "quantity": 2,
+      "price": '2.0'
+    }
+  ]
+});
+
+
+
+----------------------------------------
+
+
+1. 결제 단계 측정
+
+
+
+gtag('event', 'begin_checkout', {
+  "items": [
+    {
+      "id": "P12345",
+      "name": "Android Warhol T-Shirt",
+      "list_name": "Search Results",
+      "brand": "Google",
+      "category": "Apparel/T-Shirts",
+      "variant": "Black",
+      "list_position": 1,
+      "quantity": 2,
+      "price": '2.0'
+    }
+  ],
+  "coupon": ""
+});
+
+
+-----------------------------------
+구매 측정
+
+gtag('event', 'purchase', {
+  "transaction_id": "24.031608523954162",
+  "affiliation": "Google online store",
+  "value": 23.07,
+  "currency": "USD",
+  "tax": 1.24,
+  "shipping": 0,
+  "items": [
+    {
+      "id": "P12345",
+      "name": "Android Warhol T-Shirt",
+      "list_name": "Search Results",
+      "brand": "Google",
+      "category": "Apparel/T-Shirts",
+      "variant": "Black",
+      "list_position": 1,
+      "quantity": 2,
+      "price": '2.0'
+    },
+    {
+      "id": "P67890",
+      "name": "Flame challenge TShirt",
+      "list_name": "Search Results",
+      "brand": "MyBrand",
+      "category": "Apparel/T-Shirts",
+      "variant": "Red",
+      "list_position": 2,
+      "quantity": 1,
+      "price": '3.0'
+    }
+  ]
+});
+
+--------------------------------------
+<!-- GA 구매측정 20220808 tripleHM  -->                        
+<script>
+    console.log(22);
+    if(!echo_products) var echo_products=[];
+    echo_products.push({
+    'id' : '{$param}'.split('product_no=')[1].split('&cate_no=')[0],
+    'name' : '{$product_name}',
+    'quantity' : '{$product_quantity}',
+    'price' : '{$product_price}'.replace(',','').replace('원',''),
+    'brand' : 'Healo',
+    'category' : '{$param}'.substr('{$param}'.indexOf('cate_no='), '{$param}'.length).replace('cate_no=','')
+    });
+        console.log(echo_products);
+    console.log(111);
+</script>   
+
+
+<!-- GA 구매측정 및 결제단계측정 TripleHM 20220808-->
+<script>
+    gtag('event', 'purchase', {
+        "transaction_id": '{$order_id}',
+        "currency": "KRW",
+        "items": echo_products
+    });
+    gtag('event', 'begin_checkout', {
+        "items": echo_products
+    });
+    console.log(echo_products);
+    console.log(333);
+</script>
+
+
+---------------------------작업내용-PC ----------------------------
+구매측정 및 결제단계측정
+주문완료 페이지 46행~49행
+	<!-- GA구매측정 tripleHM 20220808 -->            
+	<script>
+	    const order_id = '{$order_id}';
+	</script>
+
+주문완료 페이지 243~252행
+	<!-- GA 구매측정 20220808 tripleHM  -->                        
+	<script>
+	    if(!echo_products) var echo_products=[];
+	    echo_products.push({
+	    'name' : '{$product_name}',
+	    'quantity' : '{$product_quantity}',
+	    'price' : '{$product_price}'.replace(',','').replace('원','')
+	    });
+	    console.log(echo_products);
+	</script>   
+
+주문완료 페이지 가장하단 566~576
+<!-- GA 구매측정 및 결제단계측정 TripleHM 20220808-->
+<script>
+    gtag('event', 'purchase', {
+        "transaction_id": order_id,
+        "currency": "KRW",
+        "items": echo_products
+    });
+    gtag('event', 'begin_checkout', {
+        "items": echo_products
+    });
+</script>
+
+
+장바구니 추가
+상품상세 페이지 10~19행
+	<!-- GA 구매측정 20220808 tripleHM  -->                        
+	<script>
+	    if(!echo_products) var echo_products=[];
+	    echo_products.push({
+	    "id": "{$product_no}",
+	    'name' : '{$name}',
+	    'price' : '{$product_price}'.replace(',','').replace('원','')
+	    });
+	    console.log(echo_products);
+	</script>   
+상품상세 페이지 659~669행
+    <!-- GA 장바구니 추가 TripleHM 20220808 -->
+    <script>
+        function addCartFunc() {
+            gtag('event', 'add_to_cart', {
+                "items": echo_products
+            });
+        }
+        document.querySelector('#totalProducts > div > div.btnArea > a.btnEm ').addEventListener('click', event => {
+            addCartFunc();
+        })
+    </script>    
+
+
+
+---------------------------작업내용-MO ----------------------------
+장바구니추가 - 상품상세 페이지 14~23 행
+<!-- GA 구매측정 20220808 tripleHM  -->                        
+<script>
+    if(!echo_products) var echo_products=[];
+    echo_products.push({
+    "id": "{$product_no}",
+    'name' : '{$name}',
+    'price' : '{$product_price}'.replace(',','').replace('원','')
+    });
+    console.log(echo_products);
+</script>  
+
+장바구니추가 - 상품상세 페이지 815~825행
+	<!-- GA 장바구니 추가 TripleHM 20220808 -->    
+    <script>
+        function addCartFunc() {
+            gtag('event', 'add_to_cart', {
+                "items": echo_products
+            });
+        }
+        document.querySelector('#rev > button').addEventListener('click', event => {
+            addCartFunc();
+        })        
+    </script>    
+
+주문완료 - 주문완료페이지10~14행
+<!-- GA구매측정 tripleHM 20220808 -->            
+<script>
+const order_id = '{$order_id}';
+console.log(order_id);
+</script>
+
+주문완료 - 주문완료페이지185~194행
+PC와 MO의 주문완료 소스코드가 다른경우 해외배송 아래쪽에 있는 Prdinfo 위에 echo_prodoucts를 만들어주면된다.
+<!-- GA 구매측정 20220808 tripleHM  -->                        
+<script>
+    if(!echo_products) var echo_products=[];
+    echo_products.push({
+    'name' : '{$product_name}',
+    'quantity' : '{$product_quantity}',
+    'price' : '{$product_price}'.replace(',','').replace('원','')
+    });
+    console.log(echo_products);
+</script>  
+주문완료 - 주문완료페이지 540~550 (최하단)
+<!-- GA 구매측정 및 결제단계측정 TripleHM 20220808-->
+<script>
+    gtag('event', 'purchase', {
+        "transaction_id": order_id,
+        "currency": "KRW",
+        "items": echo_products
+    });
+    gtag('event', 'begin_checkout', {
+        "items": echo_products
+    });
+</script>

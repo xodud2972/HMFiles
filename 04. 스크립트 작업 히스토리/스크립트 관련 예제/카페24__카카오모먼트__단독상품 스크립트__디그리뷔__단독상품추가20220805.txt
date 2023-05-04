@@ -1,0 +1,80 @@
+카페24__카카오모먼트__단독상품 스크립트__디그리뷔__단독상품추가20220805
+
+↓ 첨부파일 코드 내용 ↓
+
+https://degreve.co.kr/product/detail.html?product_no=9284<적용페이지>
+----------------
+방문페이지
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('829622579398133528').pageView('써모넥스 오퀴즈');
+</script>
+------------------
+회원가입
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('829622579398133528').pageView();
+      kakaoPixel('829622579398133528').completeRegistration('써모넥스 오퀴즈');
+</script>
+----------------------------------
+콘텐츠 조회
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('829622579398133528').pageView();
+      kakaoPixel('829622579398133528').viewContent({
+        id: '상품고유값 입력',
+        tag: '써모넥스 오퀴즈'
+      });
+</script>
+---------------------------------
+장바구니 추가
+
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('829622579398133528').addToCart({
+        id: '상품고유값입력',
+        tag: '써모넥스 오퀴즈'
+      });
+</script>
+----------------------------
+구매
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('829622579398133528').pageView();
+      kakaoPixel('829622579398133528').purchase('써모넥스 오퀴즈');
+</script>
+
+
+------------------------------------------------------------------------------------------------
+
+
+
+↓ 수정(추가) 내용 ↓
+
+방문 & 상품조회 & 장바구니추가 ( 아래코드 추가 )
+
+if(getHttpParam('product_no') == '9284') {
+                console.log('써모넥스 오퀴즈');
+                kakaoPixel('829622579398133528').pageView('써모넥스 오퀴즈');
+                kakaoPixel('829622579398133528').viewContent({
+                    id: "9284",
+                    tag: '써모넥스 오퀴즈'
+                });
+                addcartBtn.addEventListener('click', event => {
+                    kakaoPixel('829622579398133528').addToCart({
+                        id: "9284",
+                        tag: '써모넥스 오퀴즈'
+                        });
+                })
+            }
+
+회원가입 - 특이사항
+		 기존에  completeRegistration () 로 잡히는데 
+		아래 처럼 "써모넥스 오퀴즈" 가 포함된 코드를 따로 또 추가했음
+		기존에 completeRegistration () 로 잡히는 코드는 찾을 수가 없었음.
+		CMS코드이고 수정이 불가했음
+<!-- 카카오모먼트 회원가입완료 20220805 TripleHM -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('829622579398133528').completeRegistration('써모넥스 오퀴즈');
+</script>

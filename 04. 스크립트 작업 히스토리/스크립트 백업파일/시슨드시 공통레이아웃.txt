@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head> 
+<meta name="facebook-domain-verification" content="hhg0ewujc17nx6yqnip6xog30d9hlo" />    
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-193142656-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-193142656-1');
+</script>
+
+    
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<!--PG크로스브라우징필수내용 시작-->
+	<meta http-equiv="Cache-Control" content="no-cache"/>
+	<meta http-equiv="Expires" content="0"/>
+	<meta http-equiv="Pragma" content="no-cache"/>
+	<!--PG크로스브라우징필수내용 끝-->
+
+	<title>스마트PC 프리미엄</title>
+	<!--@css(/layout/basic/css/common.css)--><!--해당 CSS는 쇼핑몰 전체 페이지에 영향을 줍니다. 삭제와 수정에 주의해주세요.-->
+	<!--@css(/layout/basic/css/layout.css)-->
+
+	<!-- 스마트디자인에서는 JQuery 1.4.4 버전이 내장되어있습니다. 추가로 호출하면 충돌이 생길 수 있습니다. -->
+	<!--@js(/layout/basic/js/basic.js)-->
+	<!--@js(/js/common.js)-->
+	<!--@js(/js/module/layout/quick_view.js)-->
+	<script type="text/javascript" src="/ec-js/common.js"></script><!-- 해당 JS는 플래시를 사용하기 위한 스크립트입니다. -->
+
+	<!--폰트-->
+	<!-- <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet"> -->
+    <!--Noto Sans KR-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <!--//Noto Sans KR-->
+    <!--Lato-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+    <!--//Lato-->
+	<link href="http://fonts.googleapis.com/earlyaccess/nanumgothic.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/module/New_style.css">
+	<!-- 스마트PC 공통 css/js 시작(필수)-->
+	<link rel="stylesheet" href="/SkinImg/css/smartpc_default.css">
+	<link rel="stylesheet" href="/SkinImg/css/SPcustomCSS.css">    
+	<link rel="stylesheet" href="/SkinImg/css/shop_custom.css">    
+	<script src="/SkinImg/js/jquery-1.11.2.min.js"></script>
+	<script src="/SkinImg/js/jquery.bxslider.js"></script>
+	<script src="/SkinImg/js/jquery.easing.1.3.min.js"></script>
+	<script src="/SkinImg/js/jquery.nicescroll.min.js"></script>
+	<script src="/SkinImg/js/instafeed.min.js"></script>
+	<script id="SP" solution="cafe24" src="/SkinImg/js/SPcustomJS.js"></script>
+	<!-- 스마트PC 공통 css/js 시작(끝)-->
+
+</head>
+
+<body>
+<!-- ========================SP추가기능============================ -->
+<!-- 타임세일즈 설정 :: START  -->
+<div id="SP_TimeSales_YB" class="d-n" style="display:none;">	
+	<p id="SP_TimeSale_Start_Year" class="d-n">2017</p><!-- 세일 시작 년도 -->
+	<p id="SP_TimeSale_Start_Month" class="d-n">12</p><!-- 세일 시작 월 -->
+	<p id="SP_TimeSale_Start_Day" class="d-n">25</p><!-- 세일 시작 일 -->
+	<p id="SP_TimeSale_Start_Hour" class="d-n">0</p><!-- 세일 시작 시 -->
+	<p id="SP_TimeSale_Start_Min" class="d-n">0</p><!-- 세일 시작 분 -->
+	<p id="SP_TimeSale_Start_Sec" class="d-n">0</p><!-- 세일 시작 초 -->
+
+	<p id="SP_TimeSale_Count_Year" class="d-n">2017</p><!-- 세일 마감 년도 -->
+	<p id="SP_TimeSale_Count_Month" class="d-n">12</p><!-- 세일 마감 월 -->
+	<p id="SP_TimeSale_Count_Day" class="d-n">28</p><!-- 세일 마감 일 -->
+	<p id="SP_TimeSale_Count_Hour" class="d-n">23</p><!-- 세일 마감 시 24시 -->
+	<p id="SP_TimeSale_Count_Min" class="d-n">55</p><!-- 세일 마감 분 59분 -->
+	<p id="SP_TimeSale_Count_Sec" class="d-n">0</p><!-- 세일 마감 초 59초 -->
+</div>
+<!-- 타임세일즈 설정 :: END -->
+
+<!-- cre.ma / 로그인 회원 정보 / 스크립트를 수정할 경우 연락주세요 (support@cre.ma) -->
+<div module="Layout_stateLogon" style="display:none;">
+	<i id="crema-login-username" style="display:none;">{$id}</i>
+	<i id="crema-login-name" style="display:none;">{$name}</i>
+</div>
+
+<div id="SP_INFO_GLOBAL_CAFE24" style="display:none;">
+	<div module="Layout_stateLogon">
+		{$id}{$name}{$phone}{$group_name}{$email}
+	</div>
+	<div module="Layout_shoppingInfo">
+		{$mileage}{$deposit}{$coupon_cnt}
+	</div>
+</div>
+
+<div id="SP_toggleMenu_ver1">
+
+	<button>Side menu button</button>
+	<div class="ToggleMenu_Wrap">
+		<div class="Coupon_Banner txt_c"><a href="/board/gallery/read.html?no=16862&board_no=8&category_no=1&cate_no=1&category_no=1#none"><img src="../../SkinImg/img/custom/event_kakaotalk_thumbnail.jpg" alt="Coupon" /></a></div>
+		<!-- ========= 로그아웃 인 상태 영역 ========= -->
+		<div module="Layout_statelogoff">
+			<div class="Login_Before">
+				<div module="Layout_login">
+					<!--@css(/css/module/layout/login.css)-->
+					<fieldset>
+						<legend>member login</legend>
+						<p class="check">
+							<span><input id="member_id" name="member_id" fw-filter="isFill" fw-label="아이디" fw-msg="" class="inputTypeText _placeholder" placeholder="아이디를 입력해주세요" type="text"></span>
+							<span><input id="member_passwd" class="_placeholder" name="member_passwd" fw-filter="isFill&amp;isMin[4]&amp;isMax[16]" fw-label="패스워드" fw-msg="" placeholder="패스워드를 입력해주세요" type="password"></span>
+						</p>
+						<p class="security">
+							{$form.check_save_id}
+							{$form.check_secret_connect}
+						</p>
+						<p class="button login_submit">
+							<a href="#none" onclick="{$action_func_login}"><span class="login_btn">로그인</span></a>
+						</p>
+					</fieldset>
+					<ul class="cb_clear">
+						<li class="join"><a href="/member/join.html">회원가입</a></li>
+						<li class="find"><a href="/member/id/find_id.html">ID/PW 찾기</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- ========= 로그아웃 인 상태 영역 end ========= -->
+
+		<!-- ========= 로그인 인 상태 영역 ========= -->
+		<div module="Layout_stateLogon">
+			<div class="Login_After">
+				<div class="User_Info">
+					<div class="User_Name">
+						<span class="myinfo"><strong>{$name}</strong> 님, 환영합니다.<br/>즐거운 쇼핑하세요.</span>
+					</div>
+					<p class="button login_submit">
+						<a class="log login_btn" href="{$action_logout}">로그아웃</a>
+					</p>
+
+					<ul class="cb_clear">
+						<li class="mypage"><a href="/myshop/index.html">마이페이지</a></li>
+						<li class="modify"><a href="/member/modify.html">회원정보수정</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- ========= 로그인 인 상태 영역 end ========= -->
+
+		<!-- ========= 오른쪽 햄버거 공통 영역 ========= -->
+		<div class="Toggle_Inside_Menu"><!-- 햄버거 내부메뉴 -->
+			<ul>
+				<li class="tit"><a href="/board/product/list.html?board_no=4">제품사용후기</a></li>
+				<li class="tit"><a href="/board/gallery/list.html?board_no=12">포토사용후기</a></li>
+				<li class="tit"><a href="/board/gallery/list.html?board_no=13">블로거리뷰</a></li>
+				<li class="tit"><a href="/board/product/list.html?board_no=6">Q&amp;A</a></li>
+				<li class="tit"><a href="/board/faq/list.html?board_no=3">FAQ</a></li>
+			</ul>
+		</div><!-- 햄버거 내부메뉴:끝 -->
+		<!-- 최근본상품 시작 -->
+		<div class="Today_View ListWrap">
+			<h2 class="Today_View_Tit ListWrap_Tit">오늘 본 상품</h2>
+			<div id="SP_todayProductViewer" module="Layout_productRecent">
+				<!--@css(/css/module/layout/productRecent.css)-->
+				<ul class="SP_sliderStarter cb_clear">
+					<li class="{$disp_recent|display}">
+						<a href="/product/detail.html{$param}"><img src="{$recent_img}" alt="" /></a>
+					</li>
+					<li class="{$disp_recent|display}">
+						<a href="/product/detail.html{$param}"><img src="{$recent_img}" alt="" /></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!-- 최근본상품 끝 -->
+
+		<!-- 고객지원센터/결제입금정보 탭 영역 -->
+		<div class="toggle-menu-tab">
+			<div class="tab-title">
+				<ul class="cb_clear">
+					<li>
+						<a href="#">고객지원센터</a>
+					</li>
+					<li class="last">
+						<a href="#">결제입금 정보</a>
+					</li>
+				</ul>
+			</div>
+			<div class="tab-content">
+				<ul>
+					<li class="title">02.780.6999</li>
+					<li	class="sub-title"><span>여는시간</span>오전 10:00 - 오후 05:00</li>
+					<li><span>점심시간</span>오후 12:30 - 오후 02:00</li>
+					<li class="sub-title">주말 및 공휴일 휴무</li>
+				</ul>
+				<ul>
+					<li class="title">3333-21-4793136</li>
+					<li class="sub-title"><span>카카오뱅크</span>예금주 : 전창민(시슨드시) </li>
+				</ul>
+			</div>
+		</div>
+		<!-- 고객지원센터/결제입금정보 탭 영역 END -->
+		<script>
+            SP$(".rightMenu_csCenter .cs_tab li").on("click", function(){
+                SP$(".rightMenu_csCenter .cs_tab li").removeClass("select");
+                SP$(".rightMenu_cs ul").hide();
+                var _i = SP$(this).index();
+                SP$(this).addClass("select");
+                SP$(".rightMenu_cs ul").eq(_i).show();
+            });
+		</script>
+	</div>
+	<!-- ========= 오른쪽 햄버거 공통 영역 end ========= -->
+</div>
+<!-- #SP_toggleMenu_ver1 -->
+
+<div id="SP_goTopEnd">
+	<button class="goTop">TOP</button>
+	<button class="goEnd">END</button>
+</div>
+<!-- ========================//SP추가기능끝============================ -->
+
+<!-- ========================// 헤더 상단 영역 //======================== -->
+<div id="header">
+	<div class="SMP-header-container">
+		<!-- logo start -->
+		<div class="logo">
+			<a href="/main.html">logo</a>
+		</div>
+		<!-- logo end -->
+		<nav id="cnv">
+			<div id="gnb" class="cnv-container cb_clear ">
+				<!-- company menu navigation start -->
+				<ul class="cb_clear">
+					<li class="menu-01 first"><!-- all menu 아이콘 흰색을 원할경우 이미지 이름명 _b 만 지우세요. -->
+						<a href="/product/list.html?cate_no=40">SHOPPING</a>
+						<p class="line"></p>
+						<dl>
+							<dd class="cb_clear">
+								<div class="right">
+									<ul>
+										<li class="main"><a href="/product/list.html?cate_no=82">유형별 제품</a></li>
+                                        <li class="sub"><a href="/product/list.html?cate_no=85">클렌저</a></li>
+										<li class="sub"><a href="/product/list.html?cate_no=83">스킨&로션</a></li>
+                                        <li class="sub"><a href="/product/list.html?cate_no=114">에센스&크림</a></li>
+                                        <li class="sub"><a href="/product/list.html?cate_no=135">선크림</a></li>
+										<li class="sub"><a href="/product/list.html?cate_no=87">워시&샴푸</a></li>
+										<li class="sub"><a href="/product/list.html?cate_no=91">바디로션</a></li>
+                                        <li class="sub"><a href="/product/list.html?cate_no=150">미스트</a></li>
+                                        <li class="sub"><a href="/product/list.html?cate_no=152">마이펫</a></li>
+        								<li class="sub"><a href="/product/list.html?cate_no=89">미용소품</a></li> 	
+									</ul>
+									<ul> 
+										<li class="main"><a href="/product/list.html?cate_no=72">라인별 제품</a></li>
+                                        <li class="sub"><a href="/product/list.html?cate_no=116">전체상품</a></li>
+                                        <li class="sub"><a href="/product/list.html?cate_no=73">블레스 라인</a></li>
+                                        <li class="sub"><a href="/product/list.html?cate_no=74">루미넌트 라인</a></li>
+                                        <li class="sub"><a href="/product/list.html?cate_no=146">닥터더블하 라인</a></li>
+                                        <li class="sub"><a href="/product/list.html?cate_no=153">마이펫 라인</a></li>
+										<li class="sub"><a href="/product/list.html?cate_no=81">세트상품</a></li>
+                                    </ul>
+									<ul>
+										<li class="main"><a href="/product/list.html?cate_no=92">고민별 제품</a></li>
+										<li class="sub"><a href="/product/list.html?cate_no=93">페이스 케어</a></li>
+                                        <li class="sub"><a href="/product/list.html?cate_no=135">선케어</a></li>
+										<li class="sub"><a href="/product/list.html?cate_no=94">바디 케어</a></li>
+										<li class="sub"><a href="/product/list.html?cate_no=95">헤어 케어</a></li>
+										<li class="sub"><a href="/product/list.html?cate_no=96">미백&모공</a></li>
+										<li class="sub"><a href="/product/list.html?cate_no=97">주름&탄력</a></li>
+										<li class="sub"><a href="/product/list.html?cate_no=98">베이비 케어</a></li>
+                                        <li class="sub"><a href="/product/list.html?cate_no=154">펫 케어</a></li>
+									</ul>
+								</div>
+								<ul>
+									<li class="banner">
+										<img src="/web/upload/category/editor/2021/09/28/23a794b9c1493d0be22fa3bf24b9f0da.png" alt="Banner"/>
+									</li>
+								</ul>
+							</dd>
+						</dl>
+					</li>
+					<li class="menu-02">
+						<a href="/product/page.html?cate_no=34">ABOUT</a>
+						<p class="line"></p>
+					</li>
+					<li class="menu-03">
+						<a href="/board/gallery/list.html?board_no=8&category_no=1">EVENT</a>
+						<p class="line"></p>
+						<dl>
+							<dd class="cb_clear">
+								<ul>
+									<li class="sub"><a href="/board/gallery/list.html?board_no=8&category_no=">전체 이벤트</a></li>
+									<li class="sub"><a href="/board/gallery/list.html?board_no=8&category_no=1">진행중인 이벤트</a></li>
+									<li class="sub"><a href="/board/gallery/list.html?board_no=8&category_no=2">마감된 이벤트</a></li>
+								</ul>
+							</dd>
+						</dl>
+					</li>
+					<li class="menu-04">
+						<a href="/board/product/list.html?board_no=4">REVIEW</a>
+						<p class="line"></p>
+						<dl>
+							<dd class="cb_clear">
+								<ul>
+									<li class="sub"><a href="/board/product/list.html?board_no=4">전체 사용후기</a></li>
+									<li class="sub"><a href="/board/gallery/list.html?board_no=12">어메이징포토후기</a></li>
+									<li class="sub"><a href="/board/gallery/list.html?board_no=13">블로거 사용후기</a></li>
+								</ul>
+							</dd>
+						</dl>
+					</li>
+					<li class="menu-05">
+						<a href="/board/product/list.html?board_no=6">COMMUNITY</a>
+						<p class="line"></p>
+						<dl>
+							<dd class="cb_clear">
+								<ul>
+									<li class="sub"><a href="/board/free/list.html?board_no=1">공지사항</a></li>
+									<li class="sub"><a href="/board/product/list.html?board_no=6">Q&amp;A</a></li>
+									<li class="sub"><a href="/board/faq/list.html?board_no=3&category_no=">FAQ</a></li>
+								</ul>
+								<div class="bottom">
+									<ul class="sns-list">
+										<li class="sub">
+											<ul class="cb_clear">
+												<!-- 트위터 -->
+												<li class="first kakao">
+													<a href="https://story.kakao.com/siseundeusi" target=”_blank”>kakaostory</a>
+												</li>
+												<!-- 페이스북 -->
+												<li class="facebook">
+													<a href="https://www.facebook.com/%EC%8B%9C%EC%8A%A8%EB%93%9C%EC%8B%9C-1487718171540118/" target=”_blank”>facebook</a>
+												</li>
+												<!-- 인스타그램 -->
+												<li class="instagram">
+													<a href="https://www.instagram.com/siseundeusi_official/" target=”_blank”>instagram</a>
+												</li>
+												<!-- 유투브 -->
+												<li class="youtube">
+													<a href="https://www.youtube.com/channel/UCc2ew6OlqU3HIWoreVZhvOg" target=”_blank”>youtube</a>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+							</dd>
+						</dl>
+					</li>
+				</ul>
+				<!-- company menu navigation end -->
+				<!-- user menu navigation start -->
+				<div class="user-nav">
+					<!-- 로그인 상태 -->
+					<ul class="box-r cb_clear" module="Layout_stateLogon">
+						<li><a href="{$action_logout}" alt="로그아웃">Logout</a></li>
+						<li><a href="/myshop/index.html" alt="마이페이지">MyPage</a></li>
+						<li class="Bookmark">
+							<a module="Layout_bookmark" href="/link/bookmark.html" target="_blank" onclick="winPop(this.href); return false;">즐겨찾기</a>
+						</li>
+						<li class="basket">
+							<a href="/order/basket.html" alt="장바구니"><span module="Order_NormTitle">{$item_total}</span>장바구니</a>
+						</li>
+						<li class="search-link">
+							<!-- <div module="Layout_SearchHeader"> -->
+							<!--@css(/css/module/layout/searchHeader.css)-->
+							<!--
+                                $product_page=/product/detail.html
+                                $category_page=/product/list.html
+                            -->
+							<!-- <fieldset> -->
+							<!-- <legend>검색</legend>{$form.keyword}<input type="image" src="../../SkinImg/img/custom/icon_search.png" alt="검색" onclick="{$action_search_submit}" /></fieldset> -->
+							<!-- </div> -->
+							<!-- <a id="searchLink" href="" onclick="showSearchForm( event );">검색</a> -->
+							<a id="searchLink" href="/product/search.html">검색</a>
+						</li>
+					</ul>
+					<ul class="box-r cb_clear" module="Layout_stateLogoff">
+						<li class="login">
+							<a href="/member/login.html" alt="로그인">Login</a>
+						</li>
+						<li class="join">
+							<a href="/member/join.html" alt="회원가입">Join</a>
+						</li>
+						<li class="Bookmark">
+							<a module="Layout_bookmark" href="/link/bookmark.html" target="_blank" onclick="winPop(this.href); return false;">즐겨찾기</a>
+						</li>
+						<li class="basket">
+							<a href="/order/basket.html" alt="장바구니"><span>0</span>장바구니</a>
+						</li>
+						<li class="search-link">
+							<!-- <div module="Layout_SearchHeader"> -->
+							<!--@css(/css/module/layout/searchHeader.css)-->
+							<!--
+                                $product_page=/product/detail.html
+                                $category_page=/product/list.html
+                            -->
+							<!-- <fieldset> -->
+							<!-- <legend>검색</legend>{$form.keyword}<input type="image" src="../../SkinImg/img/custom/icon_search.png" alt="검색" onclick="{$action_search_submit}" /></fieldset> -->
+							<!-- </div> -->
+							<!-- <a id="searchLink" href="" onclick="showSearchForm( event );">검색</a> -->
+							<a id="searchLink" href="/product/search.html">검색</a>
+						</li>
+					</ul>
+					<script>
+                        ;(function () {
+                            var $basketCount = SP$( '.user-nav .basket .xans-order-normtitle' );
+                            if ( !$basketCount.length ) {
+                                SP$( '.user-nav .basket a' ).html( '<span>0</span>' );
+                            }
+                        })();
+
+                        function showSearchForm( event ) {
+                            event.preventDefault();
+                            var $searchForm = SP$( '.search-link .xans-layout-searchheader' );
+                            $searchForm.addClass('show');
+
+                            var $header = SP$( '#header' );
+                            $header.on( 'click', function( event ) {
+                                var target = event.target || event.srcElement;
+                                var searchLink = document.getElementById( 'searchLink' );
+
+                                if (target !== searchLink) {
+                                    $searchForm.removeClass( 'show' );
+                                }
+                            });
+                        }
+					</script>
+				</div>
+				<!-- user menu navigation end -->
+			</div>
+		</nav>
+	</div>
+</div>
+<!-- =============================== 상단 끝 =============================== -->
+<hr class="layout" />
+<!-- =============================== 컨텐츠 시작 =============================== -->
+<div id="wrap">
+	<div id="container">
+		<div id="contents">
+			<!--@contents-->
+		</div>
+	</div>
+</div>
+<!-- =============================== 컨텐츠 끝 =============================== -->
+<hr class="layout" />
+<!-- =============================== 푸터 하단 시작 =============================== -->
+<div class="footer-container">
+	<div id="ftLink">
+		<div class="ftLink_nv cb_clear">
+			<a class="intro-link" href="/index.html"><span>&lt;</span>처음으로 / 인트로 이동</a>
+			<ul class="box-r">
+				<li class="sub first"><a href="/product/page.html?cate_no=35">회사소개</a></li>
+				<li class="sub"><a href="/product/page.html?cate_no=38">브랜드스토리</a></li>
+				<li class="sub"><a href="/member/agreement.html">이용약관</a></li>
+				<li class="sub"><a href="/member/privacy.html">개인정보처리방침</a></li>
+				<li class="sub last"><a href="#none">제휴 및 도매문의</a></li>
+			</ul>
+		</div>
+		<div class="contentWrap">
+			<div class="SMP-container">
+				<div class="ftLink_Top">
+					<ul class="Shop_Info">
+						<li class="maintit">고객지원센터</li>
+						<li class="subtit">02.780.6999</li>
+						<li class="sub">여는시간 <span class="margin_l5">오전 10:00 - 오후 05:00</span></li>
+						<li class="sub">점심시간 <span class="margin_l5">오후 12:30 - 오후 02:00</span></li>
+						<li class="sub last">주말 및 공휴일은 고객센터를 운영하지 않습니다.</li>
+						<li class="info-btn"><a href="/board/product/list.html?board_no=6">고객센터 이동하기</a></li>
+					</ul>
+
+					<ul class="Account_Info">
+						<li class="maintit">결제입금정보</li>
+						<li class="subtit">3333-21-4793136</li>
+						<li class="sub">카카오뱅크 <span class="margin_l5">예금주 : 전창민(시슨드시)</span></li>
+						<li class="info-btn"><a href="/myshop/order/list.html">주문확인하기</a></li>
+					</ul>
+
+					<div class="return-community-container">
+						<ul class="Return_Info">
+							<li class="maintit">반송 및 교환 주소</li>
+							<li class="sub">인천광역시 남동구 남동대로 283 (주)시슨드시</li>
+						</ul>
+
+						<ul class="community-info">
+							<li class="maintit">커뮤니티</li>
+							<li class="sub">
+								<a href="/board/free/list.html?board_no=1">공지사항</a>
+								<a href="/board/product/list.html?board_no=6">Q&amp;A</a>
+								<a href="/board/faq/list.html?board_no=3&category_no=">FAQ</a>
+								<a href="/board/product/list.html?board_no=4">REVIEW</a>
+								<a href="/board/gallery/list.html?board_no=13">블로그리뷰</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="ftLink_SNS cb_clear">
+					<ul class="cb_clear">
+						<!-- 페이스북 -->
+						<li class="first facebook">
+							<a href="https://www.facebook.com/%EC%8B%9C%EC%8A%A8%EB%93%9C%EC%8B%9C-1487718171540118/" target="_blank">facebook</a>
+						</li>
+						<!-- 트위터 -->
+						<li class="kakao">
+							<a href="https://story.kakao.com/siseundeusi" target="_blank">kakaostory</a>
+						</li>
+						<!-- 인스타그램 -->
+						<li class="instagram">
+							<a href="https://www.instagram.com/siseundeusi_official/" target="_blank">instagram</a>
+						</li>
+						<!-- youtube -->
+						<li class="last youtube">
+							<a href="https://www.youtube.com/channel/UCc2ew6OlqU3HIWoreVZhvOg" target="_blank">youtube</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="footer">
+		<div class="SMP-container cb_clear" module="Layout_footer">
+			<h2 class="blind">쇼핑몰 정보</h2>
+			<div class="ft-info cb_clear">
+				<h3 class="ft-logo">logo</h3>
+				<div class="ft-info-container">
+					<ul class="info1">
+						<li class="tit"> {$company_name}</li>
+						<li class="tit vertical-line"><span>대표이사 {$president_name}</span></li>
+						<li class="tit"><span>{$mall_zipcode} {$mall_addr1} {$mall_addr2}</span></li>
+						<li class="tit last"><a href="#none" onclick="{$action_biz_info}" target="_blank"><span>사업자정보확인</span></a></li>
+					</ul>
+					<ul class="info2">
+						<li class="tit vertical-line">사업자등록번호 : <span>{$company_regno}</span></li>
+						<li class="tit">통신판매업신고 : <span>{$network_regno}</span></li>
+					</ul>
+					<ul class="info2">
+						<li class="tit vertical-line">개인정보관리책임 <span>{$cpo_name}</span></li>
+						<li class="tit">이메일 주소 <span>{$cpo_email}</span></li>
+                        <li class="tit">팩스 <span> {$fax}</span></li>
+                        <li class="tit">호스팅 사업자 : 카페24
+					</ul>
+					<div class="info3">
+						<p>Copyright ⓒ 시슨드시. All rights reserved.</p>
+					</div>
+				</div>
+			</div><!-- .ft-info -->
+			<div class="service-info-container">
+				<div class="service-info">
+					<h3 class="tit">(주)올앳구매안전(에스크로) 서비스 가맹점</h3>
+					<p>고객님들께 안전한 거래를 제공하기 위해 올앳의 구매안전 서비스에 가입하여, 모든 실물거래건에 대해 구매안전 서비스를 제공하고 있습니다.</p>
+					<span><a href="https://www.allatpay.com/servlet/AllatBiz/svcinfo/si_escrow.jsp?menu_id=S0305&action_flag=SEARCH&search_no=biz_no&es_business_no=2201026321" target="_blank">올앳구매안전 서비스 가입확인 </a>▶</span>
+				</div>
+			</div>
+		</div><!-- .SMP-container -->
+	</div>
+</div>
+<!-- LOGGER(TM) TRACKING SCRIPT V.40 FOR logger.co.kr / 107096 : COMBINE TYPE / DO NOT ALTER THIS SCRIPT. 20210917-->
+<script type="text/javascript">var _TRK_LID = "107096";var _L_TD = "ssl.logger.co.kr";var _TRK_CDMN = ".siseundeusi.com";</script>
+<script type="text/javascript">var _CDN_DOMAIN = location.protocol == "https:" ? "https://fs.bizspring.net" : "http://fs.bizspring.net"; 
+(function (b, s) { var f = b.getElementsByTagName(s)[0], j = b.createElement(s); j.async = true; j.src = '//fs.bizspring.net/fs4/bstrk.1.js'; f.parentNode.insertBefore(j, f); })(document, 'script');
+</script>
+<noscript><img alt="Logger Script" width="1" height="1" src="http://ssl.logger.co.kr/tracker.1.tsp?u=107096&amp;js=N"/></noscript>
+<!-- END OF LOGGER TRACKING SCRIPT -->
+
+<!-- 참고: 결제를 위한 필수 영역 -->
+<div id="progressPaybar" style="display:none;">
+	<div id="progressPaybarBackground" class="layerProgress"></div>
+	<div id="progressPaybarView">
+		<div class="box">
+			<p class="graph">
+				<span><img src="http://img.echosting.cafe24.com/skin/base_ko_KR/layout/txt_progress.gif" alt="현재 결제가 진행중입니다." /></span>
+				<span><img src="http://img.echosting.cafe24.com/skin/base_ko_KR/layout/img_loading.gif" alt="" /></span>
+			</p>
+			<p class="txt">
+				본 결제 창은 결제완료 후 자동으로 닫히며,결제 진행 중에 본 결제 창을 닫으시면<br />
+				주문이 되지 않으니 결제 완료 될 때 까지 닫지 마시기 바랍니다.
+			</p>
+		</div>
+	</div>
+</div>
+<!-- //참고 -->
+
+<div module="Layout_conversionPc">
+	<!--@css(/css/module/layout/conversionpc.css)-->
+	<a href="{$mobile_url}"><span>모바일 화면보기</span></a>
+</div>
+<!-- =============================== 푸터 하단 끝 =============================== -->
+
+<!-- 스마트PC 공통 실행 js 시작(필수)-->
+<script src="/SkinImg/js/SPcustomJS_starter.js"></script>
+<!-- 스마트PC 공통 실행 js 끝(필수)-->
+</body>
+</html>

@@ -1,0 +1,50 @@
+coadmaster (자동문의고수) FTP 카카오모먼트 페이지별 pageVIew
+
+
+
+
+
+var/www/html/coadmaster/resources/views/content/info.blade.php
+
+<!-- 카카오모먼트픽셀 (info) TripleHM 20220705 -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('1533422453433284034').pageView('info');
+      console.log('info');
+</script>
+
+
+
+
+
+var/www/html/coadmaster/resources/views/content/consulting.blade.php
+
+<!-- 카카오모먼트픽셀 (consulting) TripleHM 20220705 -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('1533422453433284034').pageView('consulting');
+	  console.log('consulting');
+</script>
+
+
+
+
+var/www/html/coadmaster/resources/views/content/estimate.blade.php
+
+<!-- 카카오모먼트픽셀 (estimate) TripleHM 20220705 -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('1533422453433284034').pageView('estimate');
+	  console.log('estimate');
+</script>
+
+
+
+
+var/www/html/coadmaster/resources/views/content/partner.blade.php
+
+<!-- 카카오모먼트픽셀 (partner) TripleHM 20220705 -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('1533422453433284034').pageView('partner ');
+</script>

@@ -1,0 +1,11 @@
+<!-- User ID -->
+<script type="text/javascript">
+  var loginCheck = '{=gd_is_login()}';
+  if (loginCheck == '1'){
+    dataLayer = [{
+      'userId': '{=gSess.memNo}',
+	  'userClass' : '{=gSess.groupNm}'
+    }];
+  }
+</script>	
+<!-- End User ID -->

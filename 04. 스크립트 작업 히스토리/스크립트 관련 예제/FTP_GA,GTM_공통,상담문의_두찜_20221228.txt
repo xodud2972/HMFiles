@@ -1,0 +1,14 @@
+FTP_GA,GTM_공통,상담문의_두찜_20221228
+
+www/theme/basic/skin/latest/contact_btm_latest_skin.php  138line
+
+ajax전송 success시 아래코드 삽입
+
+const wr_name = $('#wr_name')[0].value;
+const wr_1 = $('#wr_1')[0].value;
+const wr_2 = $('#wr_2')[0].value;
+const wr_list = wr_name+', '+wr_1+', '+wr_2;
+gtag('event', 'consulting', {
+	'event_category' : '상담문의',
+	'event_label' : wr_list
+});

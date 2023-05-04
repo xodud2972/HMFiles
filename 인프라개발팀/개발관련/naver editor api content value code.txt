@@ -1,0 +1,20 @@
+    var oEditors = [];
+    
+    nhn.husky.EZCreator.createInIFrame({
+        oAppRef: oEditors,
+        elPlaceHolder: "content",
+        sSkinURI: "../lib/dist/SmartEditor2Skin.html",
+        fCreator: "createSEditor2"
+    });
+
+    function submitContents(elClickedObj) {
+        oEditors.getById["content"].exec("UPDATE_CONTENTS_FIELD", []);
+        var content = document.getElementById("content").value;
+        content = content.replace(/<(\/)?([a-zA-Z]*)(\s[a-zA-Z]*=[^>]*)?(\s)*(\/)?>/ig, "");
+        if (content.length == 0) {
+                alert("내용을 입력하세요.");
+                document.getElementById("content").focus();
+                return ;
+            }
+        console.log(content);
+    }

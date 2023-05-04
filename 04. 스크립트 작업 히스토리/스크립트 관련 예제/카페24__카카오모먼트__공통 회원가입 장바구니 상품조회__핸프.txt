@@ -1,0 +1,36 @@
+핸프 카페24 카카오모먼트 공통 회원가입 장바구니 상품조회
+
+
+<!-- 카카오모먼트 공통 20220613 TripleHM -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('7220285908494759665').pageView();
+</script>
+
+<!-- 카카오모먼트 회원가입 완료 TripleHM 20220613 -->
+<script type="text/javascript">
+      kakaoPixel('7220285908494759665').completeRegistration();
+</script>
+
+<!-- Gtag 장바구니추가 TripleHM 20220609 && 카카오모먼트 장바구니 추가 TripleHM 20220613 -->    
+<!-- Event snippet for Google Channel Add To Cart conversion page -->
+<script>
+    var add_Btn = document.querySelector('#df-product-detail > div > div.infoArea-wrap > div > div > div.xans-element-.xans-product.xans-product-action > div.ec-base-button.df-action-button > div.ac-basket.wrap > a');
+    add_Btn.addEventListener('click', event => {
+          gtag('event', 'conversion', {
+          'send_to': 'AW-10895752948/KGZjCLun_MEDEPT9v8so',
+          'value': '{$product_price}',
+           'id' : '{$product_no}'
+          });
+          kakaoPixel('7220285908494759665').addToCart({
+            id: '{$product_no}'
+          });
+    }) 
+</script>
+
+<!-- 카카오모먼트 상품조회 20220613 TripleHM -->            
+<script type="text/javascript">
+      kakaoPixel('7220285908494759665').viewContent({
+        id: '{$product_no}'
+      });
+</script>

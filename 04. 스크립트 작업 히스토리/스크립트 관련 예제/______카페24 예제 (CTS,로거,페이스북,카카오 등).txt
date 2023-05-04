@@ -1,0 +1,588 @@
+★★★★★★★★★★ 카페24 ★★★★★★★★★★★★★
+
+＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠ PC ＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 전체페이지 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+    
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 주문완료 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 카카오픽셀 검색 -- 상품검색 페이지 최하단에 삽입
+<!-- 카카오 픽셀 검색 스크립트 START 2021.04.30 -->
+<script type="text/javascript">
+	kakaoPixel('1181046351359526343').search({
+		keyword: getHttpParam('keyword')
+	});
+    
+	function getHttpParam(name) {
+	    var regexS = "[\\?&]" + name + "=([^&#]*)";
+	    var regex = new RegExp(regexS);
+	    var results = regex.exec(window.location.href);
+	    if (results == null) {
+		return 2;
+	    } else {
+		return decodeURIComponent(results[1]);
+	    }
+	}
+</script> 
+<!-- 카카오 픽셀 검색 스크립트 END 2021.04.30 -->
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 주문완료 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 카카오픽셀 -- 페이지 최하단에 삽입
+<!-- 픽셀 스크립트 START 20201026 -->
+<script type="text/javascript">
+      kakaoPixel('8334364551941110685').purchase({
+            total_quantity: total_quantity, // 주문 내 상품 개수(optional)
+            total_price: total_price,  // 주문 총 가격(optional)
+            currency: "KRW",     // 주문 가격의 화폐 단위(optional, 기본 값은 KRW)
+            products: order_items
+      });
+</script>
+<!-- 픽셀 스크립트 END 20201026 -->
+
+▶▶▶ 구글 이벤트 스니펫 -- 배송지정보 바로 위 삽입
+<!-- Event snippet for Website sale conversion page HM 2021.02.01-->
+<script>
+gtag('event', 'conversion', {
+      'send_to': 'AW-433637362/yaJ5CKyNy_MBEPKP484B',
+      'transaction_id': '{$order_id}',
+      'value': '{$total_order_price}'.replace(/[원,\D ]/g, ''),
+      'currency': 'KRW'
+});
+</script>  
+
+▶▶▶ 일반 픽셀 스크립트 -- 상품 tbody 내 tr 또는 table에 삽입, 기본배송, 해외배송가능이 들어가면 그 밑 tr 또는 table에 한번 더 삽입 ( 기본배송, 개별배송, 해외배송 마다 두번씩 삽입)
+<!-- 픽셀 스크립트 START 2020.02.05 -->
+<script type="text/javascript">
+
+if("{$product_name}" != ""){
+      total_quantity+=Number('{$product_quantity}');
+      order_items.push({ name: "{$product_name}", quantity: "{$product_quantity}", price: '{$product_total_price}'.replace(',','')})
+}
+</script>
+<!-- 픽셀 스크립트 END 2020.02.05 -->    
+
+▶▶▶ 페이스북 픽셀 스크립트 -- 상품리스트 내 tr 내 삽입
+                            <!-- Facebook Pixel Code 주문완료페이지 2021.02.23 STR -->
+                            <script>
+                                if('{$product_no}') {
+                                    fbq('track', "Purchase", {
+                                        content_type: 'product',
+                                        content_ids: ['{$product_no}'],
+                                        content_name: '{$product_name}',
+                                        currency: 'KRW',
+                                        value: '{$product_price}'.replace(/[원,\D ]/g, '') * '{$product_quantity}'
+                                    });
+                                }
+                            </script>
+                            <!-- End Facebook Pixel Code 2021.02.23 END-->   
+ 
+▶▶▶ 로거 스크립트  -- 상품 tbody 내 tr 또는 table에 삽입, 기본배송, 해외배송가능이 들어가면 그 밑 tr 또는 table에 한번 더 삽입 ( 기본배송, 개별배송, 해외배송 마다 두번씩 삽입)
+<!-- LOGGER SCRIPT FOR SETTING ENVIRONMENT V.27 :  / FILL THE VALUE TO SET. -->
+                    <script type="text/javascript">
+                        var _TRK_PI;
+                        var _TRK_OA;
+                        var _TRK_OE;
+                        var _TRK_OP;
+                        var objReg = new RegExp(); // 정규 표현식 객체를 생성한다
+                        objReg = /[<][^>]*[>]/gi;
+                        var isOdr ="{$product_quantity}";
+
+                        if (isOdr != ""){
+                            _TRK_PI="ODR";
+                            if(typeof(_TRK_OA) == "undefined" || _TRK_OA == ""){
+                                _TRK_OA_TMP = "{$product_total_price}";
+                                _TRK_OA = _TRK_OA_TMP.replace(/[원, ]/g,'');
+                            }else{
+                                _TRK_OA_TMP = "{$product_total_price}";
+                                _TRK_OA = _TRK_OA + ";" + _TRK_OA_TMP.replace(/[원, ]/g,'');
+                            }
+                            if(typeof(_TRK_OE) == "undefined" || _TRK_OE == ""){
+                                _TRK_OE = "{$product_quantity}";
+                            }else{
+                                _TRK_OE = _TRK_OE + ";" + "{$product_quantity}";
+                            }
+                            if(typeof(_TRK_OP) == "undefined" || _TRK_OP == ""){
+                                _TRK_OP_TMP = "{$product_no}";
+                                _TRK_OP = _TRK_OP_TMP.replace(objReg, "");
+                            }else{
+                                _TRK_OP_TMP = "{$product_no}";
+                                _TRK_OP = _TRK_OP + ";" + _TRK_OP_TMP.replace(objReg, "");
+                            }
+                        }
+                    </script>
+                    <!-- END OF ENVIRONMENT SCRIPT -->
+ 
+▶▶▶ CTS 스크립트 삽입 -- 혜택정보 바로 위 삽입, 주문완료 위 위      
+<!-- This script is For CTS Start 20210107p-->
+<script type='text/javascript'>
+var _ORDN = '{$order_id}'; // 구매번호
+var _ORDV = '{$total_order_price}'.replace(/[^0-9]/g,''); // 구매금액
+</script>
+<!-- Script End 20210107p-->        
+
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 장바구니 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 카카오픽셀 장바구니 스크립트 -- 최하단 삽입 
+<!-- 카카오픽셀 장바구니 스크립트 START 20201026 -->
+<script type="text/javascript">
+	kakaoPixel('8334364551941110685').viewCart();
+</script>
+<!-- 카카오픽셀 장바구니 스크립트 END 20201026 -->
+
+▶▶▶ 페이스북 픽셀 -- 상품리스트 밑 tr 내 삽입 and 영문명이 있으면 한번 더 삽입
+                        <!-- Facebook Pixel Code 장바구니페이지 2021.02.23 STR -->
+                        <script>
+                            fbq('track', "AddToCart", {
+                                content_type: 'product',
+                                content_ids: ['{$product_no}'],
+                                content_name: '{$name}',
+                                currency: 'KRW',
+                                value: '{$product_price}'.replace(/[원,\D ]/g, '') * '{$quantity}'
+                            });
+                        </script>
+                        <!-- End Facebook Pixel Code 2021.02.23 END-->                         
+
+▶▶▶ 구글 스니펫 -- 최하단 삽입
+<!-- Event snippet for 장바구니 추가 conversion page START 2021.03.15-->
+<script>
+  gtag('event', 'conversion', {'send_to': 'AW-412468477/WHLACPKTrPsBEP2J18QB'});
+</script>
+<!-- Event snippet for 장바구니 추가 conversion page END 2021.03.15-->
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 상품상세 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 구글 스니펫 -- 최하단 삽입   
+    <!-- Event snippet for 구매완료 (결제 + 네이버페이) conversion page START 2021.04.28 -->
+    <script>
+      function convertPurchase(){
+          gtag('event', 'conversion', {
+              'send_to': 'AW-377980715/pwDRCL_j4osCEKuOnrQB',
+              'value': '{$product_sale_price}'.replace(/[원,\D ]/g, ''),
+              'currency': 'KRW',
+              'transaction_id': "{$product_no}"
+          });
+       }
+    </script>
+npay_btn_zzim
+<!-- Event snippet for 구매전환 Npay conversion page START 2021.04.28-->
+    <script>
+    window.onload = function() {
+        const btnNpay = document.querySelector(".npay_btn_pay");
+        btnNpay.addEventListener('click', event => {
+			gtag('event', 'conversion', {
+                'send_to': 'AW-377980715/pwDRCL_j4osCEKuOnrQB',
+              	'value': '{$product_sale_price}'.replace(/[원,\D ]/g, ''),
+              	'currency': 'KRW',
+              	'transaction_id': "{$product_no}"
+          	});
+        });
+    };
+</script> 
+
+<!-- Event snippet for 장바구니 ( ADD CART + 찜 ) conversion page START 2021.04.28 -->
+<script>
+    function convertAddToCart(){
+  gtag('event', 'conversion', {'send_to': 'AW-377980715/et_2CJ6eiIwCEKuOnrQB'});
+        }
+</script>
+
+
+<!-- Event snippet for 장바구니 ( ADD CART + 찜 ) conversion page START 2021.04.28 -->
+<script>
+    window.onload = function() {
+        const btnNpay = document.querySelector(".npay_btn_zzim");
+        btnNpay.addEventListener('click', event => {
+          	gtag('event', 'conversion', {'send_to': 'AW-377980715/et_2CJ6eiIwCEKuOnrQB'});
+		});
+    };
+</script>
+
+▶▶▶ GA script 상품상세 -- 페이지 최하단에 삽입
+    <!-- GA script START 2021.03.26 -->
+    <script>
+    gtag('event','view_item', {
+      'value': 1,
+      'items': [
+        {
+          'id': 'AW-412468477', 
+          'google_business_vertical': 'retail'
+        }]
+    });
+    </script>
+    <!-- GA script END 2021.03.26 -->
+
+▶▶▶ 페이스북 전환스크립트 -- 상단 제품 정보와 상세정보 내역 사이에 삽입 (이미지 영역 밑에 삽입)        
+<script>
+fbq('track', 'ViewContent', {
+    content_type: 'product', 
+    content_ids: ['{$product_no}'], 
+    value: '{$product_price}',  
+    currency: 'KRW' 
+});
+</script>
+
+▶▶▶ 카카오 픽셀 조회 스크립트 -- 상단 제품 정보와 상세정보 내역 사이에 삽입 (이미지 영역 밑에 삽입)  
+        
+        <!-- 카카오 픽셀 콘텐츠 조회 스크립트 START 20201026 -->
+        <script type="text/javascript">
+            kakaoPixel('8334364551941110685').viewContent({
+                id: '{$product_no}'
+            });
+        </script>  
+        <!-- 카카오 픽셀 콘텐츠 조회 스크립트 END 20201026 -->        
+        
+▶▶▶ 로거 스크립트 --  상단 제품 정보와 상세정보 내역 사이에 삽입 (이미지 영역 밑에 삽입)         
+        <!-- LOGGER SCRIPT FOR SETTING ENVIRONMENT V.27 :  / FILL THE VALUE TO SET. -->
+        <script type="text/javascript">
+        var _TRK_PI;
+        var _TRK_PN;
+        var _TRK_PND;
+        var _TRK_MF;
+        var objReg = new RegExp(); // 정규 표현식 객체를 생성한다
+        objReg     = /[<][^>]*[>]/gi;
+
+        _TRK_PI = "PDV";
+        _TRK_PN = "{$product_no}";
+        _TRK_PND_TMP = "{$name}";
+        _TRK_PND = _TRK_PND_TMP.replace(objReg, "");
+        _TRK_MF_TMP = "{$prd_brand}";
+        _TRK_MF = _TRK_MF_TMP.replace(objReg, "");
+        </script>
+        <!-- END OF ENVIRONMENT SCRIPT -->
+        
+▶▶▶ 카카오픽셀 조회 스크립트 -- 최하단 삽입도 가능
+<script type="text/javascript">
+      kakaoPixel('8334364551941110685').viewContent({
+        id: '{$product_no}'
+      });
+</script>
+       
+▶▶▶ 페이스북 픽셀 스크립트 -- 삽입하고 테스트해볼것 
+<!-- Facebook Pixel Code 상품상세페이지 2021.02.23 STR-->
+<script>
+	fbq('track', "ViewContent", {
+		content_type: 'product',
+		content_ids: ['{$product_no}'],
+		content_name: '{$name}',
+		currency: 'KRW',
+		value: '{$product_price}'
+	});
+</script>
+<!-- End Facebook Pixel Code 2021.02.23 END-->  
+
+▶▶▶ 구매완료 버튼 이벤트 스크립트 -- 삽입하고 테스트해볼것 
+<!-- Event snippet for 구매전환 구매하기 버튼 conversion page START 2021.04.09 -->
+<script>
+    function convertPurchase(){
+  gtag('event', 'conversion', {
+      'send_to': 'AW-388048846/UcmqCNLcnoACEM7PhLkB',
+      'value': '{$total_order_price}'.replace(/[원,\D ]/g, ''),
+      'currency': 'KRW',
+      'transaction_id': '{$order_id}'
+  });
+        }
+</script>
+
+▶▶▶ 네이버페이 스크립트 -- 삽입하고 테스트해볼것 
+<!-- Event snippet for 구매전환 Npay conversion page START 2021.04.09-->
+    <script>
+    window.onload = function() {
+        const btnNpay = document.querySelector(".npay_btn_pay");
+        btnNpay.addEventListener('click', event => {
+			gtag('event', 'conversion', {
+                'send_to': 'AW-412468477/ODG-CKejwfsBEP2J18QB',
+              	'value': "{$product_price}",
+              	'currency': 'KRW',
+              	'transaction_id': "{$product_no}"
+          	});
+        });
+    };
+</script> 
+<!-- Event snippet for 구매전환 conversion page START 2021.04.09-->
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 회원가입 결과 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 카카오픽셀 회원가입 -- 로그인 버튼 밑부분 삽입
+<!-- 카카오 픽셀 회원가입 스트립트 START 20201026 -->
+<script type="text/javascript">
+      kakaoPixel('8334364551941110685').completeRegistration();
+</script>
+<!-- 카카오 픽셀 회원가입 스트립트 END 20201026 -->
+
+▶▶▶ 로거 스크립트 삽입 -- 로그인 버튼 밑부분 삽입
+<!-- LOGGER SCRIPT FOR SETTING ENVIRONMENT V.27 :  / FILL THE VALUE TO SET. -->
+<script type="text/javascript">
+_TRK_PI = "RGR";
+_TRK_SX = "U";
+</script>
+<!-- END OF ENVIRONMENT SCRIPT -->
+    
+▶▶▶ CTS 스크립트 -- 로그인 버튼 밑부분 삽입
+<!-- This script is For CTS Start 20210107p-->
+<script type='text/javascript'>
+var _jn = 'join' ;
+var _jid = 'member' ;
+</script>
+<!-- Script End 20210107p-->    
+
+▶▶▶ 페이스북 픽셀 스크립트 -- 최하단 삽입
+<!-- Facebook Pixel Code 회원가입완료 페이지 2021.02.23 STR-->
+<script>
+    fbq('track', 'CompleteRegistration');
+</script>
+<!-- End Facebook Pixel Code 2021.02.23 END-->
+
+▶▶▶구글 스니펫 스크립트 -- 상단 회원가입 완료 밑 삽입
+<!-- Event snippet for 회원 가입 conversion page START 2021.03.12-->
+<script>
+  gtag('event', 'conversion', {'send_to': 'AW-412468477/1LWDCPyXrPsBEP2J18QB'});
+</script>
+<!-- Event snippet for 회원 가입 conversion page END 2021.03.12-->
+
+
+＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠ 모바일 ＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠＠
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 장바구니 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 페이스북 AddToCart 스크립트 -- 총 합계 밑부분 삽입
+<!-- Facebook Conversion Code for 장바구니 -->
+<script>
+fbq('track','AddToCart', {
+    value: '{$total_order_price_front}'.replace(',',''), 
+    currency: 'KRW'
+});
+</script>
+
+▶▶▶ 페이스북 픽셀 -- 상품리스트 밑 tr 내 삽입 and 영문명이 있으면 한번 더 삽입
+                        <!-- Facebook Pixel Code 장바구니페이지 2021.02.23 STR -->
+                        <script>
+                            fbq('track', "AddToCart", {
+                                content_type: 'product',
+                                content_ids: ['{$product_no}'],
+                                content_name: '{$name}',
+                                currency: 'KRW',
+                                value: '{$product_price}'.replace(/[원,\D ]/g, '') * '{$quantity}'
+                            });
+                        </script>
+                        <!-- End Facebook Pixel Code 2021.02.23 END-->     
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 주문완료 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+▶▶▶ 픽셀 스크립트 -- 상단 주문완료 밑부분 삽입
+<!-- 픽셀 스크립트 START 2020.02.05 -->
+<script type="text/javascript">
+    var total_price = '{$result_order_price_front_head}{$result_order_price_front}'.replace(',','');
+    var total_quantity = 0;
+    var order_items = [];
+</script>
+<!-- 픽셀 스크립트 END 2020.02.05 -->
+
+▶▶▶ 픽셀 스크립트 -- 합계 밑부분 삽입
+                        <!-- 픽셀 스크립트 START 2020.02.05 -->
+                        <script type="text/javascript">
+
+                            if("{$product_name}" != ""){
+                                total_quantity+=Number('{$product_quantity}');
+                                order_items.push({ name: "{$product_name}", quantity: "{$product_quantity}", price: '{$product_total_price}'.replace(',','')})
+                            }
+                        </script>
+                        <!-- 픽셀 스크립트 END 2020.02.05 -->
+
+▶▶▶ CTS 스크립트 -- 상단 주문완료 밑부분 Order_result 안에 삽입
+<!-- This script is For CTS Start 20210107m-->
+<script type='text/javascript'>
+        var AM_CartAMP1A447224276=(function(){
+                var c={pd:'',pn:'{$order_id}',am:'{$total_order_price}'.replace(/[^0-9]/g,''),qy:'1',ct:''};
+                var u=(!AM_CartAMP1A447224276)?[]:AM_CartAMP1A447224276; u[c.pd]=c;return u;
+        })();
+        var m_buyAMP1A447224276="finish";
+</script>
+<!-- Script End 20210107m-->    
+
+▶▶▶ 구글 이벤트 스니펫 -- 배송지 정보 위에 삽입
+	<!-- Event snippet for Website sale conversion page HM 2021.02.01-->
+	<script>
+		gtag('event', 'conversion', {
+			'send_to': 'AW-433637362/yaJ5CKyNy_MBEPKP484B',
+			'transaction_id': '{$order_id}',
+			'value': '{$total_order_price}'.replace(/[원,\D ]/g, ''),
+			'currency': 'KRW'
+
+
+		});
+	</script>          
+    
+▶▶▶ 로거 스크립트 삽입 -- 합계 밑부분 삽입
+                        <!-- LOGGER SCRIPT FOR SETTING ENVIRONMENT V.27 :  / FILL THE VALUE TO SET. -->
+                        <script type="text/javascript">
+                            var _TRK_PI;
+                            var _TRK_OA;
+                            var _TRK_OE;
+                            var _TRK_OP;
+                            var objReg = new RegExp(); // 정규 표현식 객체를 생성한다
+                            objReg = /[<][^>]*[>]/gi;
+                            var isOdr ="{$product_quantity}";
+
+                            if (isOdr != ""){
+                                _TRK_PI="ODR";
+                                if(typeof(_TRK_OA) == "undefined" || _TRK_OA == ""){
+                                    _TRK_OA_TMP = "{$product_total_price}";
+                                    _TRK_OA = _TRK_OA_TMP.replace(/[원, ]/g,'');
+                                }else{
+                                    _TRK_OA_TMP = "{$product_total_price}";
+                                    _TRK_OA = _TRK_OA + ";" + _TRK_OA_TMP.replace(/[원, ]/g,'');
+                                }
+                                if(typeof(_TRK_OE) == "undefined" || _TRK_OE == ""){
+                                    _TRK_OE = "{$product_quantity}";
+                                }else{
+                                    _TRK_OE = _TRK_OE + ";" + "{$product_quantity}";
+                                }
+                                if(typeof(_TRK_OP) == "undefined" || _TRK_OP == ""){
+                                    _TRK_OP_TMP = "{$product_no}";
+                                    _TRK_OP = _TRK_OP_TMP.replace(objReg, "");
+                                }else{
+                                    _TRK_OP_TMP = "{$product_no}";
+                                    _TRK_OP = _TRK_OP + ";" + _TRK_OP_TMP.replace(objReg, "");
+                                }
+                            }
+                        </script>
+                        <!-- END OF ENVIRONMENT SCRIPT -->
+
+▶▶▶ 카카오픽셀 스크립트 -- 최하단 삽입
+<!-- 픽셀 스크립트 START 20201026 -->
+<script type="text/javascript">
+    kakaoPixel('8334364551941110685').purchase({
+        total_quantity: total_quantity, // 주문 내 상품 개수(optional)
+        total_price: total_price,  // 주문 총 가격(optional)
+        currency: "KRW",     // 주문 가격의 화폐 단위(optional, 기본 값은 KRW)
+        products: order_items
+    });
+</script>
+<!-- 픽셀 스크립트 END 20201026 -->
+
+▶▶▶ 모본 전환 스크립트 -- 최사단 쇼핑계속하기/주문확인하기 div 위 삽입
+    <!-- MOBON Tracker v3.0 [전환] start -->
+    <script src="https://cdn.megadata.co.kr/js/enliple_min2.js" async="true" onload="mobConv()"></script>
+    <script type="text/javascript">
+        <!--
+
+        // /servlet/conv 호출시
+        function mobConv(){
+            var cn = new EN();
+            cn.setData("uid", "cellbn");
+            cn.setData("ordcode",  "{$order_id}");
+
+            if(typeof pcode=="undefined") var pcode = "";
+            if(typeof pnm=="undefined") var pnm = "";
+            if(typeof qty=="undefined"||qty=="") var qty = "1";
+            if(typeof price=="undefined"||price=="") var price = "{$total_order_price}";
+            cn.setData("pcode",  pcode);
+            cn.setData("qty",  qty);
+            cn.setData("price",  price);
+            cn.setData("pnm",  pnm);
+            cn.setSSL(true);
+            cn.sendConv();
+        }
+        //-->
+    </script>
+    <!-- MOBON Tracker v3.0 [전환] end -->
+
+▶▶▶ 페이스북 픽셀 스크립트 -- 상품리스트 내 tr 내 삽입
+                            <!-- Facebook Pixel Code 주문완료페이지 2021.02.23 STR -->
+                            <script>
+                                if('{$product_no}') {
+                                    fbq('track', "Purchase", {
+                                        content_type: 'product',
+                                        content_ids: ['{$product_no}'],
+                                        content_name: '{$product_name}',
+                                        currency: 'KRW',
+                                        value: '{$product_price}'.replace(/[원,\D ]/g, '') * '{$product_quantity}'
+                                    });
+                                }
+                            </script>
+                            <!-- End Facebook Pixel Code 2021.02.23 END-->   
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 상품상세 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 카카오픽셀 스크립트 -- 최상단 {$name} 클래스 밑 삽입
+<script>
+fbq('track', 'ViewContent', {
+    content_type: 'product', 
+    content_ids: ['{$product_no}'], 
+    value: '{$product_price}',  
+    currency: 'KRW' 
+});
+</script>
+
+▶▶▶ 카카오픽셀 조회 스크립트 -- 최상단 {$name} 클래스 밑 삽입
+        <!-- 카카오 픽셀 콘텐츠 조회 스크립트 START 20201026 -->
+        <script type="text/javascript">
+            kakaoPixel('8334364551941110685').viewContent({
+                id: '{$product_no}'
+            });
+        </script>  
+        <!-- 카카오 픽셀 콘텐츠 조회 스크립트 END 20201026 -->  
+
+▶▶▶ 로거 스크립트 -- 최상단 {$name} 클래스 밑 삽입
+        <!-- LOGGER SCRIPT FOR SETTING ENVIRONMENT V.27 :  / FILL THE VALUE TO SET. -->
+        <script type="text/javascript">
+        var _TRK_PI;
+        var _TRK_PN;
+        var _TRK_PND;
+        var _TRK_MF;
+        var objReg = new RegExp(); // 정규 표현식 객체를 생성한다
+        objReg     = /[<][^>]*[>]/gi;
+
+        _TRK_PI = "PDV";
+        _TRK_PN = "{$product_no}";
+        _TRK_PND_TMP = "{$name}";
+        _TRK_PND = _TRK_PND_TMP.replace(objReg, "");
+        _TRK_MF_TMP = "{$prd_brand}";
+        _TRK_MF = _TRK_MF_TMP.replace(objReg, "");
+        </script>
+        <!-- END OF ENVIRONMENT SCRIPT -->
+
+▶▶▶ 페이스북 픽셀 스크립트 -- 삽입하고 테스트해볼것 
+<!-- Facebook Pixel Code 상품상세페이지 2021.02.23 STR-->
+<script>
+	fbq('track', "ViewContent", {
+		content_type: 'product',
+		content_ids: ['{$product_no}'],
+		content_name: '{$name}',
+		currency: 'KRW',
+		value: '{$product_price}'
+	});
+</script>
+<!-- End Facebook Pixel Code 2021.02.23 END-->  
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 회원가입 결과☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+▶▶▶ 카카오픽셀 회원가입 스크립트 -- 최하단 삽입
+<!-- 카카오 픽셀 회원가입 스트립트 START 20201026 -->
+<script type="text/javascript">
+      kakaoPixel('8334364551941110685').completeRegistration();
+</script>
+<!-- 카카오 픽셀 회원가입 스트립트 END 20201026 -->
+
+▶▶▶ 로거 스크립트 -- 최하단 삽입
+<!-- LOGGER SCRIPT FOR SETTING ENVIRONMENT V.27 :  / FILL THE VALUE TO SET. -->
+<script type="text/javascript">
+_TRK_PI = "RGR";
+_TRK_SX = "U";
+</script>
+<!-- END OF ENVIRONMENT SCRIPT -->
+
+▶▶▶ CTS 스크립트 -- 최하단 삽입
+<!-- This script is For CTS Start 20210107m-->
+<script type='text/javascript'>
+        var m_jn='join';
+        var m_jid='member';
+</script>
+<!-- Script End 20210107m-->
+
+▶▶▶ 페이스북 픽셀 스크립트 -- 최하단 삽입
+<!-- Facebook Pixel Code 회원가입완료 페이지 2021.02.23 STR-->
+<script>
+    fbq('track', 'CompleteRegistration');
+</script>
+<!-- End Facebook Pixel Code 2021.02.23 END-->

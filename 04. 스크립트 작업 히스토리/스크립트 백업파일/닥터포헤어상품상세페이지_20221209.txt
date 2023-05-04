@@ -1,0 +1,190 @@
+{*** 상품 리스트 | goods/goods_list.php ***}
+{ # header }
+<div class="content">
+    <div class="location_wrap">
+        <div class="location_cont">
+            <em><a href="#" class="local_home">HOME</a> &nbsp;</em>
+            <!--{ ? goodsCategoryList }-->
+            <!--{ @ goodsCategoryList }-->
+            <span>&gt; </span>
+            <div class="location_select">
+                <div class="location_tit"><a href="#"><span>{=.cateNm}</span></a></div>
+                <ul style="display:none;">
+                    <!--{ @ .data }-->
+                    <li><a href="?{cateType}Cd={..key_}"><span>{=..value_}</span></a></li>
+                    <!--{ / }-->
+                </ul>
+            </div>
+            <!--{ / }-->
+            <!--{ / }-->
+        </div>
+    </div>
+    <!-- //location_wrap -->
+	<div class="sub_top member_top">
+		<!--{ ? cateCd == "005001" || cateCd == "005002" }-->
+			<h1 class="sub_title">
+				BEST
+				<b class="red-dot">.</b>
+			</h1>
+		<!--{:}-->
+			<h1 class="sub_title">
+				SHOP
+				<b class="red-dot">.</b>
+			</h1>
+		<!--{/}-->
+        <div class="goods_list_item_tit dis-no">
+            <h2>{=goodsCategoryList[cateCd]['cateNm']}</h2>
+        </div>
+
+	</div>
+	<!--{ ? naviDisplay.naviUse =='y' }-->
+	<div class="cate_namewr">
+		<div class="cate_all goods_list_category">
+			<ul class="cate_all_ulwr">{=includeWidget("proc/_category_all.html", 'type', 'tree','menuType','all')}</ul>
+		
+			<div class="cate-allsub">
+				<div class="cate-sub">
+			
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--{ / }-->
+    <div class="goods_list_item">
+
+        <!--{ ? naviDisplay.naviUse =='y' }-->
+        <!--{ ? themeInfo.cateHtml1 }-->
+        <!-- 상단 꾸미기 영역 -->
+        <div class="addition_zone">
+            {=stripslashes(str_replace('&nbsp;', ' ', themeInfo.cateHtml1))}
+        </div>
+        <!--{ / }-->
+        <!--{ ? goodsDataSubCategory }-->
+        <div class="list_item_category dis-no">
+            <ul>
+                <!--{ @ goodsDataSubCategory }-->
+                <li class="<!--{ ? cateCd == .cateCd }-->on<!--{ / }-->">
+                    <a href="?{cateType}Cd={.cateCd}"><span>{.cateNm} <!--{ ? naviDisplay.naviCount =='y' }--><em>({.goodsCnt+0})</em><!--{ / }--></span></a>
+                </li>
+                <!--{ / }-->
+            </ul>
+        </div>
+        <!--{ / }-->
+        <!--{ / }-->
+
+        <!-- 설문조사 배너 -->{=pollViewBanner()}<!-- 설문조사 배너 -->
+
+        <!--{ ? themeInfo.recomDisplayFl == 'y'  && widgetGoodsList}-->
+        <!--{ ? themeInfo.cateHtml2 }-->
+        <!-- 추천상품 상단 꾸미기 영역 -->
+        <div class="addition_zone">
+            {=stripslashes(str_replace('&nbsp;', ' ', themeInfo.cateHtml2))}
+        </div>
+        <!-- //추천상품 상단 꾸미기 영역 -->
+        <!--{ / }-->
+
+        <!-- 추천 상품 나오는영역 -->
+        <div class="best_item_view">
+            <div class="best_item_view_tit">
+                <h3>{=__('추천상품')}</h3>
+            </div>
+            <div class="goods_list">
+                <div class="goods_list_cont">
+                    <p>{=includeWidget('goods/_goods_display.html')}</p>
+                </div>
+            </div>
+        </div>
+        <!-- //추천 상품 나오는영역 -->
+        <!--{ / }-->
+
+        <!--{ ? themeInfo.cateHtml3 }-->
+        <div class="addition_zone">
+            {=stripslashes(str_replace('&nbsp;', ' ', themeInfo.cateHtml3))}
+        </div>
+        <!--{ / }-->
+        <div class="goods_pick_list">
+            <span class="pick_list_num">총 <strong>{=number_format(gd_isset(page->recode['total']))}</strong>개의 상품</span>
+            <form name="frmList" action="">
+                <input type="hidden" name="{cateType}Cd" value="{cateCd}"/>
+                <div class="pick_list_box">
+					<span class="listact"></span>
+                    <ul class="pick_list">
+                        <li>
+                            <input type="radio" id="sort1" class="radio" name="sort" value=""/>
+                            <label for="sort1">{=__('추천순')}</label>
+                        </li>
+                        <li>
+                            <input type="radio" id="sort2" class="radio" name="sort" value="sellcnt"/>
+                            <label for="sort2">{=__('판매인기순')}</label>
+                        </li>
+                        <li>
+                            <input type="radio" id="sort3" class="radio" name="sort" value="price_asc"/>
+                            <label for="sort3">{=__('낮은가격순')}</label>
+                        </li>
+                        <li>
+                            <input type="radio" id="sort4" class="radio" name="sort" value="price_dsc"/>
+                            <label for="sort4">{=__('높은가격순')}</label>
+                        </li>
+                        <li>
+                            <input type="radio" id="sort5" class="radio" name="sort" value="review"/>
+                            <label for="sort5">{=__('상품평순')}</label>
+                        </li>
+                        <li>
+                            <input type="radio" id="sort6" class="radio" name="sort" value="date"/>
+                            <label for="sort6">{=__('등록일순')}</label>
+                        </li>
+                    </ul>
+                    <!-- //choice_num_view -->
+                </div>
+                <!-- //pick_list_box -->
+            </form>
+        </div>
+        <!-- //goods_pick_list -->
+
+        <div class="goods_list">
+            <div class="goods_list_cont">
+                <!-- 상품 리스트 -->
+                { # goodsTemplate }
+                <!-- //상품 리스트 -->
+            </div>
+        </div>
+
+        <div class="pagination">
+            {page->getPage()}
+        </div>
+
+    </div>
+    <!-- //goods_list_item -->
+	<script type="text/javascript">
+		gd_btn_all_menu_open();
+		$(document).ready(function () {
+
+			$('form[name=frmList] select[name=pageNum]').change(function() {
+				$('form[name=frmList]').get(0).submit();
+				gd_btn_all_menu_open();
+			});
+
+			$('form[name=frmList] input[name=sort]').click(function() {
+				$('form[name=frmList]').get(0).submit();
+			});
+
+			$(':radio[name="sort"][value="{sort}"]').prop("checked","checked")
+			$(':radio[name="sort"][value="{sort}"]').next().addClass('on');
+			
+			var list = $('.pick_list li .on');
+			var listli = $('.pick_list li');
+			$('.listact').click(function(){
+				$(this).toggleClass("act");
+				$('.pick_list').toggleClass("act");		
+			});	
+			$('.listact').text(list.text());
+
+		});
+
+
+
+	</script>
+</div>
+<!-- //content -->
+
+{ # footer }

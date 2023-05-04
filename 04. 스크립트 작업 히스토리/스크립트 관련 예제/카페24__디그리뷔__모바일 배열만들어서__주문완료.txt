@@ -1,0 +1,41 @@
+카페24 디그리뷔 모바일 배열만들어서 주문완료 설치하기
+
+---------------------------------------------------------------------
+모바일 상품 반복 될 떄 배열만들기
+
+                        <td colspan="7"><strong class="type">[기본배송]</strong> 상품구매금액 <strong>{$normal_total_product_price}<span class="{$normal_total_option_price_display|display}"> ({$normal_total_option_price})</span></strong> + 배송비 {$normal_total_delv_price} + 지역별배송비 {$normal_total_special_delv_price} = 합계 : <strong class="total">{$normal_total_price_front_head}<span>{$normal_total_price_front}</span>{$normal_total_price_front_tail}</strong> <span class="{$normal_total_price_ref_display|display}">{$normal_total_price_back_head}{$normal_total_price_back}{$normal_total_price_back_tail}</span></td>
+                    </tr>
+                </tfoot>
+                <tbody module="Order_normalresultlist">
+                    <tr>
+<script>
+if(!echo_products) var echo_products=[];
+if('{$product_name}'!='' && !'{$product_name}'.includes("샘플")){  // 디자인편집창에 예시로 있는 상품은 제외하기 위한 if문
+echo_products.push({
+'id' : '{$param}'.split('product_no=')[1].split('&cate_no=')[0],
+'name' : '{$product_name}',
+'quantity' : '{$product_quantity}',
+'price' : '{$product_price}'.replace(',','').replace('원',''),
+'brand' : 'Healo',
+'category' : '{$param}'.substr('{$param}'.indexOf('cate_no='), '{$param}'.length).replace('cate_no=','')                           
+});
+}
+</script>
+
+<!-- 구글UA 구매전환 및 결제단계 측정TripleHM 20220602 -->
+<div module="Order_result" style="display:none">    
+<script>
+gtag('event', 'purchase', {
+  "transaction_id": '{$order_id}',
+  "currency": "KRW",
+  "items" : echo_products
+});
+gtag('event', 'begin_checkout', {
+  "items": echo_products
+});    
+    console.log(echo_products);
+</script>  
+</div>
+
+
+---------------------------------------------------------------------------------

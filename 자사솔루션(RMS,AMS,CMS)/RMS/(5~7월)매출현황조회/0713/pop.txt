@@ -1,0 +1,235 @@
+<?
+ob_start();
+@session_start();
+echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
+
+@include_once $_SERVER['DOCUMENT_ROOT']."/include/db.php";
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.common.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/report/cls/cls.sales.php';
+
+db_open();
+$clsGoodType    = new clsGoodType();
+$S_RETURNVAL     = $clsGoodType->funcSelectCsList($date, $good_type2, $code4); 
+
+// echo '<pre>';
+// print_r($_GET);
+// // print_r($S_RETURNVAL);
+// echo '</pre>';
+?>
+
+<!-- 스타일 영역 -->
+	<style>
+		.clsose_Btn {
+			position: fixed;
+			bottom: 0;
+			right: 600;
+			width: 300px;
+		}
+		#table00 tbody tr td {
+			border: none;
+		}
+		#table00 tbody tr td {
+			border-right: 1px solid #cccccc;
+		}
+		.targetTitle1{
+			font-weight: bolder;
+		}
+		#table00 thead{
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+        #table00 tfoot{
+            position: sticky;
+            bottom: 0;
+            z-index: 99;
+        }
+        #table00 tbody tr td.center,
+        .tablereport tfoot .center{
+            position: sticky;
+            left: 0;
+        }
+        #table00 {
+            width: 100%;
+            text-align: center;
+            border-spacing: 0px;
+        }
+        #table00 thead tr th,
+		#table00 tfoot tr th {
+            border-top: 1px solid #cccccc;
+            border-bottom: 1px solid #cccccc;
+            border-right: 1px solid #cccccc;
+        }
+        #table00 tbody tr td {
+            border-bottom: 1px solid #cccccc;
+            /* border-right: 1px solid #cccccc; */
+        }
+        .tablereport thead tr th,
+		.tablereport tbody tr td,
+        .tablereport tfoot tr th {
+            border : none;
+        }
+        .tablereport {
+            border-collapse: separate;
+        }
+        #table00 tbody tr td.center, 
+        #table00 tfoot .center{
+            border-left: 1px solid #cccccc;
+        }
+        #table00 > thead > tr:nth-child(1) > th:nth-child(1){
+            border-left: 1px solid #cccccc;
+        }
+		.tablereport, #table00 {
+			border-collapse: separate;
+		}
+		#table00 tfoot tr th{
+			border-top: none;
+        }
+
+		#table00 > tbody > tr > td:nth-child(1){
+			border-left: 1px solid #cccccc;
+		}
+	</style>
+<!-- link src 목록 -->
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+	<link rel="icon" type="image/png" href="http://example.com/myicon.png">  
+	<link rel="stylesheet" href="/css/style.css" type="text/css">
+	<SCRIPT LANGUAGE="Javascript" SRC="/fchart/Code/FusionCharts/FusionCharts.js"></SCRIPT>
+		
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.3.8/js/jquery.tablesorter.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.3.8/js/jquery.tablesorter.min.js"></script>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Pragma" content="no-cache">
+<title>매출관리리포트 > 매출현황조회 > 계정리스트</title>
+
+<!-- excel File name 설정 -->
+	<script>
+		var today = new Date();
+		var year = today.getFullYear();
+		var month = ('0' + (today.getMonth() + 1)).slice(-2);
+		var day = ('0' + today.getDate()).slice(-2);
+		var dateString = year + month + day;
+		var filename = "계정리스트"+ dateString + "_default_data";
+	</script>
+
+
+<!-- 날짜 변수 설정 -->
+
+	<? 
+	if($_GET['sdate1']){
+	$sdate1 =$_GET['sdate1'];
+	}
+	if($_GET['sdate']){
+		$sdate =date('Y-m-d',strtotime($_GET['sdate'])); 
+	}
+	if($_GET['edate']){
+		$edate = date('Y-m-d',strtotime($_GET['edate'])); 
+	}
+
+
+	?>
+
+<div>
+	<div style="font-weight: bolder; font-size: 20px; float: left;">계정리스트</div>
+	<button class="ui-button ui-widget ui-corner-all" onclick="tableToExcel('table00',filename);" style="float: right; font-size: 14px; margin-bottom: 10px;">
+		<span class="ui-button-icon ui-icon ui-icon-arrowthickstop-1-s"></span> 다운로드
+	</button>
+</div>
+
+<div style="width: 100%; max-height: 490px; overflow: auto;">
+	<table class="tablereport demo-1" width="100%"  border="1" cellpadding="5" cellspacing="1"  id="table00" >
+		<thead>
+			<tr>
+				<th class="targetTitle1"><a href=# style="text-decoration: none; ">번호<span class="ui-button-icon ui-icon ui-icon-arrow-2-n-s"></span></a></th>
+				<th class="targetTitle1"><a href=# style="text-decoration: none; ">본부<span class="ui-button-icon ui-icon ui-icon-arrow-2-n-s"></span></a></th>
+				<th class="targetTitle1"><a href=# style="text-decoration: none; ">팀<span class="ui-button-icon ui-icon ui-icon-arrow-2-n-s"></span></a></th>
+				<th class="targetTitle1"><a href=# style="text-decoration: none; ">담당자명<span class="ui-button-icon ui-icon ui-icon-arrow-2-n-s"></span></a></th>
+				<th class="targetTitle1"><a href=# style="text-decoration: none; ">광고주명<span class="ui-button-icon ui-icon ui-icon-arrow-2-n-s"></span></a></th>
+				<th class="targetTitle1"><a href=# style="text-decoration: none; ">광고계정<span class="ui-button-icon ui-icon ui-icon-arrow-2-n-s"></span></a></th>			
+				<th class="targetTitle1"><a href=# style="text-decoration: none; ">광고유형<span class="ui-button-icon ui-icon ui-icon-arrow-2-n-s"></span></a></th>
+				<th class="targetTitle1"><a href=# style="text-decoration: none; ">광고상품<span class="ui-button-icon ui-icon ui-icon-arrow-2-n-s"></span></a></th>
+				<th class="targetTitle1"><a href=# style="text-decoration: none; ">매체명<span class="ui-button-icon ui-icon ui-icon-arrow-2-n-s"></span></a></th>
+				<th class="targetTitle1" id="lists"><a href=# style="text-decoration: none; "><?=$edate ? $sdate.'~'.$edate : $sdate1 ?><span class="ui-button-icon ui-icon ui-icon-arrow-2-n-s"></span></a></th>
+			</tr>
+		</thead>
+		<tbody>
+			<? if($S_RETURNVAL['division1']){?>		
+				<? for($i=0; $i<count($S_RETURNVAL['division1']); $i++  ){ 
+					foreach ($S_RETURNVAL as $k) ?>
+					<tr>  
+						<td class="center"><?=$i+1?></td>
+						<td class="conConTxtC"><?=$S_RETURNVAL['division1'][$i]?></td>
+						<td class="conConTxtC"><?=$S_RETURNVAL['division2'][$i]?></td>
+						<td class="conConTxtC"><?=$S_RETURNVAL['em_seq'][$i]?></td>
+						<td class="conConTxtC"><?=$S_RETURNVAL['cs_seq'][$i]?></td>
+						<td class="conConTxtC"><?=$S_RETURNVAL['cs_m_id'][$i]?></td>
+						<td class="conConTxtC"><?=$S_RETURNVAL['code4'][$i]?></td>
+						<td class="conConTxtC"><?=$S_RETURNVAL['code5'][$i]?></td>
+						<td class="conConTxtC"><?=$S_RETURNVAL['code6'][$i]?></td>
+						<td class="conConInt"><?=number_format($S_RETURNVAL['pay_price'][$i])?></td>
+						<? $total_price += $S_RETURNVAL['pay_price'][$i] ?>
+					</tr>
+				<?}
+			}else{ ?>
+				<tr>  
+					<td class="conConTxtC">-</td>
+					<td class="conConTxtC">-</td>
+					<td class="conConTxtC">-</td>
+					<td class="conConTxtC">-</td>
+					<td class="conConTxtC">-</td>
+					<td class="conConTxtC">-</td>
+					<td class="conConTxtC">-</td>
+					<td class="conConTxtC">-</td>
+					<td class="conConTxtC">-</td>
+					<td class="conConTxtC">-</td>
+				</tr>	
+			<? }?>
+		</tbody>
+		<tfoot>
+			<tr class="right b"  bgcolor="#EFEFEF">
+				<th colspan="9" style="text-align: center" class="center">합계 </th>
+				<th colspan="1"><?=number_format($total_price)?></th>
+			</tr>
+		</tfoot>
+	</table>
+	<div class="clsose_Btn" style="margin-top:20; text-align:center; margin-bottom: 30px;">
+		<button class="ui-button ui-widget ui-corner-all" onclick="self.close();" >
+			<span class="ui-icon ui-icon-close"></span> 닫기
+		</button>
+	</div>
+</div>	
+<!-- excel다운로드 함수 -->
+	<script>
+		function tableToExcel(id, title) {
+			var data_type = 'data:application/vnd.ms-excel;charset=utf-8';
+			var table_html = encodeURIComponent(document.getElementById(id).outerHTML);
+			var a = document.createElement('a');
+			a.href = data_type + ',%EF%BB%BF' + table_html;
+			a.download = title + '.xls';
+			a.click();
+		}
+	</script>
+<!-- 테이블 컬럼 sort -->
+	<script>
+	$(document).ready(function()
+    {
+      $("#table00")
+       .tablesorter(
+          {
+            sortList: [[0,0]],
+            widthFixed: true,
+            widgets: ['zebra']
+          } )
+    }
+	);
+	</script>
+
+	
+
+
+	

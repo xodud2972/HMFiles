@@ -1,0 +1,690 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2023-02-16 08:02:48",
+    "containerVersion": {
+        "path": "accounts/6071114669/containers/102612907/versions/0",
+        "accountId": "6071114669",
+        "containerId": "102612907",
+        "containerVersionId": "0",
+        "container": {
+            "path": "accounts/6071114669/containers/102612907",
+            "accountId": "6071114669",
+            "containerId": "102612907",
+            "name": "고도몰 간접설치 코드",
+            "publicId": "GTM-PKNR8X8",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1676533356781",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6071114669/containers/102612907/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true
+            },
+            "tagIds": [
+                "GTM-PKNR8X8"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "tagId": "7",
+                "name": "[dataLayer] GA4-상품상세조회",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  var item = {{[GA4]상품 상세 - 상품 배열}};\n  if(item){\n    window.dataLayer = window.dataLayer || [];\n    window.dataLayer.push({\n      'event': 'view_item', \n      'ecommerce': {         \n        items : [item]\n      }\n    });\n  }\n</script>\n"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1676533468483",
+                "firingTriggerId": [
+                    "5"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "tagId": "8",
+                "name": "GA4",
+                "type": "gaawc",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendPageView",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableSendToServerContainer",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementId",
+                        "value": "G-2B9J7HS1C4"
+                    }
+                ],
+                "fingerprint": "1676533595529",
+                "firingTriggerId": [
+                    "2147479553"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "tagId": "9",
+                "name": "[ecommerce] GA4-상품상세조회",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "getEcommerceDataFrom",
+                        "value": "dataLayer"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "view_item"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventParameters",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "name",
+                                        "value": "items"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "{{[GA4]ecommerce.items}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TAG_REFERENCE",
+                        "key": "measurementId",
+                        "value": "GA4"
+                    }
+                ],
+                "fingerprint": "1676533648867",
+                "firingTriggerId": [
+                    "6"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "tagId": "14",
+                "name": "[dataLayer] GA4-장바구니추가",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  var result = {{[GA4]상품 상세 - 장바구니 배열}};  \n  if (result && result.items && result.items.length) {\n    window.dataLayer = window.dataLayer || [];\n    window.dataLayer.push({\n      'event': 'add_to_cart',\n      'ecommerce': {\n        'items': result.items\n      }\n    });\n  }\n</script>\n"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1676533992288",
+                "firingTriggerId": [
+                    "12"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "tagId": "15",
+                "name": "[ecommerce] GA4-장바구니추가",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "add_to_cart"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventParameters",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "name",
+                                        "value": "items"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "{{[GA4]ecommerce.items}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TAG_REFERENCE",
+                        "key": "measurementId",
+                        "value": "GA4"
+                    }
+                ],
+                "fingerprint": "1676534059920",
+                "firingTriggerId": [
+                    "13"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "tagId": "21",
+                "name": "[dataLayer] GA4-주문완료",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  window.dataLayer = window.dataLayer || [];\n  window.dataLayer.push({\n    \"event\" : \"purchase\",\n    \"ecommerce\" : {\n    \"transaction_id\" : {{[공통]주문 완료 - 주문 번호}},\n    \"currency\" : \"KRW\",\n    \"value\": {{[공통]주문 완료 - 결제 금액}},\n    \"items\" :{{[GA4]주문 완료 - 상품 배열}}\n  }\n  })     \n</script>\n"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1676534438064",
+                "firingTriggerId": [
+                    "19"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "tagId": "22",
+                "name": "[ecommerce] GA4-주문완료",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "getEcommerceDataFrom",
+                        "value": "dataLayer"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "purchase"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventParameters",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "name",
+                                        "value": "items"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "{{[GA4]ecommerce.items}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "name",
+                                        "value": "transaction_id"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "{{[공통]주문 완료 - 주문 번호}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "name",
+                                        "value": "value"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "{{[공통]주문 완료 - 결제 금액}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "name",
+                                        "value": "currency"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "KRW"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TAG_REFERENCE",
+                        "key": "measurementId",
+                        "value": "GA4"
+                    }
+                ],
+                "fingerprint": "1676534370346",
+                "firingTriggerId": [
+                    "20"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "triggerId": "5",
+                "name": "상품상세페이지 도착",
+                "type": "PAGEVIEW",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page Path}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "/goods/goods_view.php"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1676533420563"
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "triggerId": "6",
+                "name": "GA4_상품상세조회이벤트(view_item)",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "view_item"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1676533439055"
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "triggerId": "12",
+                "name": "장바구니추가 클릭",
+                "type": "CLICK",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Click Text}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "장바구니"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1676533942976"
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "triggerId": "13",
+                "name": "GA4_장바구니추가이벤트(add_to_cart)",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "add_to_cart"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1676533973093"
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "triggerId": "19",
+                "name": "주문완료페이지(DOM Ready)",
+                "type": "PAGEVIEW",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page Path}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "/order/order_end.html"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1676534207211"
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "triggerId": "20",
+                "name": "GA4_주문완료이벤트(purchase)",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "purchase"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1676534248519"
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "variableId": "3",
+                "name": "[GA4]상품 상세 - 상품 배열",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n  var item = {\n    'item_name': '',\n    'price': '',\n    'item_id': '',\n  };\n\n  item.item_name = $(\".goods-header > .top > .tit > h2\")[0].innerText;\n  item.price = $(\"input[name=set_goods_price]\").val();\n  item.item_id = goodsNo;\n  \n  return item;\n}\n"
+                    }
+                ],
+                "fingerprint": "1676533381318",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "variableId": "4",
+                "name": "[GA4]ecommerce.items",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "ecommerce.items"
+                    }
+                ],
+                "fingerprint": "1676533398931",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "variableId": "11",
+                "name": "[GA4]상품 상세 - 장바구니 배열",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n  var item = {\n    'item_name': '',\n    'price': '',\n    'item_id': '',\n    'quantity': '',\n  };\n\n  item.item_name = $(\".goods-header > .top > .tit > h2\")[0].innerText;\n  item.price = $(\"input[name=set_goods_price]\").val();\n  item.item_id = goodsNo;\n  item.quantity = goodsTotalCnt;\n  \n  return item;\n}\n"
+                    }
+                ],
+                "fingerprint": "1676533909838",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "variableId": "16",
+                "name": "[GA4]주문 완료 - 상품 배열",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n  var orderCnt = $('input[name=naver-common-inflow-script-order-item]');\n  var order_info = [];\n  var e = $('input[name=naver-common-inflow-script-order-item]');\n  for(var i = 0; i < e.length; i++){\n    var detail = eval('(' + e[i].value + ')');\n    order_info[i] = {\n      'item_name': detail.goodsnm,\n      'item_id': detail.goodsno,\n      'price':  detail.price/detail.ea,\n      'quantity': detail.ea\n    }\n  }\n  return order_info;\n}\n"
+                    }
+                ],
+                "fingerprint": "1676534123752",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "variableId": "17",
+                "name": "[공통]주문 완료 - 주문 번호",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n\n  var e = $('input[name=naver-common-inflow-script-order-item]');\n  \n  return eval('(' + e[0].value + ')').ordno;\n}\n"
+                    }
+                ],
+                "fingerprint": "1676534133984",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "variableId": "18",
+                "name": "[공통]주문 완료 - 결제 금액",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n    var e = $('input[name=naver-common-inflow-script-order-item]');\n    var totalPrice = 0;\n    for(var i = 0; i < e.length; i++){\n        var detail = eval('(' + e[i].value + ')');\n        totalPrice += detail.price;\n    }\n  return totalPrice;\n}\n"
+                    }
+                ],
+                "fingerprint": "1676534146921",
+                "formatValue": {}
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "type": "PAGE_URL",
+                "name": "Page URL"
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "type": "PAGE_HOSTNAME",
+                "name": "Page Hostname"
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "type": "PAGE_PATH",
+                "name": "Page Path"
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "type": "REFERRER",
+                "name": "Referrer"
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "type": "EVENT",
+                "name": "Event"
+            },
+            {
+                "accountId": "6071114669",
+                "containerId": "102612907",
+                "type": "CLICK_TEXT",
+                "name": "Click Text"
+            }
+        ],
+        "fingerprint": "1676534568854",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6071114669/containers/102612907/versions/0?apiLink=version"
+    }
+}

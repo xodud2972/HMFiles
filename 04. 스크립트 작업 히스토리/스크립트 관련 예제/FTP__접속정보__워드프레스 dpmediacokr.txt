@@ -1,0 +1,7 @@
+dpmedia.co.kr 대대행사이트 FTP 접속 및 워드프레스 정보
+문의완료 페이지 코드 삽입시 wp.admin접속하여 문의완료 페이지 편집에서
+코드 삽입 및 하단에 header insert를 통해서 코드를 삽입함.
+
+wp>wp-content>Site1>function1 파일 가장 하단에 기존 문의작성 페이지에서
+클릭시 이벤트 잡히도록 설정해 놓은 함수 있음.
+

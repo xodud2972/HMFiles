@@ -1,0 +1,44 @@
+Track ID  9023770129775150029
+
+방문스크립트
+
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('Track ID 입력').pageView();
+</script>
+
+
+
+잠재고객이벤트 (상담신청)
+
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+
+      kakaoPixel('Track ID 입력').pageView();
+      kakaoPixel('Track ID 입력').participation();
+</script>
+
+
+------------------------------------------------------------------------------------------------------------------------
+완료 스크립트
+------------------------------------------------------------------------------------------------------------------------
+include -> footer.php 파일에 방문 스크립트 추가
+
+<!-- 카카오모몬트픽셀 방문스크립트 TripleHM 2022-01-20 -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('9023770129775150029').pageView();
+</script>
+
+
+
+
+상담신청완료시 이동 페이지 http://lawnus.kr/exec.php 에 추가
+
+// 카카오모몬트픽셀 스크립트 2022-01-20 TripleHM
+echo'<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+	  kakaoPixel("9023770129775150029").pageView();
+	  kakaoPixel("9023770129775150029").participation();
+</script>';
+

@@ -1,0 +1,121 @@
+카페24__GA전자상거래__장바구니,결제측정,결제단계측정__MO,PC__레드닥터_한국__20220831
+
+장바구니 추가 (datail.html) PC
+   ㄴ  특이사항 : UA에 잡혀야하는데 GoogleAds에서 잡힘 코드는 정상 console도 잘 찍힘
+
+<script>
+    // 20220831 TripleHM GA전자상거래 장바구니추가 코드
+    var cartBtn = document.querySelector('#totalProducts > div > div.btnArea > a.btnEm');
+   
+    function addCartFunc(){
+        gtag('event', 'add_to_cart', {
+            "items": [
+                {
+                    "id": "{$product_no}",
+                    "name": "{$product_name}",
+                    "price": '{$product_price}'
+                }
+            ]
+        });
+    }    
+    
+    cartBtn.addEventListener('click', event => {
+		addCartFunc();
+	})
+</script>
+-----------------------------------------------------------------------------------------------------------------------------
+장바구니 추가 (datail.html) MO
+   ㄴ  특이사항 : UA에 잡혀야하는데 GoogleAds에서 잡힘 코드는 정상 console도 잘 찍힘 (PC와 동일)
+
+<script>
+    // 20220831 TripleHM GA전자상거래 장바구니추가 코드
+    const cartBtn = document.querySelector('#naver > button');
+   
+    function addCartFunc(){
+        gtag('event', 'add_to_cart', {
+            "items": [
+                {
+                    "id": "{$product_no}",
+                    "name": "{$product_name}",
+                    "price": '{$product_price}'
+                }
+            ]
+        });
+    }    
+    
+    cartBtn.addEventListener('click', event => {
+		addCartFunc();
+	})
+</script>
+-----------------------------------------------------------------------------------------------------------------------------
+결제측정 및 결제단계측정 (order_resultl.html) PC
+   ㄴ  특이사항 : 없음 UA에서 잘 잡힘
+
+	<script>
+        // 주문번호
+	    const order_id = '{$order_id}';
+	</script>    
+order_info에서 만들어야함
+---------------------------------------------
+	<script>
+        // GA 구매측정 20220831 tripleHM                       
+	    if(!echo_products) var echo_products=[];
+	    echo_products.push({
+	    'name' : '{$product_name}',
+	    'quantity' : '{$product_quantity}',
+	    'price' : '{$product_price}'.replace(',','').replace('원','')
+	    });
+	</script>   
+위코드는 2번 반복
+---------------------------------------------
+<script>
+    //GA 구매측정 및 결제단계측정 TripleHM 20220831
+    gtag('event', 'purchase', {
+        "transaction_id": order_id,
+        "currency": "KRW",
+        "items": echo_products
+    });
+    gtag('event', 'begin_checkout', {
+        "items": echo_products
+    });    
+</script>
+console.log 꼭 찍어보기
+-----------------------------------------------------------------------------------------------------------------------------
+결제측정 및 결제단계측정 (order_resultl.html) MO
+   ㄴ  특이사항 : gtag를 못찾는 에러가 있어서 3초뒤에 실행시키
+
+	<script>
+        // 주문번호
+	    const order_id = '{$order_id}';
+	</script>    
+order_info에서 만들어야함
+---------------------------------------------
+	<script>
+        // GA 구매측정 20220831 tripleHM                       
+	    if(!echo_products) var echo_products=[];
+	    echo_products.push({
+	    'name' : '{$product_name}',
+	    'quantity' : '{$product_quantity}',
+	    'price' : '{$product_price}'.replace(',','').replace('원','')
+	    });
+	</script>   
+위코드는 2번 반복
+---------------------------------------------
+특이사항 : gtag를 못찾는 오류가 있어서 3초뒤에 실행되도록 함.
+<script>
+    console.log(order_id);
+    console.log(echo_products);
+    setTimeout(function() {    
+        //GA 구매측정 및 결제단계측정 TripleHM 20220831 @@
+        gtag('event', 'purchase', {
+            "transaction_id": order_id,
+            "currency": "KRW",
+            "items": echo_products
+        });
+        gtag('event', 'begin_checkout', {
+            "items": echo_products
+        });    
+    }, 3000);
+</script>  
+console.log 꼭 찍어보기
+-----------------------------------------------------------------------------------------------------------------------------

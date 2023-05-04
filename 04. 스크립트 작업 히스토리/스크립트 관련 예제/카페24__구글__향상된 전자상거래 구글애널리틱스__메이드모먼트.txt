@@ -1,0 +1,354 @@
+카페24 향상된 전자상거래 구글애널리틱스 코드 메이드모먼트
+참고 URL https://jaddong.tistory.com/entry/%EC%B9%B4%ED%8E%9824%EC%97%90-%ED%96%A5%EC%83%81%EB%90%9C-%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0-STEP7-%EA%B2%B0%EC%A0%9C%ED%96%89%EB%8F%99checkout-%ED%96%89%EB%8F%99%EB%B6%84%EC%84%9D
+
+
+---------------------------제품상세---------------------------------------
+제품상세페이지 마지막 두번쨰 div 안에
+
+<!-- 구글 향상된 전자상거래 스크립트 2022.04.29 TripleHM -->            
+<script>
+  var isInIframe = (window.location != window.parent.location);
+  if (isInIframe != true) {
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-780526173');
+  }
+    
+gtag('event', 'view_item', {
+  "items": [
+    {
+      "id": "{$product_no}",
+      "name": "{$name}",
+      "price": '{$product_price}',
+      "brand": "{$prd_brand}"
+    }
+  ]
+});
+dataLayer.push({ ecommerce: null });  // Clear the previous ecommerce object.
+dataLayer.push({
+  'ecommerce': {
+    'detail': {
+      'actionField': {'list': 'Apparel Gallery'},    // 'detail' actions have an optional list property.
+      'products': [{
+      "id": "{$product_no}",
+      "name": "{$name}",
+      "price": '{$product_price}',
+      "brand": "{$prd_brand}"
+       }]
+     }
+   }
+});
+</script>     
+
+
+
+-------------------------------상품노출측정+상품클릭수측정---------------------------------
+상품리스트페이지 (list.html) 
+
+<!-- 구글 애널리틱스 향상된 전자상거래코드 2022.04.29 TripleHM -->
+<script>
+    var echo_products = []; // 상품들을 담을 객체
+
+    if($('.prdList .item .name a').length > 0 && location.href.includes('list2.html')){
+
+        $('.prdList .item .name a').each(function(){ // 상품들의 a태그들을 가져와서 반복문으로 담음
+            echo_products.push({
+                'id': new URL(this.href).searchParams.get("product_no"), // 상품 아이디
+                'name' : this.text, // 상품명
+                'price' : this.parentElement.nextElementSibling.nextElementSibling.innerText.replace(/,/gi,"").replace("원",""), //가격
+                'category' : new URL(this.href).searchParams.get("cate_no"), //카테고리
+                'brand' : 'Healo', //브랜드명
+                'list': "상품 리스트 : "+document.querySelector("meta[property='og:description']").getAttribute("content"), //리스트명
+                'position' : $('.prdList .item .name a').index(this)+1  //상품 위치
+            }); 
+        });
+        
+        dataLayer.push({
+            'event' : 'ImpressionsView',
+            'ecommerce': {
+                'currencyCode':'KRW',
+                'impressions': echo_products // 위에서 담음 상품객체를 보냄
+            }
+        });
+    }
+ /* Product Impressions Click : 상품리스트에서 상품 클릭 측정 */
+    // 1. 상품의 이름 클릭
+    $('.prdList .item .name a').on('click',function(){
+        dataLayer.push({
+            'event': 'productClick',
+            'ecommerce': {
+                'click': {
+                    'actionField': {'list': "상품 리스트 : "+document.querySelector("meta[property='og:description']").getAttribute("content") },
+                    'products': [{
+                        'id': new URL(this.href).searchParams.get("product_no"),
+                        'name' : this.text, 
+                        'price' : this.parentElement.nextElementSibling.nextElementSibling.innerText.replace(/,/gi,"").replace("원",""), 
+                        'category' : new URL(this.href).searchParams.get("cate_no"), 
+                        'brand' : 'Healo', 
+                        'position' : $('.prdList .item .name a').index(this)+1
+                    }]
+                }
+            }
+         });          
+    });
+
+    // 1. 상품이미지 클릭
+    $('.prdList .item .box > a').on('click',function(){
+        dataLayer.push({
+            'event': 'productClick',
+            'ecommerce': {
+                'click': {
+                    'actionField': {'list': "상품 리스트 : "+document.querySelector("meta[property='og:description']").getAttribute("content") },
+                    'products': [{
+                        'id': new URL(this.href).searchParams.get("product_no"),
+                        'name' : this.nextElementSibling.innerText, 
+                        'price' : this.nextElementSibling.nextElementSibling.nextElementSibling.innerText.replace(/,/gi,"").replace("원",""), 
+                        'category' : new URL(this.href).searchParams.get("cate_no"), 
+                        'brand' : 'Healo', 
+                        'position' : $('.prdList .item .box > a').index(this)+1
+                    }]
+                }
+            }
+        });          
+    });    
+</script>
+
+-------------------------장바구니 추가 측정-----------------------------------------------
+제품상세페이지 detail.html 첫번쨰 항목과 제품상세와 동일페이지
+<div class="product_detail" module="product_detail">
+    <script>
+        // 장바구니에 담기 버튼 클릭시 이벤트    
+        function addtoCart(){
+            // 수량이 1이상이어야 장바구니에 담기 이벤트가 실행됨
+            var total_quantity = $(".total").html().substring($(".total").html().indexOf('(')+1, $(".total").html().indexOf('개'));
+
+            if( total_quantity && total_quantity > 0){
+
+                dataLayer.push({
+                    'event': 'addToCart',
+                    'ecommerce': {
+                        'currencyCode': 'KRW',
+                        'add': {                                // 'add' actionFieldObject measures.
+                            'products': [{                    //  adding a product to a shopping cart.
+                                'name': '{$name}',          // Name or ID is required.
+                                'id': '{$product_no}',
+                                'price': '{$product_sale_price}'.split('.')[0],
+                                'brand': 'Healo',
+                                'category': '{$cate_no}',
+                                'quantity': total_quantity 
+                            }]
+                        }
+                    }
+                });
+            }     
+    	}
+    </script>
+</div>    
+그리고 버튼에 onclick="addtoCart(); {$action_basket}" 로 함수 추가해줌.
+
+
+
+
+-------------------------장바구니 삭제 비우기 측정-----------------------------------------------
+장바구니 페이지 bastket.html
+
+
+<!-- 구글애널리틱스 장바구니 비우기 측정 2022.04.29 TripleHM -->
+<div module="Order_NormNormal">
+    <div module="Order_list"><!-- 일반 기본배송 -->
+        <script>
+            //  장바구니에 담겨있는 모든 상품정보 : echo_products
+            if(!echo_products) var echo_products =[];
+
+            echo_products.push({
+                'id' : '{$product_no}',
+                'name' : '{$name}',
+                'price' : '{$product_sale_price}'.replace(',','').replace('원',''),
+                'brand' : 'Healo',
+                'category' : '{$cate_no}',
+                'quantity': '{$form.quantity}'.substring('{$form.quantity}'.indexOf('value=')+7,'{$form.quantity}'.indexOf(' type=')-1)
+            });
+
+            // [장바구니 비우기] 버튼 클릭시 작동 : echo_products 사용
+            function removeFromCart(){
+                dataLayer.push({
+                    'event': 'removeFromCart',
+                    'ecommerce': {
+                    'currencyCode': 'KRW',
+                    'remove': { 
+                        'products': echo_products
+                    }
+                    }
+                });
+            }
+
+            // 선택상품이 담겨있는 상품정보 : document.checked_products
+            $('.orderListAreatable input[type=checkbox]').on('click',function(){  
+                //console.log($(this));
+                document.checkedItemsIndex = []; // check한 인덱스들
+                document.checked_products = []; //check한 인덱스순서에 있는 제품들 정보
+                
+                $('.orderListArea tbody.xans-order-list input[type=checkbox]').each(function(index, item){
+
+                    if($(this).attr("checked")){
+                        //console.log($(this).attr('id'));
+                        // 체크한 상품의 인덱스를 담음
+                        document.checkedItemsIndex.push($(this).attr('id').substring($(this).attr('id').lastIndexOf('id_')+3,$(this).attr('id').length))
+
+                    }
+
+                    if($('tbody.xans-order-list input[type=checkbox]').length === index+1) {
+                        //console.log(document.checkedItemsIndex);
+                        document.checkedItemsIndex.forEach(function(item, index, object) {
+                                //체크한 인덱스에 있는 상품정보를 모음
+                                document.checked_products.push(echo_products[item]);     
+                        });
+                    }      
+                }) 
+
+            })
+
+
+            // [선택상품 삭제] 버튼 클릭시 작동 : document.checked_products 사용
+            function removeFromCartIndivisual(){
+
+                if(document.checked_products.length > 0){
+                    dataLayer.push({
+                        'event': 'removeFromCart',
+                        'ecommerce': {
+                            'currencyCode': 'KRW',
+                            'remove': {
+                                'products': document.checked_products
+                            }
+                        }
+                    });
+                }
+            }
+        </script>
+    </div>
+</div>
+
+<a href="#none" class="btnNormal" onclick="removeFromCartIndivisual(); {$action_delete}"><i class="icoDelete"></i> 삭제하기</a>
+<a href="#none" class="btnNormal" onclick="removeFromCart(); {$action_empty}">장바구니비우기</a>
+와같이 버튼클릭시 함수 실행하도록 설정.
+
+
+
+------------------------------------------주문완료측정--------------------------------------
+주문완료 페이지 
+
+<td><strong>{$product_total_price_front_head}{$product_total_price_front}{$product_total_price_front_tail}</strong><div class="{$product_total_price_ref_display|display}">{$product_total_price_back_head}{$product_total_price_back}{$product_total_price_back_tail}</div></td>
+</tr>
+<tr>
+위 태그 아래에  아래 스크립트 삽입 후 바로 아래쪽에 위 태그와 동일한 태그 하나 더 있는데 거기 하단에도 동일하게 아래스크립트 삽입
+총 두번 넣는 거임.
+
+<!-- 구글애널리틱스 향상된전자상거래 스크립트 20220429 TripleHM -->
+<script>
+if(!echo_products) var echo_products=[];
+if('{$product_name}'!='' && !'{$product_name}'.includes("샘플")){  // 디자인편집창에 예시로 있는 상품은 제외하기 위한 if문
+echo_products.push({
+'id' : '{$param}'.split('product_no=')[1].split('&cate_no=')[0],
+'name' : '{$product_name}',
+'quantity' : '{$product_quantity}',
+'price' : '{$product_price}'.replace(',','').replace('원',''),
+'brand' : 'Healo',
+'category' : '{$param}'.substr('{$param}'.indexOf('cate_no='), '{$param}'.length).replace('cate_no=','')                           
+});
+}
+</script>
+
+최하단에 마지막 div 태그 안에 넣어주기
+<!-- 구글애널리틱스 향상된 전자상거래 스크립트 TripleHM 20220429 -->    
+<script>
+if( '{$order_id}' ){
+// 디자인 편집창에서 주문 id가 디폴드'20111102-0000001' 되어있어서 이것을 제외한 구매id만 purchase로 날라감
+    if('{$order_id}' != '20111102-0000001'){
+        dataLayer.push({
+            'event': 'purchase',
+            'ecommerce': {
+                'purchase': {
+                    'actionField': {
+                        'id': '{$order_id}',
+                        'affiliation': 'Online Store',
+                        'revenue': '{$normal_total_product_price}'.replace(',','').replace('원',''),
+                        'tax':'{$total_vat_price}'.replace(',','').replace('원',''),  
+                        'shipping': '{$normal_total_delv_price}'.replace(',','').replace('원',''),  
+                        //'coupon': 'SUMMER_SALE'
+                    },
+                    'products': echo_products
+                }
+            }
+        });
+    }
+}
+</script>    
+</div>
+
+
+주문서작성페이지 
+                <tbody module="Order_supplierlist" class="center">
+                    <tr>
+위태그 아래 쪽에 아래 코드 삽입 위 코드 동일한 거 하나 더 있는데 그 아래에도 아래코드 삽입
+<!-- 구글애널리틱스 향상된 전자상거래 2022.04.29 TripleHM 결제행동분석 -->                        
+<script>
+if(!echo_products) var echo_products=[];
+if('{$product_name}'!='' || !'{$product_name}'.includes("상품")){
+    echo_products.push({
+        'id' : '{$param}'.substr('{$param}'.indexOf('product_no='), '{$param}'.indexOf('&')-1).replace('product_no=',''),
+        'name' : '{$product_name}',
+        'quantity' : '{$product_quantity}',
+        'price' : '{$product_price}'.replace(',','').replace('원',''),
+        'brand' : 'Healo',
+        'category' : '{$param}'.substr('{$param}'.indexOf('cate_no='), '{$param}'.length).replace('cate_no=','')
+    });
+}
+</script>     
+
+
+
+최하단에 
+<!-- 구글 애널리틱스 향상된 전자상거래 결제행동분석 TripleHM 2022.04.29-->
+<script>       
+var echo_products = echo_products||[];
+if(echo_products){
+    dataLayer.push({
+        'event' : 'checkout',
+        'ecommerce' : {
+            'checkout': {
+                'actionField' : {
+                    'step' : 2,
+                    'option' : '주문서작성'
+                },
+                'products' : echo_products
+            }
+        }
+    });
+}
+</script>
+
+주문완료페이지 최하단 마지막div안에 넣어주기
+<!-- 구글애널릭틱스 향상된 전자상거래 스크립트 결제행동 20220429 TripleHM -->
+<div module="Order_result" style="display:none">
+    <script>
+        // 주문id가 있어야 purchase로 잡힘
+        if( '{$order_id}' ){
+            // 디자인 편집창에서 주문 id가 디폴드'20111102-0000001' 되어있어서 이것을 제외한 구매id만 purchase로 날라감
+            if('{$order_id}' != '20111102-0000001'){
+                dataLayer.push({
+                    'event' : 'checkout',
+                    'ecommerce' : {
+                        'checkout': {
+                            'actionField' : {
+                                'step' : 3,
+                                'option' : '주문완료'
+                            },
+                            'products' : echo_products
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+</div>

@@ -1,0 +1,133 @@
+* 빌더형 사이트 픽셀 샘플
+	
+[장바구니]
+● 메이크샵
+    <!-- Facebook Pixel Code 장바구니페이지 -->
+    <script>
+        var startIndex = '<!--/basket@link/-->'.indexOf("=")+1;
+        var endIndex = '<!--/basket@link/-->'.indexOf("&");        
+        fbq('track', "AddToCart", {
+            content_type: 'product',
+            content_ids: '<!--/basket@link/-->'.substring(startIndex, endIndex),
+            content_name: '<!--/basket@name/-->',
+            currency: 'KRW',
+            value: '<!--/basket@price_sell/-->'.replace(/[원,\D ]/g, '')
+        });
+    </script>
+    <!-- End Facebook Pixel Code -->
+
+● 카페24                
+<!-- Facebook Pixel Code 장바구니페이지 -->
+<script>
+	fbq('track', "AddToCart", {
+		content_type: 'product',
+		content_ids: ['{$product_no}'],
+		content_name: '{$name}',
+		currency: 'KRW',
+		value: '{$product_price}'.replace(/[원,\D ]/g, '') * '{$quantity}'
+	});
+</script>
+<!-- End Facebook Pixel Code -->                        
+       
+● 고도몰    
+<!-- Facebook Pixel Code 장바구니페이지 -->
+<script>
+    fbq('track', "AddToCart", {
+        content_type: 'product',
+        content_ids: '{=...goodsNo}',
+        content_name: '{=...goodsNm}',
+        currency: 'KRW',
+        value: '{=...price['goodsPriceSubtotal']}'
+    });
+</script>
+<!-- End Facebook Pixel Code -->			
+
+
+[주문완료]
+● 메이크샵
+<!-- Facebook Pixel Code 구매완료페이지 -->
+<script>
+        fbq('track', "Purchase", {
+	        content_type: 'product',
+                content_ids: '<!--/order_product@product_id/-->',
+                content_name: '<!--/order_product@name/-->',
+                currency: 'KRW',
+		value: '<!--/order_product@price/-->'.replace(/[원,\D ]/g, '')
+	});
+</script>
+<!-- End Facebook Pixel Code -->  
+
+● 카페24
+<!-- Facebook Pixel Code 주문완료페이지 -->
+<script>
+	if('{$product_no}') {
+		fbq('track', "Purchase", {
+			content_type: 'product',
+			content_ids: ['{$product_no}'],
+			content_name: '{$product_name}',
+			currency: 'KRW',
+			value: '{$product_price}'.replace(/[원,\D ]/g, '') * '{$product_quantity}'
+		});
+	}
+</script>
+<!-- End Facebook Pixel Code -->                  
+       
+● 고도몰		
+<!-- Facebook Pixel Code 주문완료페이지 -->
+<script>
+    fbq('track', "Purchase", {
+        content_type: 'product',
+        content_ids: '{orderInfo.orderNo}',
+        currency: 'KRW',
+        value: "{=gd_currency_display(gd_isset(orderInfo.settlePrice))}".replace(/[원,\D ]/g, '')
+    });
+</script>
+<!-- End Facebook Pixel Code -->						
+
+			
+[제품상세]
+● 메이크샵
+<!-- Facebook Pixel Code 상품상세페이지 -->
+<script>
+    fbq('track', "ViewContent", {
+        content_type: 'product',
+        content_ids: '<!--/number/-->',
+        content_name: '<!--/name/-->',
+        currency: 'KRW',
+        value: '<!--/price_sell/-->'.replace(/[^0-9]/g,"")
+    });
+</script>
+<!-- End Facebook Pixel Code -->
+
+● 카페24
+<!-- Facebook Pixel Code 상품상세페이지 -->
+<script>
+	fbq('track', "ViewContent", {
+		content_type: 'product',
+		content_ids: ['{$product_no}'],
+		content_name: '{$name}',
+		currency: 'KRW',
+		value: '{$product_price}'
+	});
+</script>
+<!-- End Facebook Pixel Code -->   
+
+● 고도몰
+<!-- Facebook Pixel Code 상품상세페이지 -->
+<script>
+    fbq('track', "ViewContent", {
+        content_type: 'product',
+        content_ids: ['{goodsView.goodsNo}'],
+        content_name: '{=goodsView['goodsNmDetail']}',
+        currency: 'KRW',
+        value: '{=gd_isset(goodsView['goodsPrice'],0)}'.replace(".00", "")
+    });
+</script>
+<!-- End Facebook Pixel Code -->	
+
+[회원가입 완료]
+<!-- Facebook Pixel Code 회원가입완료 페이지 -->
+<script>
+    fbq('track', 'CompleteRegistration');
+</script>
+<!-- End Facebook Pixel Code -->

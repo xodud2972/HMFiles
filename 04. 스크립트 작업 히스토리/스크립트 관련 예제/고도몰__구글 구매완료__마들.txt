@@ -1,0 +1,13 @@
+
+고도몰 마들쇼핑몰 주문완료 태그
+<!-- 구글태그 주문완료 2022-01-12 Triple HM -->
+<!-- Event snippet for 구매완료 conversion page -->
+<script>
+	console.log('{=gd_global_currency_display(gd_isset(orderInfo.settlePrice))}'.replace(/[원,\D ]/g,''));
+  gtag('event', 'conversion', {
+      'send_to': 'AW-693097974/eUoGCJaJnI8DEParv8oC',
+      'value': '{=gd_global_currency_display(gd_isset(orderInfo.settlePrice))}'.replace(/[원,\D ]/g,''),
+      'currency': 'KRW',
+      'transaction_id': '{orderInfo.orderNo}'
+  });
+</script>

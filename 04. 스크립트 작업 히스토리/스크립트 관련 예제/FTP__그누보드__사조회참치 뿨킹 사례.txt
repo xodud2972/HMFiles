@@ -1,0 +1,44 @@
+ID
+2226761853282660861
+
+
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('2226761853282660861').pageView();
+      kakaoPixel('2226761853282660861').purchase({
+        total_quantity: "3", 				 // 주문 내 상품 개수(optional)
+        total_price: "$pp['pp_price']", 			 // 주문 총 가격(optional)
+        currency: "KRW",     				// 주문 가격의 화폐 단위(optional, 기본 값은 KRW)
+        products: [          				// 주문 내 상품 정보(optional)
+            { id: "상품고유값 입력", name: "상품명1", quantity: "2", price: "200"},
+            { id: "상품고유값 입력", name: "상품명2", quantity: "1", price: "100"}
+        ]
+    });
+</script>
+-----------------------------------------------------------------------------------------------------------------------------
+사조회참치 같은 경우 FTP로 접속하고 그누보드로 구성이 되어있었고,
+결제완료페이지가 따로 없었으며 동시에 주문자체도 무통장입금이 없었다.
+일전에 페이스북 픽셀을 설치했을 떄도 주문금액만 잡히도록 설정을 하였기에,
+금일 진행한 카카오모몬튼 픽셀 설치시에도 주문금액만 잡히도록 설정을 하였다.
+
+그누보드 www -> mobile -> shop -> orderinquiryview.php 에 삽입
+
+<!-- 카카오모몬트 픽셀 주문완료 2022-01-14 -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('2226761853282660861').pageView();
+      kakaoPixel('2226761853282660861').purchase({
+        total_quantity: "1",										// 주문 내 상품 개수(optional)
+        total_price: "<?=$od_receipt_price?>".replace(/[원,\D ]/g, ''),	// 주문 총 가격(optional)
+        currency: "KRW"
+    });
+</script>
+
+안녕하세요 인프라개발팀 엄태영입니다.
+사조회참치 스크립트 요청 관련하여 연락드렸습니다.
+총 주문금액같은경우는 소스상에서 바로 확인이가능해서 볼 수 있는데,
+각각 상품별 데이터는 페이지 새로고침하면서 눈으로 확인해야합니다
+현상황에서는 데이터를 확인하기가 어려울 것 같습니다.
+그래서, 현재 삽입 예정인 코드는 총수량을 1로 고정하였고
+주문금액만 잡히도록 설정되었으니 참고하시면 될 것 같습니다.
+현재 삽입이 완료되었으니 페이스북 픽셀처럼 모수데이터 잡히는지 확인 부탁드리겠습니다 !

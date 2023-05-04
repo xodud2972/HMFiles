@@ -1,0 +1,87 @@
+카페24 구글 전자향상거래 구매측정, 결제측정, 장바구니 추가
+
+                <tbody module="Order_normalresultlist" class="center">
+                    <tr>
+
+<script>
+if(!echo_products) var echo_products=[];
+if('{$product_name}'!='' && !'{$product_name}'.includes("샘플")){  // 디자인편집창에 예시로 있는 상품은 제외하기 위한 if문
+echo_products.push({
+'id' : '{$param}'.split('product_no=')[1].split('&cate_no=')[0],
+'name' : '{$product_name}',
+'quantity' : '{$product_quantity}',
+'price' : '{$product_price}'.replace(',','').replace('원',''),
+'brand' : 'Healo',
+'category' : '{$param}'.substr('{$param}'.indexOf('cate_no='), '{$param}'.length).replace('cate_no=','')                           
+});
+}
+</script>
+
+
+
+
+
+                        <td>{$product_quantity}</td>
+                        <td><span class="txtInfo">{$product_mileage}</span></td>
+                        <td><div class="txtInfo">기본배송<div class="{$oversea_able_display|display}">(해외배송가능)</div></div></td>
+                        <td><strong>{$product_total_price_front_head}{$product_total_price_front}{$product_total_price_front_tail}</strong><div class="{$product_total_price_ref_display|display}">{$product_total_price_back_head}{$product_total_price_back}{$product_total_price_back_tail}</div></td>
+                    </tr>
+                    <tr>    
+<script>
+if(!echo_products) var echo_products=[];
+if('{$product_name}'!='' && !'{$product_name}'.includes("샘플")){  // 디자인편집창에 예시로 있는 상품은 제외하기 위한 if문
+echo_products.push({
+'id' : '{$param}'.split('product_no=')[1].split('&cate_no=')[0],
+'name' : '{$product_name}',
+'quantity' : '{$product_quantity}',
+'price' : '{$product_price}'.replace(',','').replace('원',''),
+'brand' : 'Healo',
+'category' : '{$param}'.substr('{$param}'.indexOf('cate_no='), '{$param}'.length).replace('cate_no=','')                           
+});
+}
+</script>   
+
+
+
+
+
+
+<!-- 구글UA 구매전환 및 결제단계 측정TripleHM 20220602 -->
+<div module="Order_result" style="display:none">    
+<script>
+gtag('event', 'purchase', {
+  "transaction_id": '{$order_id}',
+  "currency": "KRW",
+  "items" : echo_products
+});
+gtag('event', 'begin_checkout', {
+  "items": echo_products
+});    
+    console.log(echo_products);
+</script>  
+</div>
+-----------------------------------------------------------------------------------------------------------------
+
+
+상세페이지 장바구니 추가
+
+    <script>
+var addcartBtn = document.querySelector('#totalProducts > div > div.btnArea > a.btnEm');
+ console.log(addcartBtn);
+
+        function addCartFunc(){
+            gtag('event', 'add_to_cart', {
+              "items": [
+                {
+                  "id": "{$product_no}",
+                  "name": "{$product_name}",
+                  "price": '{$product_price}'
+                }
+              ]
+            });
+        }
+        
+        addcartBtn.addEventListener('click', event => {
+            addCartFunc();
+        })
+</script>    

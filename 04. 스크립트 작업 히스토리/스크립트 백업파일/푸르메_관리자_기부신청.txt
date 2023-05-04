@@ -1,0 +1,188 @@
+&nbsp;
+<div id="dona_intro" class="donation_intro_size">
+<div class="dona_title_area">
+<h2>장애인이 행복하면 모두가 행복한 사회,
+<span class="color_blue">푸르메재단</span>이 열어가겠습니다.</h2>
+</div>
+<div class="dona_contents_area">
+<div class="dona_title_img">
+<div class="img_box"><img src="https://purme.org/wp-content/uploads/dona_title_text-1.png" alt="당신의 작은 마음이 세상을 움직입니다." /></div>
+</div>
+<div class="dona_cont_txt">
+<div class="txt_box">
+
+2005년 장애어린이의 성공적인 재활을 목표로 재단을 창립,
+10년 만에 서울 마포구에 푸르메재단 넥슨어린이재활병원을 세웠습니다.
+지자체, 기업, 시민 1만 명과 함께 이뤄낸 ' 기적 ' 이었습니다.
+
+2020년, 장애청년들의 좋은 일자리를 만들고자
+경기도 여주에 푸르메소셜팜을 짓습니다. 지자체, 기업, 기관 외
+수많은 시민이 두 번째 ' 기적 ' 을 만들어가고 있습니다.
+
+장애인이 일상을 누릴 수 있는 그날까지
+푸르메재단은 새로운 복지의 모델을 만들어가겠습니다.
+함께 해주시는 여러분, 참 고맙습니다.
+
+</div>
+</div>
+</div>
+<div class="dona_info_area">
+<div id="SUB01" class="dona_info_con dona_info_01">
+<div class="dona_info_title">
+<div class="info_main_title">
+<h2>푸르메소셜팜 건립지원</h2>
+</div>
+스마트팜 첨단기기 도입, 온실 및 부대시설 건립비용 지원
+
+</div>
+<div class="dona_info_cont">
+<div class="cont_list_01">
+<div class="cont_list_img"><img src="/wp-content/uploads/dona_info_01_1.png" alt="사진1" /></div>
+<h4>하루하루 발달장애 청년들의 희망이 싹트는 행복한 일자리</h4>
+</div>
+<div class="cont_list_02">
+<div class="cont_list_box cont_list_02_1">
+<div class="cont_list_box_img"><img src="/wp-content/uploads/dona_info_01_2.png" alt="사진2" /></div>
+<h4>스마트팜 설비구축</h4>
+온도와 습도 등을 버튼 하나로 조절하는 첨단 스마트팜을 지어
+장애청년들이 안전하고 쾌적하게 일할 수 있도록 돕습니다.
+
+</div>
+<div class="cont_list_box cont_list_02_2">
+<div class="cont_list_box_img"><img src="/wp-content/uploads/dona_info_01_3.png" alt="사진3" /></div>
+<h4>체험/교육/여가시설 구축</h4>
+온실 옆에 교육장, 카페와 레스토랑, 상점 등을 열어 장애직원과
+지역주민이 함께 어울려 살아가는 공간을 만듭니다.
+
+</div>
+</div>
+<div class="dona_btn_box_con" style="margin-top: -20px;">
+<ul class="dona_btn_list">
+ 	<li class="dona_btn_box dona_btn_box_01"><a href="https://mrmweb.hsit.co.kr/v2/Member/MemberJoin.aspx?action=join&amp;server=IThkBZb5Mrs/NeV1ssOZJQ==&amp;supportgroup=22&amp;_ga=2.159632382.2107863625.1605420874-641770548.1605420874" target="_blank">정기기부<img src="/wp-content/uploads/dona_arrow_black.png" alt="정기기부" /></a></li>
+ 	<li class="dona_btn_box dona_btn_box_02"><a href="https://mrmweb.hsit.co.kr/v2/Member/SupportOnce.aspx?action=once&amp;server=IThkBZb5Mrs/NeV1ssOZJQ==&amp;supportgroup=23&amp;_ga=2.159632382.2107863625.1605420874-641770548.1605420874" target="_blank">일시기부<img src="/wp-content/uploads/dona_arrow_white.png" alt="일시기부" /></a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="SUB02" class="dona_info_con dona_info_con_use dona_info_02">
+<div class="dona_info_title">
+<div class="info_main_title">
+<h2>의료지원</h2>
+</div>
+재활치료사업비 지원
+
+</div>
+<div class="dona_flex_cont">
+<div class="dona_flex_img">
+<div class="flex_img"><img src="/wp-content/uploads/dona_info_02_1.png" alt="사진1" /></div>
+</div>
+<div class="dona_flex_txt">
+<div class="dona_txt_title">
+<h2>건강한 어린이, 건강한 가정을 응원합니다.</h2>
+</div>
+<h3>재활치료사업비</h3>
+장애어린이들이 걱정 없이 꾸준히 치료받을 수 있도록 진료 및
+치료사업 전반에 필요한 비용을 지원합니다.
+<ul class="dona_btn_list">
+ 	<li class="dona_btn_box dona_btn_box_01"><a href="https://mrmweb.hsit.co.kr/v2/Member/MemberJoin.aspx?action=join&amp;server=IThkBZb5Mrs/NeV1ssOZJQ==&amp;supportgroup=19&amp;_ga=2.159632382.2107863625.1605420874-641770548.1605420874" target="_blank">정기기부<img src="/wp-content/uploads/dona_arrow_black.png" alt="정기기부" /></a></li>
+ 	<li class="dona_btn_box dona_btn_box_02"><a href="https://mrmweb.hsit.co.kr/v2/Default.aspx?action=once&amp;server=IThkBZb5Mrs/NeV1ssOZJQ==&amp;supportgroup=20&amp;_ga=2.150718453.2107863625.1605420874-641770548.1605420874" target="_blank">일시기부<img src="/wp-content/uploads/dona_arrow_white.png" alt="일시기부" /></a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="SUB03" class="dona_info_con dona_info_con_use dona_info_03">
+<div class="dona_info_title">
+<div class="info_main_title">
+<h2>자립지원</h2>
+</div>
+지역사회재활사업비 지원
+
+</div>
+<div class="dona_flex_cont">
+<div class="dona_flex_img">
+<div class="flex_img"><img src="/wp-content/uploads/dona_info_03_1.png" alt="사진1" /></div>
+</div>
+<div class="dona_flex_txt">
+<div class="dona_txt_title">
+<h2>장애인 홀로서기, 더 나은 사회의 시작입니다.</h2>
+</div>
+<h3>지역사회재활사업비 지원</h3>
+교육, 사회적응훈련, 직업훈련 등 전문적인 서비스를 제공해
+장애인이 지역사회에서 행복하게 살아가도록 지원합니다.
+<ul class="dona_btn_list">
+ 	<li class="dona_btn_box dona_btn_box_01"><a href="https://mrmweb.hsit.co.kr/v2/Member/MemberJoin.aspx?action=join&amp;server=IThkBZb5Mrs/NeV1ssOZJQ==&amp;supportgroup=24&amp;_ga=2.150718453.2107863625.1605420874-641770548.1605420874" target="_blank">정기기부<img src="/wp-content/uploads/dona_arrow_black.png" alt="정기기부" /></a></li>
+ 	<li class="dona_btn_box dona_btn_box_02"><a href="https://mrmweb.hsit.co.kr/v2/Default.aspx?action=once&amp;server=IThkBZb5Mrs/NeV1ssOZJQ==&amp;supportgroup=12&amp;_ga=2.150718453.2107863625.1605420874-641770548.1605420874" target="_blank">일시기부<img src="/wp-content/uploads/dona_arrow_white.png" alt="일시기부" /></a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="SUB04" class="dona_info_con dona_info_con_use dona_info_04">
+<div class="dona_info_title">
+<div class="info_main_title">
+<h2>비지정</h2>
+</div>
+지원이 시급한 장애인 지원
+
+</div>
+<div class="dona_flex_cont">
+<div class="dona_flex_img">
+<div class="flex_img"><img src="/wp-content/uploads/dona_info_05_1.png" alt="사진1" /></div>
+</div>
+<div class="dona_flex_txt">
+<div class="dona_txt_title">
+<h2>재단에 맡기겠습니다.</h2>
+</div>
+<h3>가장 긴급한 곳에 우선 지원합니다.</h3>
+긴급한 도움이 필요한 장애인들을 위해 가장 시급하고,
+꼭 필요한 곳에 지원합니다.
+<ul class="dona_btn_list">
+ 	<li class="dona_btn_box dona_btn_box_01"><a href="https://mrmweb.hsit.co.kr/v2/Member/MemberJoin.aspx?action=join&amp;server=IThkBZb5Mrs/NeV1ssOZJQ==&amp;supportgroup=4&amp;_ga=2.234087005.2107863625.1605420874-641770548.1605420874" target="_blank">정기기부<img src="/wp-content/uploads/dona_arrow_black.png" alt="정기기부" /></a></li>
+ 	<li class="dona_btn_box dona_btn_box_02"><a href="https://mrmweb.hsit.co.kr/v2/Default.aspx?action=once&amp;server=IThkBZb5Mrs/NeV1ssOZJQ==&amp;supportgroup=13&amp;_ga=2.234087005.2107863625.1605420874-641770548.1605420874" target="_blank">일시기부<img src="/wp-content/uploads/dona_arrow_white.png" alt="일시기부" /></a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="SUB05" class="dona_info_con dona_info_con_use dona_info_05">
+<div class="dona_info_title">
+<div class="info_main_title">
+<h2>캠페인</h2>
+</div>
+다양한 기부 캠페인
+
+</div>
+<div class="dona_flex_cont">
+<div class="dona_flex_img">
+<div class="flex_img"><img src="/wp-content/uploads/dona_info_04_1.png" alt="사진1" /></div>
+</div>
+<div class="dona_flex_txt">
+<div class="dona_txt_title">
+<h2>함께해서 더 즐거운 다양한 캠페인</h2>
+</div>
+장애인 재활치료와 자립을 위한
+다양한 모금 캠페인에 참여하세요!
+<ul class="dona_btn_list">
+ 	<li class="dona_btn_box dona_btn_box_01"><a href="http://purme.org/donation-campaign" target="_blank">기부하기<img src="/wp-content/uploads/dona_arrow_black.png" alt="기부하기" /></a></li>
+</ul>
+<!-- Event snippet for 기부버튼 conversion page START 2021.10.14 -->
+<script>
+function gtag_report_conversion(url) {
+	kakaoPixel('1329805841398411380').purchase();
+	var callback = function () {
+	if (typeof(url) != 'undefined') {
+	window.location = url;
+}
+	};
+	gtag('event', 'conversion', {
+		'send_to': 'AW-477401848/mHmLCMDwwPsCEPil0uMB',
+		'event_callback': callback,
+                'values': 1
+	});
+	return false;
+}
+</script>
+
+</div>
+</div>
+</div>
+</div>
+</div>

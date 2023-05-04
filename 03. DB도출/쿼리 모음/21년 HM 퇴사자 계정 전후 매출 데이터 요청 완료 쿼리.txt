@@ -1,0 +1,39 @@
+http://rms.hmcorp.co.kr/work/?nc=22&id=20&category=2&content_no=80950&grp_no=80950&grp_ord=0&page=1&idx=849&division1=&division2=&s_type=&s_text=&sdate=&edate=&work_type=&request_grade_yn=&preface=&cnt=
+
+SELECT mc.m_nm, mc.cs_m_id, mc.end_date, mc.division1, mc.division2, mc.em_nm, 
+		 sum(if(DATE_FORMAT(mc.end_date - INTERVAL 6 MONTH, '%Y-%m') = tc.pay_month, tc.pay_price, 0)) AS '퇴사월-6', 
+		 sum(if(DATE_FORMAT(mc.end_date - INTERVAL 5 MONTH, '%Y-%m') = tc.pay_month, tc.pay_price, 0)) AS '퇴사월-5', 	
+		 sum(if(DATE_FORMAT(mc.end_date - INTERVAL 4 MONTH, '%Y-%m') = tc.pay_month, tc.pay_price, 0)) AS '퇴사월-4', 	
+		 sum(if(DATE_FORMAT(mc.end_date - INTERVAL 3 MONTH, '%Y-%m') = tc.pay_month, tc.pay_price, 0)) AS '퇴사월-3', 	
+		 sum(if(DATE_FORMAT(mc.end_date - INTERVAL 2 MONTH, '%Y-%m') = tc.pay_month, tc.pay_price, 0)) AS '퇴사월-2', 	
+		 sum(if(DATE_FORMAT(mc.end_date - INTERVAL 1 MONTH, '%Y-%m') = tc.pay_month, tc.pay_price, 0)) AS '퇴사월-1', 	
+		 sum(if(DATE_FORMAT(mc.end_date, '%Y-%m') = tc.pay_month, tc.pay_price, 0)) AS '퇴사월',
+		 sum(if(DATE_FORMAT(mc.end_date + INTERVAL 1 MONTH, '%Y-%m') = tc.pay_month, tc.pay_price, 0)) AS '퇴사월+1', 		 
+		 sum(if(DATE_FORMAT(mc.end_date + INTERVAL 2 MONTH, '%Y-%m') = tc.pay_month, tc.pay_price, 0)) AS '퇴사월+2', 
+		 sum(if(DATE_FORMAT(mc.end_date + INTERVAL 3 MONTH, '%Y-%m') = tc.pay_month, tc.pay_price, 0)) AS '퇴사월+3', 
+		 sum(if(DATE_FORMAT(mc.end_date + INTERVAL 4 MONTH, '%Y-%m') = tc.pay_month, tc.pay_price, 0)) AS '퇴사월+4', 		 
+		 sum(if(DATE_FORMAT(mc.end_date + INTERVAL 5 MONTH, '%Y-%m') = tc.pay_month, tc.pay_price, 0)) AS '퇴사월+5', 
+		 sum(if(DATE_FORMAT(mc.end_date + INTERVAL 6 MONTH, '%Y-%m') = tc.pay_month, tc.pay_price, 0)) AS '퇴사월+6',
+		 SUM(tc.pay_price)
+FROM
+(SELECT IF(m_nm='302', good_type2, m_nm) AS 'm_nm', cs_m_id, DATE_FORMAT(pay_date, '%Y-%m') AS 'pay_month', SUM(pay_price) AS 'pay_price'
+FROM t_contract
+WHERE del_date IS NULL AND sales_type IN ('1') AND agree_state IN ('3') AND pay_date >= '2020-07-01'
+GROUP BY IF(m_nm='302', good_type2, m_nm), cs_m_id, DATE_FORMAT(pay_date, '%Y-%m')) AS tc
+RIGHT OUTER JOIN
+(SELECT t.m_nm, t.cs_m_id, e.end_date, e.division1, e.division2, e.em_nm
+FROM
+(SELECT IF(m_nm='302', good_type2, m_nm) AS 'm_nm', cs_m_id, em_seq
+FROM t_contract
+WHERE del_date IS NULL AND sales_type IN ('1') AND agree_state IN ('3') and
+      em_seq IN ('1281','200958','1077','200967','37','1018','1610','1407','200956','1296','200955',
+					  '200959','200968','1315','1563','639','921','279','1564','1502','923','1503','1378','1669','1592','1670')) as t	  	  
+INNER JOIN 
+(SELECT em_seq, em_nm, division1, division2, end_date 
+FROM t_employee 
+WHERE em_seq IN ('1281','200958','1077','200967','37','1018','1610','1407','200956','1296','200955',
+'200959','200968','1315','1563','639','921','279','1564','1502','923','1503','1378','1669','1592','1670')) AS e
+ON (t.em_seq = e.em_seq)
+GROUP BY t.m_nm, t.cs_m_id, t.em_seq) as mc
+ON(tc.m_nm = mc.m_nm AND tc.cs_m_id = mc.cs_m_id)
+GROUP BY mc.m_nm, mc.cs_m_id, mc.em_nm

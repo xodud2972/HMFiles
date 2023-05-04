@@ -1,0 +1,31 @@
+Q) 엄태영의 본부, 팀, 직급, 직책을 SELECT해라 (직원테이블과, commons2 를 join하여)
+A) 
+1] LEFT JOIN의 경우 양 쪽에 데이터가 null 이여도 모두 출력한다 (합집합)
+SELECT 
+	DISTINCT 
+			em_nm AS 이름
+			, (SELECT kr_name FROM t_common2 WHERE t_common2.cm2_seq = POSITION1) AS 직급
+			, (SELECT kr_name FROM t_common2 WHERE t_common2.cm2_seq =  division1) AS 부서
+			, (SELECT kr_name FROM t_common2 WHERE t_common2.cm2_seq =  division2) AS 팀
+			 FROM t_employee
+			LEFT JOIN t_common2
+			ON t_employee.em_seq = t_common2.cm1_seq
+			WHERE em_nm = '엄태영' ;
+
+
+
+2] INNER JOIN 같은 경우 양 쪽 테이블 중 null 이 없는 데이터만 출력한다. (교집합)
+SELECT 
+	DISTINCT 
+				em_nm AS 이름
+				, (SELECT kr_name FROM t_common2 WHERE t_common2.cm2_seq = POSITION1) AS 직급
+				, (SELECT kr_name FROM t_common2 WHERE t_common2.cm2_seq =  division1) AS 부서
+				, (SELECT kr_name FROM t_common2 WHERE t_common2.cm2_seq =  division2) AS 팀
+				 FROM t_employee
+			INNER JOIN t_common2
+				ON t_employee.em_seq = t_common2.cm1_seq
+			WHERE em_nm = '김민주' ;
+
+3] 의문점
+엄태영의 경우 LEFT JOIN으로만 SELECT가 가능하며, 책임매니저님의 경우 LEFT와 INNER모두 가능.
+t_employee 테이블에 null데이터가 있기때문 ?

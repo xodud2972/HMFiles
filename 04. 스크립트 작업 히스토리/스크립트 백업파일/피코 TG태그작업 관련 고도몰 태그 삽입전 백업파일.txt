@@ -1,0 +1,140 @@
+{*** 장바구니 상품목록 | goods/goods_cart.php ***}
+<style media="screen">
+	table.orderitem-list {position: relative; width: 100%; margin-top: -28px; text-align: center; vertical-align: middle; border-collapse: collapse; border-spacing: 0; border-bottom: 1px solid #f1f1f1; }
+table.orderitem-list thead tr th {height: 28px; vertical-align: middle;}
+	table.orderitem-list tbody td	{ height: 120px; color: #767676; text-align: center; }
+table.orderitem-list tbody tr	{ border-top: 1px solid #f3f3f3; }
+table.orderitem-list tbody tr:first-child	{ border: 0; }
+table.orderitem-list tbody td input				{ float: none !important; }
+table.orderitem-list tbody td.order-info	{ padding-left: 8px; text-align: left; }
+table.orderitem-list tbody td.order-info p.thumbs-item	{ float: left; width: 70px; height: 70px; margin-right: 15px; background: #f2f2f2; }
+table.orderitem-list tbody td.order-info p.thumbs-item img	{ width: 70px; height: 70px; }
+table.orderitem-list tbody td.order-info dl				{ float: left; margin: 1px 0 0 0; }
+table.orderitem-list tbody td.order-info dl dt			{ margin-bottom: 3px; font-size: 12px; }
+table.orderitem-list tbody td.order-info dl dd			{ margin: 0; }
+table.orderitem-list tbody td.order-info dl dd.option{ margin: 0 0 3px 0; font-size: 11px; color: #b1b1b1; }	
+	
+	.all-cash	{ margin-bottom: 30px; padding: 11px 20px 8px 14px; background: #f8f8f8; overflow: hidden; }
+	.all-cash .btn-order	{ float: left; }
+	.all-cash .count		{ float: right; padding-top: 7px; }
+	.all-cash .count .price	{ margin-bottom: 5px; padding-left: 62px; color: #e8359d; font-weight: bold; background: url(../img/common/txt_price.gif) no-repeat left 1px; }
+	.all-cash .count .total-price	{ margin-bottom: 5px; overflow: hidden; }
+	
+	.all-cash .count .total-price .tit	{ float: left; width: 80px; color: #a7a7a7; }
+	.all-cash .count .total-price .tit-price	{ float: left; color: #e8359d; font-weight: bold;  }
+</style>
+
+<div class="table-head-bg"></div>
+<table cellpadding=0 cellspacing=0 border=0 class="orderitem-list">
+	<!--{ ? _orderitem_mode=="cart" }-->
+	<col width="5%" />
+	<!--{ / }-->
+	<col width="*" />
+	<col width="10%" />
+	<col width="15%" />
+	<col width="10%" />
+	<col width="10%" />
+<thead>
+<tr>
+	<!--{ ? _orderitem_mode=="cart" }--><th><a href="javascript:void(0);" onClick="chkBox('idxs[]','rev');nsGodo_CartAction.recalc();"><img src="../img/common/th_cart01.gif" alt="선택" /></a></th><!--{ / }-->
+	<th><img src="../img/common/th_cart02.gif" alt="상품정보" /></th>
+	<th><img src="../img/common/th_cart03.gif" alt="판매가" /></th>
+	<th><img src="../img/common/th_cart04.gif" alt="수량" /></th>
+	<th><img src="../img/common/th_cart05.gif" alt="배송비" /></th>
+	<th><img src="../img/common/th_cart06.gif" alt="합계" /></th>
+</tr>
+</thead>
+<tbody>
+
+<!--{ @ cart->item }-->
+<tr>
+	<input type="hidden" name="adultpro[]" value="{.use_only_adult}">
+	<!--{ ? _orderitem_mode=="cart" }-->
+	<td align=center><input type="checkbox" name="idxs[]" value="{.index_}" checked onClick="nsGodo_CartAction.recalc();"></td>
+	<!--{ / }-->
+	<td class="order-info">
+		<p class="thumbs-item">
+			<!--{?.todaygoods=='y'}--><a href="../todayshop/today_goods.php?tgsno={.tgsno}">{=goodsimgTS(.img,40)}</a>
+			<!--{:}--><a href="../goods/goods_view.php?goodsno={.goodsno}">{=goodsimg(.img,40)}</a>
+			<!--{/}-->
+		</p>
+		<dl>
+			<dt>{.goodsnm}</dt>
+			<dd class="option">
+				<!--{ ? .opt }-->선택옵션 : [{=implode("/",.opt)}]<br /><!--{ / }-->
+				<!--{ ? .select_addopt}-->
+				추가옵션 : <!--{ @ .select_addopt }-->[{..optnm}:{..opt}]<br /><!--{ / }-->
+				<!--{ / }-->
+				<!--{ ? .input_addopt}-->
+				입력옵션 : <!--{ @ .input_addopt }-->[{..optnm}:{..opt}]<br /><!--{ / }-->
+				<!--{ / }-->
+				<!--{ ? _orderitem_mode=="cart" }-->
+			</dd>
+		</dl>
+		<!--{ / }-->
+	</td>
+	<td align=right style="padding-right:10">{=number_format(.price + .addprice)}</td>
+	<td style="padding-left: 10px;">
+	<!--{ ? _orderitem_mode=="cart" }-->
+		<div style="display: inline; float: left; margin-right: 5px;">
+			<input type=text name=ea[] step="{? .sales_unit}{.sales_unit}{:}1{/}" min="{? .min_ea}{.min_ea}{:}1{/}" max="{? .max_ea}{.max_ea}{:}0{/}" size=2 value="{.ea}" class=line style="width:41px; width:37px\9; height:25px; height: 21px\9; padding-left: 5px; line-height: 12px; color: #6e6e6e; border-top:  1px solid #c3c3c3; border-left: 1px solid #c3c3c3; border-right: 1px solid #ddd; border-bottom: 1px solid #ddd;" onkeydown="onlynumber()" onblur="chg_cart_ea(this,'set')">
+		</div>
+		<div style="display: inline; position: relative; float:left; width: 15px; height: 25px; margin-right: 5px; overflow: hidden;">
+			<img src="../img/common/btn_plus.gif" onClick="chg_cart_ea(frmCart['ea[]'],'up',{.index_})" style="position: absolute; left: 0; top: 0; cursor:pointer;">
+			<img src="../img/common/btn_minus.gif" onClick="chg_cart_ea(frmCart['ea[]'],'dn',{.index_})" style="position: absolute; left: 0; bottom: 0; cursor:pointer;">
+		</div>
+		<p style="float: left; width: 40px;">
+			<input type=image src="../img/common/btn_modify2.gif">
+		</p>
+	<!--{ : }-->
+	{.ea}개
+	<!--{ / }-->
+	</td>
+	<!--{ ? orderitem_rowspan[.index_] > 0}-->
+	<td align=center rowspan="{orderitem_rowspan[.index_]}">
+		<!--{ ? .delivery_type == 1 }-->
+		무료배송
+		<!--{ : .delivery_type == 2 && .goods_delivery }-->
+		개별배송
+		<div>({=number_format(.goods_delivery)})</div>
+		<!--{ : .delivery_type == 3 && .goods_delivery }-->
+		착불배송
+		<div>({=number_format(.goods_delivery)})</div>
+		<!--{ : .delivery_type == 4 && .goods_delivery }-->
+		고정배송
+		<div>({=number_format(.goods_delivery)})</div>
+		<!--{ : .delivery_type == 5 && .goods_delivery }-->
+		수량별배송
+		<div>({=number_format(.goods_delivery * .ea)})</div>
+		<!--{ : }-->
+		<div id="el-default-delivery">
+		기본배송
+		</div>
+		<!--{ / }-->
+	</td>
+	<!--{ / }-->
+
+	<td align=right style="padding-right:10; color: #e73299;">{=number_format((.price + .addprice)*.ea)}</td>
+</tr>
+<!--{ ? _orderitem_mode=="cart" }-->
+<script>nsGodo_CartAction.pushdata({reserve:{=.reserve},price:{=(.price + .addprice)},ea:{=.ea}});</script>
+<!--{ / }-->
+<!--{ / }-->
+</tbody>
+</table>
+<div class="all-cash">
+	<div class="btn-order">
+		<a href="javascript:void(0);" onClick="chkBox('idxs[]','rev');nsGodo_CartAction.recalc();"><img src="../img/common/btn_all_check_item.gif" alt="전체선택" /></a>
+		<a href="javascript:void(0);" onClick="nsGodo_CartAction.del();return false;"><img src="../img/common/btn_check_item_delete.gif" alt="선택삭제" /></a>
+	</div>
+	<div class="count">
+		<p class="price"><span id="el-orderitem-total-price">{=number_format(cart->goodsprice)}</span>원</p>
+		
+		<!--{? view_aboutdc}-->
+		<p class="total-price">
+			<span class="tit">어바웃쿠폰</span>
+			<span class="tit-price">{=number_format(about_coupon)}원&nbsp;</span>
+		</p>
+		<!--{ / }-->
+	</div>
+</div>

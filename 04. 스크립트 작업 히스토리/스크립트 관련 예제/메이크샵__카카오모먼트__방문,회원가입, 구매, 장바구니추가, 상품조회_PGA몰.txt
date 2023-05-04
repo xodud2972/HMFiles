@@ -1,0 +1,52 @@
+GPGA몰 메이크샵 카카오모먼트 (방문,회원가입, 구매, 장바구니추가, 상품조회)
+
+<!-- 카카오모먼트 방문스크립트 2022.04.20 TripleHM -->
+<script type="text/javascript">
+      kakaoPixel("1802503803021313158").pageView();
+</script>
+
+<!-- 카카오모먼트 상품조회 이벤트 TripleHM 2022.04.20 -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('1802503803021313158').pageView();
+      kakaoPixel('1802503803021313158').viewContent({
+        id: "10213774"
+      });
+</script>
+
+<!-- 카카오모먼트 회원가입 이벤트 TripleHM 2022.04.20 -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+	kakaoPixel('1802503803021313158').pageView();
+	kakaoPixel('1802503803021313158').completeRegistration();
+</script>
+
+<!-- 카카오모먼트 장바구니 추가 버튼이벤트 TripleHM 2022.04.20 -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+ function cartEvent(){
+       kakaoPixel('1802503803021313158').addToCart({
+         id: "<!--/number/-->"
+       });
+ }
+var cartBtnn = document.querySelector('#cartBtn');
+cartBtnn .addEventListener('click', event => {
+   cartEvent();
+});
+</script>
+
+<!-- 카카오모먼트 구매완료 이벤트 TripleHM 2022.04.20 -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+var quar = "<!--/order_product@amount/-->";
+if(quar == "" || quear == "undefind"){
+ quar = 1;
+}
+      kakaoPixel('1802503803021313158').pageView();
+      kakaoPixel('1802503803021313158').purchase({
+        total_quantity: quar,
+        total_price: "<!--/number/pay_price/-->",
+        currency: "KRW",     
+    });
+console.log(quar);
+</script>

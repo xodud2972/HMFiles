@@ -1,0 +1,30 @@
+<?
+include $_SERVER['DOCUMENT_ROOT']."/inc/global.inc";
+include $_SERVER['DOCUMENT_ROOT']."/inc/util_lib.inc";
+
+
+$sql  = "";
+$sql .= "	Insert into df_site_counsel ";
+$sql .= "	Set		name = '".$name."' ";
+$sql .= "	,		tel = '".$tel."' ";
+$sql .= "	,		price = '".$price."' ";
+$sql .= "	,		area = '".$area."' ";
+$sql .= "	,		category = '".$category."' ";
+$sql .= "	,		content = '".$content."' ";
+$sql .= "	,		wdate = NOW() ";
+mysql_query($sql) or error(mysql_error());
+
+//naver script 
+echo'<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script>
+<script type="text/javascript">
+if (!wcs_add) var wcs_add={};
+wcs_add["wa"] = "s_2436c85808";
+if (!_nasa) var _nasa={};
+_nasa["cnv"] = wcs.cnv("4","1");
+wcs_do(_nasa);
+</script>';
+
+
+//comalert("무료상담이 접수되었습니다.", "/"); Logger 20191028 무료상담에 대해 파라미터 추가
+comalert("무료상담이 접수되었습니다.", "/?write_ok");
+?>

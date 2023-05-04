@@ -1,0 +1,9 @@
+<!-- facebook Pixel 주문완료 2021-12-17 -->
+<script>
+        fbq('track', "Purchase", {
+	        content_type: 'product',
+                content_ids: '<?= $od_id ?>',
+                currency: 'KRW',
+		value: '<?=$od_receipt_price?>'.replace(/[원,\D ]/g, '')
+	});
+</script>

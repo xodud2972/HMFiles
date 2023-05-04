@@ -1,0 +1,102 @@
+디그리뷔 향상된전자상거래 코드 장바구니추가, 주문완료 20220706
+
+
+PC   
+<script>
+    /* 장바구니 함수 */
+    function addCartFunc() {
+        gtag('event', 'add_to_cart', {
+            "items": [{
+                "id": "{$product_no}",
+                "name": "{$product_name}",
+                "price": '{$product_price}'
+            }]
+        });
+    }
+
+    var naverBtn = document.querySelector('#NaverChk_Button');
+    if(document.querySelector('#totalProducts > div > div.btnArea > a.btnEm')){
+	    var addcartBtn = document.querySelector('#totalProducts > div > div.btnArea > a.btnEm');
+    }
+    addcartBtn.addEventListener('click', event => {
+        addCartFunc();
+    })
+    
+	 /* 상세페이지 동적으로 변하는 가격은 구매클릭시에 찍혀있는 값을 토대로 변수를 만들어서 gtag에 사용한다. */
+    naverBtn.addEventListener('click', event => {
+        var current_Price = document.querySelector('#totalPrice > tr > td > strong > strong > em').textContent;
+        console.log(current_Price.replace(/[-원,\D ]/g, ''));
+        gtag('event', 'purchase', {
+          "transaction_id": "{$product_no}",
+          "currency": "KRW",
+            "value": current_Price.replace(/[-원,\D ]/g, ''),
+            "items":[{
+          			"name": "{$product_name}",
+          			"price": '{$product_price}'   
+            }]
+        });
+    })
+    /* 카카오모먼트 */
+    function getHttpParam(name) {
+        var regexS = "[\\?&]" + name + "=([^&#]*)";
+        var regex = new RegExp(regexS);
+        var results = regex.exec(window.location.href);
+        if (results == null) {
+        return 2;
+        } else {
+        return decodeURIComponent(results[1]);
+        }
+    }
+
+    setTimeout(function() {
+        if(getHttpParam('product_no') == '9224') {
+            console.log('써모넥스 방문 및 콘텐츠 조회');
+            kakaoPixel('829622579398133528').pageView('써모넥스 메인상품');
+            kakaoPixel('829622579398133528').viewContent({
+                id: "9224",
+                tag: '써모넥스 메인상품'
+            });
+            addcartBtn.addEventListener('click', event => {
+                kakaoPixel('829622579398133528').addToCart({
+                    id: "9224",
+                    tag: '써모넥스 메인상품'
+                    });
+            })
+        }
+    }, 3000);
+</script>   
+
+
+
+
+모바일
+
+<!-- Gtag 구매 및 장바구니 20220705 TripleHM -->        
+<script>
+    var addcartBtn = document.querySelector('.enp_mobon_cart > button');
+    addcartBtn.addEventListener('click', event => {
+        var current_Price_mo1 = document.querySelector('#totalPrice > div > span > strong').textContent.replace(/[-원,\D ]/g, '');
+        gtag('event', 'add_to_cart', {
+            "items": [{
+                "id": "{$product_no}",
+                "name": "{$product_name}",
+                "price": current_Price_mo1
+            }]
+        });
+    });
+    
+    var naverPayBtn = document.querySelector('#NaverChk_Button ');
+    console.log(naverPayBtn);
+    naverPayBtn.addEventListener('click', event => {
+        var current_Price_mo2 = document.querySelector('#totalPrice > div > span > strong').textContent.replace(/[-원,\D ]/g, '');
+        gtag('event', 'purchase', {
+          "transaction_id": "{$product_no}",
+          "currency": "KRW",
+            "value": current_Price_mo2,
+            "items":[{
+          			"name": "{$product_name}",
+          			"price": '{$product_price}'   
+            }]
+        });
+    })
+</script>    

@@ -1,0 +1,31 @@
+베버시티마켓 장바구니 추가 버튼 클릭시 
+
+
+<!-- 2021-12-21 Google Ads 장바구니 버튼 클릭 TripleHM -->
+<!-- Event snippet for 장바구니에 추가 conversion page -->
+<script>
+  	let btnAddCart = document.querySelector('#   버튼id   ');
+	
+	btnAddCart.addEventListener('click', event => {  
+		if($(' 버튼위에 나와있는 상품가격 id or class ').text().replaceAll(',','') != '0'){	//상품가격이 0이 아닌경우에만 발생
+			gtag('event', 'conversion', {'send_to': 'AW-10796904283/acG0CLTPoYoDENverpwo'}); //GoogleAds는 그대로 삽입
+		}
+	});
+	
+</script>
+
+
+
+// 고도몰이였음
+<!-- Google Ads 구매전환 TripleHM 2021-12-21 -->
+<!-- Event snippet for 구매 conversion page -->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-10796904283/WAOBCLGtz4oDENverpwo',
+      'value': '{=gd_currency_display(gd_isset(orderInfo.settlePrice))}'.replace(/[^0-9]/g,''),
+      'currency': 'KRW',
+      'transaction_id': '{orderInfo.orderNo}'
+  });
+	console.log('{=gd_currency_display(gd_isset(orderInfo.settlePrice))}'.replace(/[^0-9]/g,''));
+	console.log('{orderInfo.orderNo}');
+</script>

@@ -1,0 +1,127 @@
+디그리뷔 카카오모먼트 카페24 단독상품 스크립트 적용 PC,Mo 둘다 적용
+	PC는 아래코드로 적용
+	Mo는 상품상세페이지만 적용 주문완료는 넣지 않았음(카페24 디자인편집창에서 주문완료페이지 무한로딩)
+
+상품상세 페이지
+-----------------------PC----------------------------------------------------------------------------------
+<!-- PC카카오모먼트 써모넥스상품 상품조회&장바구니추가&방문 코드 20220630 -->
+<script>
+    function getHttpParam(name) {
+	    var regexS = "[\\?&]" + name + "=([^&#]*)";
+	    var regex = new RegExp(regexS);
+	    var results = regex.exec(window.location.href);
+	    if (results == null) {
+		return 2;
+	    } else {
+		return decodeURIComponent(results[1]);
+	    }
+	}
+    setTimeout(function() {
+        if(getHttpParam('product_no') == '9224') {
+            console.log('써모넥스 방문 및 콘텐츠 조회');
+            console.log('{$product_no}');
+            kakaoPixel('829622579398133528').pageView('써모넥스 메인상품');
+            kakaoPixel('829622579398133528').viewContent({
+                id: '{$product_no}',
+                tag: '써모넥스 메인상품'
+            });
+            addcartBtn.addEventListener('click', event => {
+                kakaoPixel('829622579398133528').addToCart({
+                    id: '{$product_no}',
+                    tag: '써모넥스 메인상품'
+         		 });
+                console.log('써모넥스 장바구니 클릭');
+            })
+        }
+    }, 3000);
+</script>
+
+
+-----------------------MO----------------------------------------------------------------------------------
+<!-- 마케팅 스크립트 삽입 페이지 -->
+<!--@import(/marketing/standard/kakaoMoment/detailMarketing.html)-->
+<!--@import(/marketing/standard/snappush/detailMarketing.html)-->
+<!--@import(/marketing/standard/enliple/detailMarketing.html)-->
+<!--@import(/marketing/standard/ifdo/detailMarketing.html)-->
+<!--@import(/marketing/standard/dable/detailMarketing.html)-->
+<!--@import(/marketing/standard/kakaoPixel/detailMarketing.html)-->
+위에서 첫번쨰 카카오먼트 파일열어서
+<!-- MO 카카오모먼트 써모넥스상품 상품조회&장바구니추가&방문 코드 20220630 -->
+<script>
+    function getHttpParam(name) {
+        var regexS = "[\\?&]" + name + "=([^&#]*)";
+        var regex = new RegExp(regexS);
+        var results = regex.exec(window.location.href);
+        if (results == null) {
+        return 2;
+        } else {
+        return decodeURIComponent(results[1]);
+        }
+    }
+const addcartBtn = document.querySelector('#naver > button');
+    setTimeout(function() {
+        if(getHttpParam('product_no') == '9224') {
+            console.log('써모넥스 방문 및 콘텐츠 조회');
+            kakaoPixel('829622579398133528').pageView('써모넥스 메인상품');
+            kakaoPixel('829622579398133528').viewContent({
+                id: '9224',
+                tag: '써모넥스 메인상품'
+            });
+            addcartBtn.addEventListener('click', event => {
+                kakaoPixel('829622579398133528').addToCart({
+                    id: '9224',
+                    tag: '써모넥스 메인상품'
+                    });
+                console.log('써모넥스 장바구니 클릭');
+            })
+        }
+    }, 3000);
+    </script>
+<!-- 카카오모먼트 스크립트 종료 -->
+위 코드 삽입함
+
+
+
+
+
+주문완료 페이지 -> echo_products 로 배열 만드는 소스코드 바로 밑에 삽입
+-----------------------PC----------------------------------------------------------------------------------
+<!-- PC카카오모먼트 써모넥스 전환이벤트 20220630 -->                        
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+    function getHttpParam(name) {
+	    var regexS = "[\\?&]" + name + "=([^&#]*)";
+	    var regex = new RegExp(regexS);
+	    var results = regex.exec(window.location.href);
+	    if (results == null) {
+		return 2;
+	    } else {
+		return decodeURIComponent(results[1]);
+	    }
+	}
+       if(getHttpParam('product_no') == '9224') {
+    setTimeout(function() {
+        if('{$param}'.split('product_no=')[1].split('&cate_no=')[0] == '9224'){
+            kakaoPixel('829622579398133528').pageView();
+            kakaoPixel('829622579398133528').purchase('써모넥스 메인상품');
+            console.log('이것은 9224');
+        }
+    }, 2000);        
+        }    
+</script>
+-----------------------MO----------------------------------------------------------------------------------
+ 	<!-- 참고: 상품 반복 -->
+                    <div class="prdInfo">   
+                        <!-- MO카카오모먼트 주문완료 (씨모넥스상품일경우) TripleHM20220630 -->
+                        <script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+                        <script> 
+                            if({$product_no}=='9224'){
+                                setTimeout(function() {
+                                    if('{$param}'.split('product_no=')[1].split('&cate_no=')[0] == '9224'){
+                                        kakaoPixel('829622579398133528').pageView();
+                                        kakaoPixel('829622579398133528').purchase('써모넥스 메인상품');
+                                        console.log('이것은 9224 상품을 포함합니다');
+                                    }
+                                }, 2000);    
+                            }
+                        </script>

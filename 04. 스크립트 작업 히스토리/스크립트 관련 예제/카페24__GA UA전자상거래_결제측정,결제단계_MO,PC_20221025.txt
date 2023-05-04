@@ -1,0 +1,45 @@
+카페24_GA UA전자상거래_결제측정,결제단계_MO,PC_20221025
+
+기존 고도몰에서 카페24로 리뉴얼하면서 전환이 잡히지 않게 되어
+1부문 안다예PM 요청으로 작업진행
+
+특이사항 : GA계정 슬리피캣 속성 보기 중에서 Master 에서는 보이지 않고, Test에서만 확인 되어 내용공유
+
+resultinfo 안에
+	<script>
+        // 주문번호
+	    const order_id = '{$order_id}';
+	</script>    
+삽입
+----------------------------------------------------------------------------------
+          </li>
+          <li title="배송">기본배송 <span class="{$oversea_able_display|display}">(해외배송가능)</span></li>
+     </ul>
+</div>
+아래에 
+<!-- 구매목록 배열 TripleHM 20221024 -->                                
+<script>   
+    if(!echo_products) var echo_products=[];
+    echo_products.push({
+    'id': '{$product_no}',
+    'name' : '{$product_name}',
+    'price' : '{$product_price}'.replace(',','').replace('원',''),
+    'quantity' : '{$product_quantity}'
+    });
+    console.log(echo_products);
+</script>    
+삽입(같은 코드 밑에 한번더 삽입해야 함)
+----------------------------------------------------------------------------------
+body태그 밖에 아래 태그 삽입
+    <script>
+     // GA UA전자상거래 결제단계측정 및 결제측정 TripleHM 20221024 
+    gtag('event', 'purchase', {
+        "transaction_id": order_id,
+        "currency": "KRW",
+        "items": echo_products
+    });
+    gtag('event', 'begin_checkout', {
+		"items": echo_products
+	});
+
+    </script>

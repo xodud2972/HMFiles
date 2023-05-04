@@ -1,0 +1,27 @@
+-------------------------------------PC-------------------------------------
+<!-- 페이스북스크립트 N-Pay버튼 Triple 20221124 시작-->
+<script>
+	var npay_button = document.querySelector('#NPAY_BUTTON_BOX_ID > div.npay_button > table > tbody > tr > td:nth-child(1) > a');	
+	npay_button.addEventListener('click', event => {
+		fbq('trackCustom', 'click_NPay',{
+			contents_id : '{goodsView.goodsNo}',			
+			currency: 'KRW', 
+			value : document.querySelector('#total_price').textContent.replace(/[원,\D ]/g,'')
+		});
+	});
+</script>
+<!-- 페이스북스크립트 N-Pay버튼 Triple 20221124 끝 -->
+
+-------------------------------------M-------------------------------------
+<!-- 페이스북스크립트 N-Pay버튼 Triple 20221124 시작-->
+<script>
+	var npay_button = document.getElementsByClassName('npay_btn_item')[0];
+	npay_button.addEventListener('click', event => {	
+		fbq('trackCustom', 'click_NPay',{
+			contents_id : '{goodsView.goodsNo}',			
+			currency: 'KRW', 
+			value : document.querySelector('#frmView > div > div.option_total_display_area > div.total_price_box.view_end_price > ul > li.total > dl > dd').textContent.replace(/[원,\D ]/g,'')
+		});		
+	});	
+</script>
+<!-- 페이스북스크립트 N-Pay버튼 Triple 20221124 끝 -->

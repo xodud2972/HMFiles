@@ -1,0 +1,30 @@
+개발관련문서 폴더에 정리 잘해두기
+
+
+
+페이징 처리
+view폴더에는 .php만 있고 나머지 다 밖으로
+cms seller_data_sync 30line처럼 배열로...
+=================최근글이 가장위로 올라오게 sorting
+db.php에 mysqli_query 함수로 만들어사용
+select_one에 while삭제
+file을 멀티플로 진행
+================DB에서 table명 수정하기
+================T_file 테이블 따로 생성하기(peple_id로 연결)
+================file 컬럼은 varchar200으로 설정
+================모든 컬럼은 unicode ci로 설정
+================taeyoung.js 함수들은 모두 각 페이지 아래로 이동
+process파일을 하나로 묶어서 케이스별로 실행(action=add)
+auto_rule.php보면 switch case예시 나옴
+select_all에서는 select_one처럼 html태그는 뺴고 진행하기
+delete페이지는 따로 작성하여 edit,add처럼 ajax로 진행
+T_poeple 데이터가 삭제되면 같은id T_file데이터가 삭제되도록
+뿌릴때는 조인해서 뿌려야함
+===============header파일확인하고 include할때 중복되지 않게 진행
+
+
+CMS파일들 잘보기
+CMS에 답이 다 있음
+
+다음주 금요일까지
+

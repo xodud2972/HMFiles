@@ -1,0 +1,913 @@
+<?
+
+/**********************************************
+Author				: 엄태영
+Create Date			: 2022.05.11
+Comment				: 매출현황조회
+-----------------------------------------------
+Modify Author		:
+Modify date			:
+Comment				:
+ ***********************************************/
+?>
+
+
+<title>매출관리리포트>매출현황조회</title>
+
+<?
+$N_ChkLevelValue = 40;
+@include_once $_SERVER['DOCUMENT_ROOT'] . '/include/inc.level.php';
+@include_once $_SERVER['DOCUMENT_ROOT'] . '/report/cls/cls.sales68.php';
+@include_once $_SERVER['DOCUMENT_ROOT'] . '/cls/cls.employee.php';
+
+$dateList = $_GET['dateList'];
+$s_date                = $_GET['s_date'] ? $_GET['s_date'] : date("Y-m-01");
+$e_date                = $_GET['e_date'] ? $_GET['e_date'] : date("Y-m-d");
+
+$cal_kind            = $_GET['cal_kind'];
+$syear                = $_GET['syear'];
+$smonth                = $_GET['smonth'];
+$sday                = $_GET['sday'];
+$eyear                 = $_GET['eyear'];
+$emonth                = $_GET['emonth'];
+$eday                = $_GET['eday'];
+
+$syear                 = $syear ? $syear     : date('Y');
+$smonth                = $smonth ? $smonth    : date('m');
+$sday                 = $sday ? $sday         : "01";
+$eyear                 = $eyear ? $eyear     : date('Y');
+$emonth                = $emonth ? $emonth    : date('m');
+$eday                 = $eday ? $eday         : date('d') - 1;
+
+$s_date                = $_GET['s_date'];
+$e_date                = $_GET['e_date'];
+$week                = $_GET['week'];
+$weekdayyn            = $_GET['weekdayyn'];
+
+$division1            = $_GET['division1'];
+$division2            = $_GET['division2'];
+$em_nm                = $_GET['em_nm'];
+
+$ad_type              = $_GET['ad_type'];
+$m_nm             = $_GET['m_nm'];
+$cs_nm        = $_GET['cs_nm'];
+$cs_m_id          = $_GET['cs_m_id'];
+$cs_num         = $_GET['cs_num'];
+
+// 주의 첫날과 마지막날 계산 START
+$sdate = "$syear-$smonth-$sday";
+$edate = "$eyear-$emonth-$eday";
+// 검색이 일요일일 경우 -1 day
+$yoil = array("일", "월", "화", "수", "목", "금", "토");
+if ($yoil[date('w', strtotime($sdate))] === '일') {
+    $sdate = date('Y-m-d', strtotime($sdate . '-1 days'));
+}
+if ($yoil[date('w', strtotime($edate))] === '일') {
+    $edate = date('Y-m-d', strtotime($edate . '-1 days'));
+}
+
+
+if ($_SESSION['em_level'] == 40) {
+    $division1        = $_SESSION['em_division1'];
+    $division2        = $_SESSION['em_division2'];
+    $em_nm            = $_SESSION['s_em_seq'];
+    $em_nm_1        = $_GET['em_nm'];
+} else if ($_SESSION['em_level'] == 30) {
+    $division1        = $_SESSION['em_division1'];
+    $division2        = $_SESSION['em_division2'];
+    $em_nm            = $_GET['em_nm'];
+    $em_nm_1        = $_GET['em_nm'];
+} else if ($_SESSION['em_level'] == 20) {
+    $division1        = $_SESSION['em_division1'];
+    $division2        = $_GET['division2'];
+    $em_nm            = $_GET['em_nm'];
+    $em_nm_1        = $_GET['em_nm'];
+} else if ($_SESSION['em_level'] == 10) {
+    $division1        = $_GET['division1'];
+    $division2        = $_GET['division2'];
+    $em_nm            = $_GET['em_nm'];
+    $em_nm_1        = $_GET['em_nm'];
+}
+
+$clsEmp            = new clsEmp();      //  report -> cls -> cls.employee.php
+$clsGoodType    = new clsGoodType();    //  report -> cls -> cls.sales.php
+
+$S_RETURNVAL     = $clsGoodType->funcGoods3($cal_kind, $syear, $smonth, $sday, $eyear, $emonth, $eday); //  report -> cls -> cls.sales.php
+//$T_RETURNVAL     = $clsGoodType->funcGoods4(); 
+$S_RETURNVAL_EMP = $clsEmp->funSelectEmpAll(1);                                                         //  report -> cls -> cls.employee.php
+
+// 최대값 최소값에 따른 폰트 스타일
+function chnageMaxMinTextColor($value, $max, $min)
+{
+    echo $value . " " . $max . " " . $min . "</br>";
+}
+
+/* 최대값 최소값 찾기 START */
+$maxDateValue = 0;
+$minDateValue = 9999999999;
+$maxValue = array();
+$minValue = array();
+
+$maxDateValue_wk = 0;
+$minDateValue_wk = 9999999999;
+$maxValue_wk = array();
+$minValue_wk = array();
+
+// 주간 제외 나머지
+if ($cal_kind != "wk") {
+    foreach ($S_RETURNVAL['good_type2'] as $k => $v) {
+        foreach ($v as $k1 => $v1) {
+            $maxValue[$k1] = 0;
+            $minValue[$k1] = 9999999999;
+
+            $maxValue_wk[$k1] = 0;
+            $minValue_wk[$k1] = 9999999999;
+        }
+        $good_type2_cnt[$k] = count($v);
+    }
+
+    foreach ($S_RETURNVAL['good_type2_price'] as $k => $v) {
+        foreach ($v as $k1 => $v1) {
+            foreach ($v1 as $k2 => $v2) {
+                $tt[$k] += $v2;
+
+                if ($v2 > $maxValue[$k2]) {
+                    $maxValue[$k2] = $v2;
+                }
+                if ($v2 < $minValue[$k2]) {
+                    $minValue[$k2] = $v2;
+                }
+            }
+        }
+        if ($tt[$k] > $maxDateValue) {
+            $maxDateValue = $tt[$k];
+        }
+        if ($tt[$k] < $minDateValue) {
+            $minDateValue = $tt[$k];
+        }
+    }
+
+    // 주간일때
+} else {
+    foreach ($S_RETURNVAL['good_type2'] as $k => $v) {
+        foreach ($v as $k1 => $v1) {
+
+            $maxValue_wk[$k1] = 0;
+            $minValue_wk[$k1] = 9999999999;
+        }
+        $good_type2_cnt[$k] = count($v);
+    }
+
+    foreach ($S_RETURNVAL['good_type2_price'] as $k => $v) {
+        foreach ($v as $k1 => $v1) {
+            foreach ($v1 as $k2 => $v2) {
+                $tt_wk[$k] += $v2;
+
+                if ($v2 > $maxValue_wk[$k2]) {
+                    $maxValue_wk[$k2] = $v2;
+                }
+                if ($v2 < $minValue_wk[$k2]) {
+                    $minValue_wk[$k2] = $v2;
+                }
+            }
+        }
+        if ($tt_wk[$k] > $maxDateValue_wk) {
+            $maxDateValue_wk = $tt_wk[$k];
+        }
+        if ($tt_wk[$k] < $minDateValue_wk) {
+            $minDateValue_wk = $tt_wk[$k];
+        }
+    }
+}
+/* 최대값 최소값 찾기 END */
+
+$array_nm                = @funSelectCom5('24');
+echo '<pre>';
+echo 'array_nm : ';
+print_r($array_nm);
+echo '</pre>';
+// 리스트 제목만들기
+foreach ($array_nm as $k => $v) {
+    if (in_array($k, $S_RETURNVAL['m_nm'])) {
+
+        $array_nm_matching[$k] = $v;
+    }
+}
+
+?>
+
+<script language='javascript'>
+    function funcSubmit() {
+        if (frm1.s_date.value > frm1.e_date.value) {
+            alert("시작일이 종료일보다 뒷날입니다.다시 선택해주세요.");
+            return false;
+        }
+    }
+
+    function allCheck(val) {
+        var cnt = document.frm1.elements[val].length;
+        for (var i = 0; i < cnt; i++) {
+            document.frm1.elements[val][i].checked = document.frm1.all_good_type2.checked;
+        }
+    }
+
+    function selectDivi1(division1, type) {
+
+        //frm1.old_divi.value = division1;
+        iFrmSubmit.location.href = "/frame_division/select_division2.php?division1=" + division1 + "&type=" + type;
+    }
+
+    function selectDivi2(division1, division2, type) {
+        //alert(division1);
+        iFrmSubmit.location.href = "/frame_division/select_division2.php?division1=" + division1 + "&division2=" + division2 + "&type=" + type;
+
+    }
+
+    function getDivision2(obj, row) {
+        if (obj.value != '') {
+            $.ajax({
+                type: 'POST',
+                url: '/include/inc.select_division2.php',
+                data: 'division1=' + obj,
+                dataType: 'json',
+                success: function(response) {
+                    var list = eval(response);
+                    $('#division2').find('option').each(function() {
+                        $(this).remove();
+                    });
+
+                    var str = "";
+                    str += "<option value=''>선택</option>";
+                    $.each(list, function(key, val) {
+                        str += "<option value=" + key + ">" + val + "</option>";
+                    });
+                    $('#division2').append(str);
+                }
+            });
+        }
+    }
+
+    function hide_l_layers() {
+        document.all.spanStartDay.style.display = 'none';
+        document.all.spanEndDay.style.display = 'none';
+        document.all.divWeek.style.display = 'none';
+    }
+
+    function s_mode(lname) {
+        if (lname == 'm' || lname == 'y') {
+            document.all.spanStartDay.style.display = 'none';
+            document.all.spanEndDay.style.display = 'none';
+            document.all.divWeek.style.display = 'none';
+            document.all.divWeekDayYn.style.display = 'none';
+        } else if (lname == 'd') {
+            document.all.spanStartDay.style.display = 'inline';
+            document.all.spanEndDay.style.display = 'inline';
+            document.all.divWeek.style.display = 'none';
+            document.all.divWeekDayYn.style.display = 'none';
+        } else if (lname == 'wk') {
+            document.all.spanStartDay.style.display = 'inline';
+            document.all.spanEndDay.style.display = 'none';
+            document.all.divWeek.style.display = 'none';
+            document.all.divWeekDayYn.style.display = 'none';
+        } else if (lname == 'wd') {
+            document.all.spanStartDay.style.display = 'inline';
+            document.all.spanEndDay.style.display = 'inline';
+            document.all.divWeek.style.display = 'inline';
+            document.all.divWeekDayYn.style.display = 'inline';
+        } else if (lname == 'w') {
+            document.all.spanStartDay.style.display = 'inline';
+            document.all.spanEndDay.style.display = 'inline';
+            document.all.divWeek.style.display = 'none';
+            document.all.divWeekDayYn.style.display = 'inline';
+        }
+    }
+
+    function getEmNm(v) {
+        frm = frm1;
+        if (!v) {
+            alert("직원명을 입력하십시오.");
+            return false;
+        }
+        url = "search_em_nm.php?frm=frm1&s_item=em_nm&s_string=" + encodeURIComponent(v) + "&order=order";
+        window.open(url, 'search', 'width=500,height=400,scrollbars=1,status=1');
+    }
+
+    function viewCpc(t, d, m, wk, el, good_type2) {
+        console.log(t, d, m, wk, el, good_type2);
+        var em_seq;
+        var arr_division1 = new Array();
+        var arr_division2 = new Array();
+        var arr_good_type2 = new Array();
+
+
+        if (<?= $_SESSION['em_level'] ?> == 10) {
+            var k = 0;
+            for (var i = 0; i < frm1['division1[]'].length; i++) {
+                if (frm1['division1[]'][i].checked == true) {
+                    arr_division1[k] = frm1['division1[]'][i].value;
+                    k++;
+                }
+            }
+
+            var l = 0;
+            for (var i = 0; i < frm1['division2[]'].length; i++) {
+                if (frm1['division2[]'][i].checked == true) {
+                    arr_division2[l] = frm1['division2[]'][i].value;
+                    l++;
+                }
+            }
+
+
+            if (frm1.em_seq.value) {
+                em_seq = frm1.em_seq.value;
+            } else if (frm1.em_nm.value) {
+                em_seq = frm1.em_seq1.value;
+            }
+        } else if (<?= $_SESSION['em_level'] ?> == 30) {
+            if (frm1.em_nm.value) {
+                em_seq = frm1.em_seq1.value;
+            }
+
+        } else {
+            em_seq = "<?= $_SESSION['s_em_seq'] ?>";
+        }
+
+
+        if (t == "c") {
+            location.href = "?nc=53&division1=" + arr_division1 + "&division2=" + arr_division2 + "&sdate=" + d;
+        } else {
+            url = "pop_personal_term_sales.php?type=" + t + "&ndate=" + d + "&m_nm=" + m + "&good_type2=" + good_type2 + "&division1=" + arr_division1 + "&division2=" + arr_division2 + "&em_seq=" + em_seq + "&sales_type=" + el;
+            window.open(url, 'asdf', 'width=1400,height=700,left=0,top=0,scrollbars=yes');
+        }
+    }
+
+
+
+
+    // 광고유형, 광고매체 +, - 항목 처리
+    $(function() {
+        var productState = true;
+
+        $("#titleProductType").on("click", function() {
+            if ($("#btnProduct").text() == "-") {
+                $("#btnProduct").text("+");
+                $("#productType").attr("style", "display:none");
+
+            } else {
+                $("#btnProduct").text("-");
+                $("#productType").attr("style", "display:inline");
+            }
+
+            if (productState) {
+                $("#productType").animate({
+                    color: "#330000",
+                }, 0);
+                $('#productType').css('height', 'auto');
+            } else {
+                $("#productType").animate({
+                    color: "#000",
+                    height: 00
+                }, 0);
+            }
+            productState = !productState;
+        });
+
+        var divState1 = true;
+
+        $("#ad_type").on("click", function() {
+            if ($("#btndiv1").text() == "-") {
+                $("#btndiv1").text("+");
+
+            } else {
+                $("#btndiv1").text("-")
+            }
+            if (divState1) {
+                $("#divType1").animate({
+                    color: "#fff",
+                    height: 200
+                }, 0);
+                $('#divType1').css('height', 'auto');
+            } else {
+                $("#divType1").animate({
+                    color: "#000",
+                    height: 20
+                }, 0);
+            }
+            divState1 = !divState1;
+        });
+
+        var divState2 = true;
+        $("#m_nm").on("click", function() {
+            if ($("#btndiv2").text() == "-") {
+                $("#btndiv2").text("+");
+
+            } else {
+                $("#btndiv2").text("-")
+            }
+            if (divState2) {
+                $("#divType2").animate({
+                    color: "#fff",
+                    height: 200
+                }, 0);
+                $('#divType2').css('height', 'auto');
+            } else {
+                $("#divType2").animate({
+                    color: "#000",
+                    height: 20
+                }, 0);
+            }
+            divState2 = !divState2;
+        });
+
+
+    });
+</script>
+
+
+
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=css&amp;skin=doxy"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script type="text/javascript" src="/lib/datePicker/js/datepicker_copy.js"></script>
+<script type="text/javascript" src="/lib/datePicker/js/DateRange.js"></script>
+<script type="text/javascript" src="/lib/datePicker/js/DateRangesWidget.js"></script>
+<link rel="stylesheet" href="/lib/datePicker/css/datepicker/base.css" />
+<link rel="stylesheet" href="/lib/datePicker/css/DateRangesWidget/base.css" />
+<link rel="stylesheet" href="/lib/datePicker/examples/example.css" />
+
+
+<div style="float:left; width:100%">
+    <div style="float:left; margin-top:5px;">매출관리리포트 > 매출현황조회</div>
+    <div>
+
+        <!-- 조회 폼 -->
+        <form method='GET' action='/report/sales/' name='frm1' onsubmit='return funcSubmit(this)'>
+
+            <input type='hidden' name='nc' value='<?= $_GET['nc'] ?>'>
+            <!-- <input type="hidden" name="old_divi"> -->
+            
+            <!-- <input type="hidden" name="em_seq1" value='<?= $_GET['em_seq1'] ?>'> -->
+
+            <!-- 조회 테이블 -->
+            <table width="100%" border="0" cellpadding="5" cellspacing="1" bgcolor="CCCCCC" align="left">
+
+                <!-- 광고유형 TR  -->
+                <tr bgcolor="#FFFFFF">
+                    <td bgcolor="#EFEFEF" id="ad_type">광고유형
+                        <font id="btndiv1">+</font>
+                    </td>
+                    <td valign="top">
+                        <div id="divType1" class="ui-widget-content ui-corner-all" style="width:100%; height:20; overflow:auto; overflow-y:hidden; border:0px solid #FFF;">
+                            <table cellpadding="0" cellspacing="0" border='0'>
+                                <tr>
+                                    <td width="100%" valign="top">
+                                        <input type="checkbox" name="ad_type[]" value="1230,1231,1232,1233,1234">유형별 (전체)<br><br>
+                                        <input type="checkbox" name="ad_type[]" value="1230" style="margin-left: 35px;">검색유형
+                                        <input type="checkbox" name="ad_type[]" value="1231" style="margin-left: 35px;">배너유형
+                                        <input type="checkbox" name="ad_type[]" value="1232" style="margin-left: 35px;">커머스유형
+                                        <input type="checkbox" name="ad_type[]" value="1233" style="margin-left: 35px;">컨텐츠유형
+                                        <input type="checkbox" name="ad_type[]" value="1234" style="margin-left: 35px;">기타
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- 광고매체 TR  -->
+                <tr bgcolor="#FFFFFF" style="cursor:pointer">
+                    <td bgcolor="#EFEFEF" id="m_nm">광고매체
+                        <font id="btndiv2">+</font>
+                    </td>
+                    <td valign="top">
+                        <div id="divType2" class="ui-widget-content ui-corner-all" style="width:100%; height:20; overflow:auto; overflow-y:hidden; border:0px solid #FFF;">
+                            <table cellpadding="0" cellspacing="0" border='0'>
+                                <tr>
+                                    <td width="100%" valign="top">
+                                        <input type="checkbox" name="m_nm[]" value="264,41,42,454,520,504,38,845,496,808,847,820,844,1198,988,1213,265,20,1214,789,816">매체별 (전체)<br><br>
+                                        <input type="checkbox" name="m_nm[]" value="264" style="margin-left: 35px;">네이버
+                                        <input type="checkbox" name="m_nm[]" value="41" style="margin-left: 47px;">카카오
+                                        <input type="checkbox" name="m_nm[]" value="42" style="margin-left: 70px;">네이트
+                                        <input type="checkbox" name="m_nm[]" value="454" style="margin-left: 47px;">크리테오
+                                        <input type="checkbox" name="m_nm[]" value="520" style="margin-left: 35px;">와이더플래닛
+                                        <input type="checkbox" name="m_nm[]" value="504" style="margin-left: 35px;">인라이플
+                                        <input type="checkbox" name="m_nm[]" value="38" style="margin-left: 45px;">리얼클릭
+                                        <input type="checkbox" name="m_nm[]" value="000000" style="margin-left: 45px;">레인보우8<br>
+                                        <input type="checkbox" name="m_nm[]" value="845" style="margin-left: 35px;">메타
+                                        <input type="checkbox" name="m_nm[]" value="496" style="margin-left: 59px;">지마켓글로벌
+                                        <input type="checkbox" name="m_nm[]" value="808" style="margin-left: 35px;">11번가
+                                        <input type="checkbox" name="m_nm[]" value="847" style="margin-left: 45px;">위메프
+                                        <input type="checkbox" name="m_nm[]" value="820" style="margin-left: 47px;">티몬
+                                        <input type="checkbox" name="m_nm[]" value="844" style="margin-left: 83px;">인터파크
+                                        <input type="checkbox" name="m_nm[]" value="1198" style="margin-left: 45px;">다나와
+                                        <input type="checkbox" name="m_nm[]" value="988" style="margin-left: 56px;">쿠팡<br>
+                                        <input type="checkbox" name="m_nm[]" value="000000" style="margin-left: 35px;">코이즈
+                                        <input type="checkbox" name="m_nm[]" value="1213" style="margin-left: 47px;">바이럴
+                                        <input type="checkbox" name="m_nm[]" value="265" style="margin-left: 71px;">구글
+                                        <input type="checkbox" name="m_nm[]" value="20" style="margin-left: 58px;">위사
+                                        <input type="checkbox" name="m_nm[]" value="1214" style="margin-left: 59px;">버즈빌
+                                        <input type="checkbox" name="m_nm[]" value="000000" style="margin-left: 71px;">토스
+                                        <input type="checkbox" name="m_nm[]" value="789" style="margin-left: 69px;">에피어
+                                        <input type="checkbox" name="m_nm[]" value="000000" style="margin-left: 56px;">클릭몬<br>
+                                        <input type="checkbox" name="m_nm[]" value="816" style="margin-left: 35px;">카울리
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- 소속 TR -->
+                <tr bgcolor="#FFFFFF" class="toggler">
+                    <td bgcolor="#EFEFEF" height="auto">소속</td>
+                    <td>
+                        <select style="font-size:9pt" name='division1' class='adminSelect' onchange="selectDivi1(this.value,3)">
+                            <option value=''>본부전체</option>
+                            <? foreach (funSelectCom('1', '', '1', 'Y') as $key => $val) { ?>
+                                <option value='<?= $key ?>' <?= $key == $division1 ? "selected" : "" ?>><?= $val ?></option>
+                            <? } ?>
+                        </select>
+
+                        <span id="division2"></span>
+
+                        <select name="division2" class='adminSelect' onchange="selectDivi2(frm1.division1.value,this.value,3)">
+                            <option value="">팀선택</option>
+                        </select>
+
+                        <select name="em_nm" class='adminSelect'>
+                            <option value="">직원선택</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr bgcolor="#FFFFFF">
+                    <td bgcolor="#EFEFEF"> 광고주 </td>
+                    <td>
+                        <select id="searchSelect" name="s_item" style="width:100px">
+                            <option value="cs_nm" <?= "cs_nm" == $_GET['s_item'] ? "selected" : "" ?>>광고주명</option>
+                            <option value="cs_m_id" <?= "cs_m_id" == $_GET['s_item'] ? "selected" : "" ?>>광고계정</option>
+                            <option value="cs_num" <?= "cs_num" == $_GET['s_item'] ? "selected" : "" ?>>사업자번호</option>
+                        </select>
+                        </select>
+                        <input style="background-color: #EFEFEF" id="inputString" type="text" name="s_string" class='adminInputTxt' value="<?= $_GET['s_string'] ?>">
+                    </td>
+                </tr>
+
+                <tr bgcolor="#FFFFFF">
+                    <td bgcolor="#EFEFEF">조회유형 </td>
+                    <td>
+                        <input type="radio" value="d" name="cal_kind" checked onclick="s_mode('d')" <?= "d" == $cal_kind ? "checked" : "" ?>>일별
+                        <input type="radio" value="wk" name="cal_kind" onclick="s_mode('wk')" <?= "wk" == $cal_kind ? "checked" : "" ?>>주별
+                        <input type="radio" value="m" name="cal_kind" onclick="s_mode('m')" <?= "m" == $cal_kind ? "checked" : "" ?>>월별
+                        <input type="radio" value="y" name="cal_kind" onclick="s_mode('y')" <?= "y" == $cal_kind ? "checked" : "" ?>>연별
+                    </td>
+                </tr>
+                <tr bgcolor="#FFFFFF">
+                    <td bgcolor="#EFEFEF">조회기간</td>
+                    <td>
+                        <div id="container" style="margin: 0">
+                            <div class="item" style="height: auto;">
+                                <div class="pickerContainer widget" style="margin: 0" name="dateList" value="date">
+                                </div>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+
+                <tr bgcolor="#FFFFFF">
+                    <td colspan="2" align="center" height="30">
+                        <!--<INPUT TYPE="submit" value="조&nbsp;&nbsp;&nbsp;회" class="adminButton" style="width:100px;height:25px">-->
+                        <!--<button class="button" type="submit"><span class="ui-button-icon ui-icon ui-icon-search"  class="ui-state-default ui-corner-all"></span> 조 회</button>-->
+                        <button class="ui-button ui-widget ui-corner-all" type="submit"><span class="ui-button-icon ui-icon ui-icon-search"></span> 조 회</button>
+
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+    </div>
+
+    <div>5. 구글 차트로 수정하기</div>
+    <!-- 차트 -->
+    <div id="curve_chart" style="float:left; width: 100%; height: 250px;margin:0 0 20 0 " class="ui-state-default ui-corner-all"></div>
+    <div id="chart_div" style="width: 100%; height: 500px;"></div>
+
+    <div>6. 데이터 변경</div>
+    <? 
+    // echo '<pre>';
+    // echo 'array_nm_matching';
+    // print_r($array_nm_matching);
+    // echo '</pre>';
+
+    // echo '<pre>';
+    // echo 's_returnval';
+    // print_r($S_RETURNVAL); 
+    // echo '</pre>';
+//     echo '<pre>';
+// print_r($GLOBALS['HOLIDAY']); 비영업일..? 휴무일 ..?
+// echo '</pre>';
+    ?>
+    
+    <div style="float:left; margin:20 0 20 0; width:100%; overflow: auto;" >
+        <div style="float:left; margin:0 0 0 0;" class='tablewrapper'>
+
+
+            <table class="tablereport demo-1" >
+                <!-- 주간 제외 나머지 조회일 떄 head영역 -->
+                <? if ($cal_kind != "wk" || $cal_kind == "") { ?>
+                    <thead>
+                        <!-- 첫번쨰 tr : rowspan이 2 이다. 테이블 head부분이 두줄이기때문이다. -->
+                        <tr>
+                        <!-- 매체구분 체크 수에 따라서 '일자' 행 스타일 다르게 줌 -->
+                            <th rowspan="2" align="center">
+                                <? foreach ($array_nm_matching as $k => $v) { ?>
+                                    <? if (count($array_nm_matching) <= 3) { ?>
+                                            <div>
+                                    <? } else { ?>
+                                            <div style="width:80px" align="center">
+                                    <? }
+                                } ?>일자</div>
+                            </th>
+                        <!-- 셀병합은 매체의 상품 수만큼하고 매체명을 뿌려준다. -->                
+                            <? foreach ($array_nm_matching as $k => $v) { ?>
+                                <th colspan="<?= $good_type2_cnt[$k] ?>" align="center">
+                                    <?= $v ?> 
+                                </th>
+                            <? } ?>
+
+                            <th rowspan="2" align="center">
+                                <div style="width:100px">합계</div>
+                            </th>
+                        </tr>
+
+                        <!-- 두번쨰 tr : 나머지 헤드 두번쨰 영역에 상품명 뿌려준다. -->
+                        <tr>
+                        <? foreach ($array_nm_matching as $k => $v) {
+                                foreach ($S_RETURNVAL['good_type2'][$k] as $k1 => $v1) { ?>
+                                <th>
+                                    <?= funcGoodsKnm($v1) ?>
+                                </th>
+                            <? }
+                        } ?>
+                        </tr>
+
+
+                    </thead>
+
+                <? } else { ?>
+
+                    <!-- 주간일때 조회일 떄 head영역-->
+                    <thead>
+
+                         <!-- 첫번쨰 tr : rowspan이 2 이다. 테이블 head부분이 두줄이기때문이다. -->
+                        <tr>
+                            <!-- 매체구분 체크 수에 따라서 '일자' 행 스타일 다르게 줌 -->
+                            <th rowspan="2" align="center">
+                                <? foreach ($array_nm_matching as $k => $v) { ?>
+                                    <? if (count($array_nm_matching) <= 3) { ?><div><? } else { ?><div style="width:80px" align="center"><? }
+                                                                                                                                    } ?>일자</div>
+                            </th>
+                        <!-- 셀병합은 매체의 상품 수만큼하고 매체명을 뿌려준다. -->                                                                                                                          
+                        <? foreach ($array_nm_matching as $k => $v) { ?>
+                            <th colspan="<?= $good_type2_cnt[$k] ?>" align="center">
+                                <?= $v ?>
+                            </th>
+                        <? } ?>
+
+                            <th rowspan="2" align="center">
+                                <div style="width:100px">합계</div>
+                            </th>
+                        </tr>
+
+
+                         <!-- 두번쨰 tr : 나머지 헤드 두번쨰 영역에 상품명 뿌려준다. -->
+                        <tr>
+                            <? foreach ($array_nm_matching as $k => $v) {
+                                foreach ($S_RETURNVAL['good_type2'][$k] as $k1 => $v1) {?>
+                                    <th><?= funcGoodsKnm($v1) ?></th>
+                            <? }
+                            } ?>
+                        </tr>
+                    </thead>
+
+                <? } ?>
+                <?
+
+//---------------------------------------------일별 tbody + tfoot--------------------------------------------------------------------------------------------------------
+                if ($cal_kind != "wk" || $cal_kind == "") { ?>
+                    <tbody>
+                    <?  $rows[] = array('year', '합계');
+
+                        if (!is_array($S_RETURNVAL['pay_date'])) {
+                            array_push($rows, array(0, 0));
+                        }
+
+                        foreach ($S_RETURNVAL['pay_date'] as $k => $v) {
+                            list($d, $w) = explode(' ', date('Y-m-d w', strtotime($k)));
+                            $timestamp += 86400;
+                    ?>
+                            <tr bgcolor="<?= $bgcolor ?>">
+                                <td class='center' bgcolor="<?= $bgcolor ?>"><?= $_GET['cal_kind'] == "w" || $_GET['cal_kind'] == "wd" ? $k : $k ?></td>
+                                <?
+
+                                foreach ($array_nm_matching as $k1 => $v1) {
+                                    foreach ($S_RETURNVAL['good_type2'][$k1] as $k2 => $v2) {               			
+                                        $realValue        = $S_RETURNVAL['good_type2_price'][$k][$k1][$k2]; 
+
+                                        $tot[$k2]        += $S_RETURNVAL['good_type2_price'][$k][$k1][$k2];
+                                        $tot_m_nm[$k1]    += $S_RETURNVAL['good_type2_price'][$k][$k1][$k2];
+                                        $tot_date[$k]    += $S_RETURNVAL['good_type2_price'][$k][$k1][$k2];
+                                        $grand_tot        += $S_RETURNVAL['good_type2_price'][$k][$k1][$k2];
+
+                                        $google_tot[$k]    += $S_RETURNVAL['good_type2_price'][$k][$k1][$k2];
+                                ?>
+                                        <td class='right'>
+                                            <? if ($cal_kind == "d" || $cal_kind == "") { ?>
+                                                <span class='blue b l_left'>
+                                                    <a href='#' class='blue' onclick="viewCpc('d','<?= $k ?>','<?= $k1 ?>','1','<?= $k2 ?>');" title='어제와 오늘의 매출 비교'>d</a>
+                                                </span>
+                                            <? } else if ($cal_kind == "m") { ?>
+                                                <span class='blue b l_left'>
+                                                    <a href='#' class='blue' onclick="viewCpc('m','<?= $k ?>','<?= $k1 ?>','1','<?= $k2 ?>');" title='지난달과 이번달의 매출 비교'>M</a>
+                                                </span>
+                                            <? } ?>
+                                        <!-- 최대값 최솟값 폰트 컬러 -->
+                                        <? if ($realValue == $maxValue[$k2]) {
+                                                echo "<font color='#FF0000'><b>" . number_format($realValue) . "</b></font>";
+                                            } else if ($realValue == $minValue[$k2]) {
+                                                echo "<font color='#0080FF'><b>" . number_format($realValue) . "</b></font>";
+                                            } else {
+                                                echo number_format($realValue);
+                                            }
+                                            ?>
+                                        </td>
+                                <? }
+                                } ?>
+
+
+
+                                <!-- 합계 데이터 뿌리기 및 최대값 최솟값 폰트 컬러 -->
+                                <td class='right'>
+                                <?  if ($tot_date[$k] == $maxDateValue) {
+                                        echo "<font color='#FF0000'><b>" . number_format($tot_date[$k]) . "</b></font>";
+                                    } else if ($tot_date[$k] == $minDateValue) {
+                                        echo "<font color='#0080FF'><b>" . number_format($tot_date[$k]) . "</b></font>";
+                                    } else {
+                                        echo number_format($tot_date[$k]);
+                                    }
+                                    ?>
+
+                                </td>
+                            </tr>
+
+                        <? array_push($rows, array($_GET['cal_kind'] == "w" || $_GET['cal_kind'] == "wd" ? $k : $k, $google_tot[$k]));
+                        }
+                        $jsonTable = json_encode($rows); 
+                        ?>
+
+                    </tbody>
+
+
+
+                    <tfoot>
+                        <tr>
+                            <th class='center' rowspan="2">총계</th>
+                        <? foreach ($tot as $k => $v) { ?>
+                            <th class='right b'>
+                                <? if (count($tot) <= 13) { ?>
+                                    <div>
+                                <? } else { ?>
+                                    <div style="width:120px">
+                                <? } ?>
+                                    <?= number_format($v) ?></div>
+                                </th>
+                        <? } ?>
+                            <th class='right' rowspan="2"><?= number_format($grand_tot) ?></th>
+                        </tr>
+                        <tr>
+                            <? foreach ($array_nm_matching as $k => $v) { ?>
+                                <th colspan="<?= $good_type2_cnt[$k] ?>" align="right"><?= number_format($tot_m_nm[$k]) ?></span></th>
+                            <? } ?>
+                        </tr>
+                    </tfoot>
+                    <? } ?>
+<?//---------------------------------------------주별 tbody tfoot--------------------------------------------------------------------------------------------------------?>
+                <? if ($cal_kind == "wk") { ?>
+                    <tbody>
+                    <? $rows_wk[] = array('year', '합계');
+                        if (!is_array($S_RETURNVAL['pay_date'])) {
+                            array_push($rows_wk, array(0, 0));
+                        }
+                        foreach ($S_RETURNVAL['pay_date'] as $k => $v) { ?>
+                            <tr bgcolor="<?= $bgcolor ?>">
+                                <td class='center' style="width:10px" bgcolor="<?= $bgcolor ?>"><?= $v ?></td>
+                            <?foreach ($array_nm_matching as $k1 => $v1) {
+                                foreach ($S_RETURNVAL['good_type2'][$k1] as $k2 => $v2) {                        
+                                        $realValue           = $S_RETURNVAL['good_type2_price'][$v][$k1][$k2];  
+                                        $tot[$k2]           += $S_RETURNVAL['good_type2_price'][$v][$k1][$k2];
+                                        $tot_m_nm[$k1]      += $S_RETURNVAL['good_type2_price'][$v][$k1][$k2];
+                                        $tot_date[$k]       += $S_RETURNVAL['good_type2_price'][$v][$k1][$k2];
+                                        $grand_tot          += $S_RETURNVAL['good_type2_price'][$v][$k1][$k2];  
+                                        $google_tot[$k]     += $S_RETURNVAL['good_type2_price'][$v][$k1][$k2]; ?>
+
+                                    <td class='right'>
+                                        <span class='blue b l_left'>
+                                            <a href='#' class='blue' onclick="viewCpc('wk','<?= $v ?>','<?= $k1 ?>','1','<?= $k2 ?>');" title='지난주와 이번주의 매출 비교'>wk</a>
+                                        </span>
+                                    <?if ($realValue == $maxValue_wk[$k2]) {
+                                            echo "<font color='#FF0000'><b>" . number_format($realValue) . "</b></font>";
+                                        } else if ($realValue == $minValue_wk[$k2]) {
+                                            echo "<font color='#0080FF'><b>" . number_format($realValue) . "</b></font>";
+                                        } else {
+                                            echo number_format($realValue);
+                                        }?>
+                                    </td>
+                        <?        }
+                                } ?>
+                                <td class='right'>
+                                <?if ($tot_date[$k] == $maxDateValue_wk) {
+                                        echo "<font color='#FF0000'><b>" . number_format($tot_date[$k]) . "</b></font>";
+                                    } else if ($tot_date[$k] == $minDateValue_wk) {
+                                        echo "<font color='#0080FF'><b>" . number_format($tot_date[$k]) . "</b></font>";
+                                    } else {
+                                        echo number_format($tot_date[$k]);
+                                    }?>
+                                </td>
+                            </tr>
+                            <? array_push($rows_wk, array($v, $google_tot[$k]));
+                        }
+                        $jsonTable = json_encode($rows_wk); ?>
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <th class='center' rowspan="2">총계</th>
+                            <? foreach ($tot as $k => $v) { ?>
+                                <th class='right b'>
+                                <? if (count($tot) <= 13) {?>
+                                        <div>
+                                <?  } else { ?>
+                                        <div style="width:120px">
+                                <? } ?>
+                                    <?= number_format($v) ?></div>
+                                </th>
+                            <? } ?>
+                            <th class='right' rowspan="2"><?= number_format($grand_tot) ?></th>
+                        </tr>
+                        <tr>
+                            <? foreach ($array_nm_matching as $k => $v) { ?>
+                                <th colspan="<?= $good_type2_cnt[$k] ?>" align="right"><?= number_format($tot_m_nm[$k]) ?></span></th>
+                            <? } ?>
+                        </tr>
+                    </tfoot>
+                <? } ?>
+            </table>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+    var data = google.visualization.arrayToDataTable(<?= $jsonTable ?>);
+
+    var options = {
+        title: '매출 추이',
+        curveType: 'function',
+        legend: {
+            position: 'bottom'
+        },
+        fontSize: 11,
+        backgroundColor: '#f8f8f8',
+
+    };
+
+    var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+    }
+</script>
+<script src="/thema/jQuery-Fix-Table-header-When-Scrolling-floatThead/dist/jquery.floatThead.js"></script>
+<script>
+    $('.tablereport.demo-1').floatThead({
+        scrollContainer: function($table) {
+            return $table.closest('.tablewrapper');
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#loading').fadeOut(500);
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+       var date = $('.pickerContainer').DateRangesWidget2(); 
+       console.log(date);
+    });
+</script>
+
+<iframe name='iFrmSubmit' width="0" height="0" frameborder="0" src="/frame_division/select_division2.php?division1=<?= $division1 ?>&division2=<?= $division2 ?>&em_nm=<?= $em_nm ?>&em_nm_1=<?= $em_nm_1 ?>&type=3&view_type=2"></iframe>

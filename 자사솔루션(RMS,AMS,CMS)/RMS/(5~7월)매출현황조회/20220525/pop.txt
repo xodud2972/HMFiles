@@ -1,0 +1,94 @@
+<?
+ob_start();
+@session_start();
+echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
+
+@include_once $_SERVER['DOCUMENT_ROOT']."/include/db.php";
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.common.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/report/cls/cls.sales68.php';
+
+db_open();
+$clsGoodType    = new clsGoodType();    //  report -> cls -> cls.sales.php
+
+$S_RETURNVAL     = $clsGoodType->funcSelectCsList($date, $good_type2, $code4); 
+
+
+
+
+?>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Pragma" content="no-cache">
+<title>매출관리리포트 > 매출현황조회 > 계정리스트</title>
+<link rel="stylesheet" href="/css/style.css" type="text/css">
+<SCRIPT LANGUAGE="Javascript" SRC="/fchart/Code/FusionCharts/FusionCharts.js"></SCRIPT>
+<script>
+    var today = new Date();
+    var year = today.getFullYear();
+    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+    var day = ('0' + today.getDate()).slice(-2);
+    var dateString = year + month + day;
+    var filename = "계정리스트"+ dateString + "_default_data";
+</script>
+<div style="margin-bottom: 10px;">
+	<h2 style="margin-top: 20px; margin-bottom : 0;">계정리스트</h2>
+	<button class="button" onclick="tableToExcel('table00',filename);" style="margin-bottom: 5px; float: right; font-size: 14px; border: none; vertical-align: middle; border-radius: 5px; font-size: 15px;">
+	다운로드
+	</button>
+</div>
+
+		<table width="100%"  border="1" cellpadding="5" cellspacing="1"  id="table00" style="border: none;" >
+		<tr>
+			<td class="targetTitle1">번호</td>
+			<td class="targetTitle1">본부</td>
+			<td class="targetTitle1">팀</td>
+			<td class="targetTitle1">담당자명</td>
+			<td class="targetTitle1">매체명</td>
+			<td class="targetTitle1">계정명</td>			
+			<td class="targetTitle1">광고유형</td>
+			<td class="targetTitle1">광고상품</td>
+			<td class="targetTitle1">총비용</td>
+		</tr>
+<? for($i=0; $i<count($S_RETURNVAL['division1']); $i++  ){ ;?>
+
+	<? 
+		foreach ($S_RETURNVAL as $k) ?>
+		<tr>  
+			<td class="conConTxtC"><?=$i+1?></td>
+			<td class="conConTxtC"><?=$S_RETURNVAL['division1'][$i]?></td>
+			<td class="conConTxtC"><?=$S_RETURNVAL['division2'][$i]?></td>
+			<td class="conConTxtC"><?=$S_RETURNVAL['em_seq'][$i]?></td>
+			<td class="conConTxtC"><?=$S_RETURNVAL['m_nm'][$i]?></td>
+			<td class="conConTxtC"><?=$S_RETURNVAL['cs_m_id'][$i]?></td>
+			<td class="conConTxtC"><?=$S_RETURNVAL['code4'][$i]?></td>
+			<td class="conConTxtC"><?=$S_RETURNVAL['good_type22'][$i]?></td>
+			<td class="conConTxtC"><?=number_format($S_RETURNVAL['pay_price'][$i])?></td>
+			<? $total_price += $S_RETURNVAL['pay_price'][$i] ?>
+		</tr>
+<?}?>
+		<tr class="right b"  bgcolor="#EFEFEF">
+			<td colspan="8" style="text-align: center">합계 </td>
+			<td colspan="1"><?=number_format($total_price)?></td>
+		</tr>
+		</table>
+		
+		<div style="margin-top:20;text-align:center; margin-bottom: 50px;">
+			<button class="ui-button ui-widget ui-corner-all" onclick="self.close();">
+				<span class="ui-icon ui-icon-close"></span> 닫기
+			</button>
+		</div>
+<script>
+    function tableToExcel(id, title) {
+        var data_type = 'data:application/vnd.ms-excel;charset=utf-8';
+        var table_html = encodeURIComponent(document.getElementById(id).outerHTML);
+        var a = document.createElement('a');
+        a.href = data_type + ',%EF%BB%BF' + table_html;
+        a.download = title + '.xls';
+        a.click();
+    }
+
+</script>
+
+
+

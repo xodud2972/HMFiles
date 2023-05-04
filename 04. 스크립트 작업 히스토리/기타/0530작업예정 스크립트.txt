@@ -1,0 +1,14 @@
+조별철 PM 요청 스크립트 30일 월요일 오후 2시 이후 진행 예정
+작업 URL : https://www.cdnetworks.com/ko/contact-thank-you/
+작업 내용 : 
+	네이버 공통스크립트 + 해당 URL 전환코드삽입
+	카카오 공통스크립트 + 해당 URL 전환코드 삽입
+	header파일
+	(카카오 pageview만) + (카카오 purchase만)
+	(네이버 공통스크립트) + (네이버 전환코드)
+
+3.업체URL : https://www.cdnetworks.com
+
+FTP : 66.114.61.100 / PORT : 21
+ID : wp-admin
+PW: jbc3jtugids! 

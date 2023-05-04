@@ -1,0 +1,19 @@
+RMS 폴더 및 파일 추가 목록
+1. lib 폴더 : bootstrap-ko버전
+2. phpExcel_ty 폴더 : 기존 phpExcel의 몇몇파일들을 수정했기때문에, 기존 PHPExcel폴더와 별개로 사용예정
+3. uploads 폴더 : excel파일이 업로드되는 폴더를 추가함.
+4. include안에 db2.php : 기존 소스는 mysqli가 아니여서 나의 php버전에 맞는 소스로 변경한 파일
+4. outpeopleDBDown_process 파일 : 해당 엑셀파일의 Process 파일
+5. outpeopleDBDownView.php 파일 : VIEW파일
+6. outpeopleDBDownView_top 파일 : VIEW파일의 Top 파일
+
+RMS에 적용 로직
+1. 메뉴 생성 및 신규VIEW파일 생성 후 페이지이동 확인 view&topview
+2. VIEW파일 정상작동 확인 후 process 삽입
+3. 이후 파일,폴더 추가 항목들 그대로 추가
+
+( 추가 사항 )
+- nc 를 몇번으로 페이지를 만들것인지 확인해봐야함.
+- 서버의 디렉토리 주소로 모두 변경해줘야함. 부트스트랩부터 각종 폴더와 라이브러리들
+- 메뉴는 인프라개발팀만 보이도록 설정?
+- PHP버전이 다르기 때문에 mysqli 문법 관련해서도 수정할 수도 있음.

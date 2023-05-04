@@ -1,0 +1,20 @@
+<!-- 구글 UA 공통코드 --> UA는 유니버셜 애널리틱스라는 뜻
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-V9X8D4PXRK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-V9X8D4PXRK');
+</script>
+
+
+<!-- 구글UA 구매전환 TripleHM 202205017 -->
+<script>
+gtag('event', 'purchase', {
+  "transaction_id": '{orderInfo.orderNo}',
+  "currency": "KRW",
+  "value" : '{=gd_global_currency_display(gd_isset(orderInfo.settlePrice))}'.replace(/[원,\D ]/g,'')
+});
+</script>

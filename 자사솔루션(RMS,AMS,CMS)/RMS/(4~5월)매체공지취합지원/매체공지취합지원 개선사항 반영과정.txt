@@ -1,0 +1,88 @@
+@include_once $_SERVER['DOCUMENT_ROOT'].'/PHPExcel_2022/PHPExcel.php';
+		
+ob_start(); 
+$objPHPExcel = new PHPExcel();
+$dir_path = $_SERVER['DOCUMENT_ROOT']."/data/work_project_file/";
+
+
+
+		//require_once $_SERVER['DOCUMENT_ROOT'].'/phpExcelReader/Excel/reader.php';
+		//$data = new Spreadsheet_Excel_Reader();
+		//$data->setOutputEncoding('CP949');
+		//$dir_path = $_SERVER['DOCUMENT_ROOT']."/data/work_project_file/";
+		
+		//print_R($_FILES);
+
+		if($_FILES){		
+			/*공지, 취합파일 업로드*/
+			if( $_FILES['file_nm']){
+				$files_upload_tmp	= $_FILES['file_nm']['tmp_name'];
+				$files_upload_nm	= $_FILES['file_nm']['name'];				
+				$files_upload_size	= $_FILES['file_nm']['size'];
+
+				$file_info = pathinfo($files_upload_nm);
+
+				$file_name_real = preg_replace( '/,/', '_', $file_info['basename']);
+				$file_name_real = preg_replace( '/\s+/', '', $file_name_real);
+				$file_name_real = $files_upload_nm;	
+				$file_name_new	= strtotime("now").".".$file_info['extension'];
+			
+				if(move_uploaded_file($files_upload_tmp,$dir_path.$file_name_new)){
+					$B_RETURNVAL = 1;
+$objPHPExcel = PHPExcel_IOFactory::load($dir_path.$file_name_new);
+$objPHPExcel -> setActiveSheetIndex(0);
+$activesheet = $objPHPExcel -> getActiveSheet();
+$highestRow = $activesheet -> getHighestRow();             // 마지막 행
+$highestColumn = $activesheet -> getHighestColumn();    // 마지막 컬럼
+for($row = 1; $row <= $highestRow; $row++) {
+	$rowData = $activesheet -> rangeToArray("A" . $row . ":" . $highestColumn . $row, NULL, TRUE, FALSE);
+	$temp[$row] = $rowData[0]; 
+	//print_r($temp[$row]);
+} 
+				}else{
+					$B_RETURNVAL = -1;
+					exit();
+				}
+			}
+
+inert쿼리에 인코딩하는 iconv 코드는 제외            
+
+-------------------------------------------------------
+DB의 정상적으로 insert. (title, content 둘 다)
+s_returnval 에서 title은 array로 찍혀서 상세페이지에서 보여지는데,
+content는 array에 찍히지 않음.
+원래 title과 content 의 배열 둘 다 있어야함.
+
+상세페이지에서 가져오는 s_returnval는 어디서 가져오는가
+어디서 만들어지는가
+---------------------------------------------------------------
+cls파일에서 4278 line에 Qry부분에서 조건 $where_em_seq를 제외시킴
+해당조건은 무엇인가.
+-------------------------------------------------------------------
+insert부분만 excel로바꾸면 되는 줄 알았는데,
+cls파일에서 content가 넘어오지 않아서 조건을 바꿨음
+1. 내용이 보여지는 화면에서 옵션항목과 한글이름이 보여지지 않음.
+2. 항목정렬이 이전과 다름.
+그런데 데이터는 맞음.
+
+
+
+
+------------------------0329--------------------------------
+PHPEXCEL코드는 동일하게 넣고 
+insert되는 부분의 인코딩 부분을 수정하였다.
+down부분과 상세페이지 부분은 보여지지만,
+한글데이터들은 찍히지 않는다.
+
+문제 : DB에 찍힐 때 title1부터 들어가야하는데
+
+자꾸 title0부터 찍히기때문에 해당 common숫자들이 한글로해석되지 않음.
+
+엑셀파일에서는 부문, 담당ㅈ, site, 확인여부 부분이 제대로 출력되지 않음.
+
+결론 : DB에 title0부터 찍히는게 아닌 title1 부터 찍히게 하면 문제 없음.
+
+-----------------------------------------
+title은 정상적으로 들어갔으나
+title1의 값인 927 이 찍히지 않고 사라졌다.
+즉 title2값이 title1부터 찍히고 실제로 title1은 입력되지 않았다.

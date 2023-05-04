@@ -1,0 +1,302 @@
+    <style>
+		#smoothmenu1{
+			padding : 6px;
+		}
+    </style>
+    <!-- Bootstrap Core CSS -->
+    <link href="/thema/startbootstrap-sb-admin-2-gh-pages/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<!-- font-awesome CSS -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css" />
+	<!-- datepicker -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="../lib//bootstrap-datepicker.ko.js"></script>
+
+<body style="margin: 8px;">
+    <div class="well" style="margin: 1%; background-color:#FFFFFF">
+	    <h5>파일관리 > 파일다운로드		
+		<?
+			$title = '퇴사자 파일 다운로드';
+			$pageIndex = '7';
+			@include_once $_SERVER['DOCUMENT_ROOT'].'/tool/initBookMark.php';
+		?> 
+		</h5>
+            <div class="panel panel-default">
+                <div class="panel-body" style="width:50%">
+                    <table width="100%" class="table table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td style="text-align:center;"><h5>양식 다운로드</h5></td>
+                                    <td>
+                                        <button id="formFile" class="btn btn-info"><a style="color:white;" href="../file/retiree/Form_File.xlsx">양식 다운로드</a></button>
+                                    </td>
+                                </tr>
+							<form id="frm1" name="frm1" role="form" method="POST" action="../cls/cls.file_retiree.php" enctype="multipart/form-data">
+								<tr>
+                                    <td style="text-align:center;"><h5>업로드 파일 선택</h5></td>
+                                    <td>
+                                        <input class="btn btn-default" id="file" name="file" type="file" value="" style="width: 100%; border: none; vertical-align: middle;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: middle; text-align:center;"><h5>기간조회</h5></td>
+                                    <td style="vertical-align: middle; float:left; display:flex; border:none; padding-top:13px">
+										<div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+											<div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+												<input autocomplete="off" style="background-color: #F8F8F8; text-align: center; border:1px solid #cccccc" id="date1" name="startDate" type="text" class="datetimepicker-input" data-target="#datetimepicker1" placeholder="시작날짜">
+											</div>
+										</div>
+										<i class="fa fa-calendar"></i>
+										&nbsp ~ &nbsp
+										<div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+											<div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+												<input autocomplete="off" style="background-color: #F8F8F8; text-align: center; border:1px solid #cccccc" id="date2" name="endDate" type="text" class="datetimepicker-input" data-target="#datetimepicker2" placeholder="끝 날짜">
+											</div>
+										</div>
+										<i class="fa fa-calendar"></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:center"><h5>나누기</h5></td>
+                                    <td style="text-align:left; vertical-align: middle;">
+										<input type="text" name="divide" value="" style="border:1px solid #cccccc; background-color: #F8F8F8; width: 300px;" placeholder="ex)    3">
+									</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                    <input type="submit" class="btn btn-info" value="다운로드" onclick="alert('확인 버튼을 누르고 5초 정도 기다려주세요')">
+                    </form>
+                </div>
+            </div>
+        </div>
+</body>
+
+<!-- datepicker script -->
+<script type="text/javascript">
+    $(function() {
+        $('#datetimepicker1').datetimepicker({
+            format: 'YYYY-MM-DD',
+            locale: 'ko',
+        });
+        $('#datetimepicker2').datetimepicker({
+            format: 'YYYY-MM-DD',
+            locale: 'ko',
+            useCurrent: true
+        });
+        $("#datetimepicker1").on("change.datetimepicker", function(e) {
+            $('#datetimepicker2').datetimepicker('minDate', e.date);
+
+        });
+        $("#datetimepicker2").on("change.datetimepicker", function(e) {
+            $('#datetimepicker1').datetimepicker('maxDate', e.date);
+        });
+    });
+</script>
+---------------------------------------------------------------29.php----------------------------------------------------------------
+
+
+
+
+----------------------------------------------------------------cls.file.retiree.php--------------------------------------------------
+<?php
+session_start();
+@include_once $_SERVER['DOCUMENT_ROOT']."/include/db.php";
+@include_once $_SERVER['DOCUMENT_ROOT']."/include/inc.common.php";
+@include_once $_SERVER['DOCUMENT_ROOT']."/PHPExcel_2022/PHPExcel.php";
+
+db_open();
+
+ob_start();
+
+
+if (isset($_POST['divide'])) {
+    $divide = $_POST['divide'];
+}
+if (isset($_POST['startDate'])) {
+    $sDate = $_POST['startDate'];
+}
+if (isset($_POST['endDate'])) {
+    $eDate = $_POST['endDate'];
+}
+if (isset($_FILES['file']['name'])) {
+    $file = $_FILES['file']['name'];
+    $tmp_Name = $_FILES["file"]["tmp_name"];
+    $filePath = "../file/retiree/";
+    $filename = iconv("UTF-8", "EUC-KR", $_FILES['file']['name']);
+    $name = basename($file);
+    move_uploaded_file($tmp_Name, "$filePath"."$file");
+}
+
+
+$allData = array();
+$resultData = array();
+$colData = array();
+
+$objPHPExcel = new PHPExcel();
+
+if (isset($filename)) {
+    $objPHPExcel = PHPExcel_IOFactory::load("../file/retiree/".$filename);
+}
+$objPHPExcel->setActiveSheetIndex(0);
+$sheet = $objPHPExcel->getActiveSheet();
+$highestRow = $sheet->getHighestRow();           // 마지막 행
+$highestColumn = $sheet->getHighestColumn();    // 마지막 컬럼
+
+
+for ($row = 3; $row <= $highestRow; $row++) {
+    $rowData = $sheet->rangeToArray("A" . $row . ":" . $highestColumn . $row, NULL, TRUE, FALSE);
+    $allData[$row] = $rowData[0];
+//	print_r(iconv("utf-8", "euc-kr", $rowData[0][2]));
+    if($row >= 3){
+
+		$mediaKrName = iconv("utf-8", "euc-kr", $allData[$row][2]);
+
+		if( $mediaKrName == '구글'){
+			$allData[$row][2] = 265;
+		}else if($mediaKrName == '네이버'){
+			$allData[$row][2] = 264;
+		}else if($mediaKrName == '카카오'){
+            $allData[$row][2] = 41;
+		}else if($mediaKrName == '기타'){
+            $allData[$row][2] = 302;
+        }else if($mediaKrName == '페이스북'){
+            $allData[$row][2] = 845;
+        }else if($mediaKrName == '티몬'){
+            $allData[$row][2] = 820;
+        }else if($mediaKrName == '인터파크'){
+            $allData[$row][2] = 844;
+        }else if($mediaKrName == '위메프'){
+            $allData[$row][2] = 847;
+        }else if($mediaKrName == '카카오모먼트'){
+            $allData[$row][2] = 881;
+        }else if($mediaKrName == '와이더플래닛'){
+            $allData[$row][2] = 520;
+        }else if($mediaKrName == '인라이플(모비온)'){
+            $allData[$row][2] = 504;
+        }else if($mediaKrName == '네이트'){
+            $allData[$row][2] = 853;
+        }else if($mediaKrName == '크리테오'){
+            $allData[$row][2] = 454;
+        }else if($mediaKrName == '바이럴'){
+            $allData[$row][2] = 1213;
+        }else if($mediaKrName == '다음브랜드검색'){
+            $allData[$row][2] = 839;
+        }else if($mediaKrName == '네이버GFA'){
+            $allData[$row][2] = 969;
+        }else if($mediaKrName == '다음키워드광고'){
+            $allData[$row][2] = 839;
+        }else if($mediaKrName == '11번가'){
+            $allData[$row][2] = 808;
+        }else if($mediaKrName == '이베이'){
+            $allData[$row][2] = 496;
+        }else if($mediaKrName == '타게팅게이츠'){
+            $allData[$row][2] = 438;
+        }else if($mediaKrName == 'ADN'){
+            $allData[$row][2] = 963;
+        }else if($mediaKrName == '인터파크'){
+            $allData[$row][2] = 844;
+        }else if($mediaKrName == '다나와-애드스마트'){
+            $allData[$row][2] = 1198;
+        }else if($mediaKrName == '롯데온'){
+            $allData[$row][2] = 974;
+        }else if($mediaKrName == '지그재그'){
+            $allData[$row][2] = 889;
+        }else{
+            $allData[$row][2] = '';
+        } 
+
+        $tempList['col2'] = $allData[$row][2];
+        $tempList['col3'] = $allData[$row][3];
+
+        $colData[] = $tempList;
+    }
+}
+
+
+
+$cellNo = 3;
+
+for($colIndex=0; $colIndex< sizeof($colData); $colIndex++){
+
+
+    if(isset($colData[$colIndex]['col3']) !== "" && isset($colData[$colIndex]['col2']) !== ""){
+        $querySelectDataList = sprintf(
+            'SELECT c1.cs_num, getcomkrname(c1.cs_type_new1) AS cs_type_new1 , getcomkrname(c1.cs_type_new2) AS cs_type_new2, 
+                                                c1.cs_nm,c1.url AS url, c1.mg_nm, c1.mg_cell1, c1.mg_cell2, c1.mg_cell3,
+                                                c1.mg_tel1, c1.mg_tel2, c1.mg_tel3, c1.mg_email, 
+                                                round(SUM(c2.pay_price)/%d,0) AS pay_price, getcomkrname(c2.m_nm) AS m_nm
+                                        FROM t_customer c1
+                                            INNER JOIN(
+                                                        SELECT cs_seq, cs_m_id, m_nm, pay_date, pay_price
+                                                        from t_contract
+                                                        WHERE cs_m_id ="%s"
+                                                        AND m_nm = "%s"
+                                                        AND pay_date BETWEEN "%s" AND "%s"
+                                                    )c2 
+                                            ON c1.cs_seq = c2.cs_seq
+                                        GROUP BY c2.cs_m_id, m_nm
+                                        ORDER BY m_nm',
+        $divide, $colData[$colIndex]['col3'], $colData[$colIndex]['col2'], $sDate, $eDate);
+
+        $result = que($querySelectDataList);
+
+        while ($row = @mysql_fetch_assoc($result)) {
+            $tempData['cs_num'] = iconv("utf-8", "euc-kr", $row['cs_num']);
+            $tempData['cs_type_new1'] = iconv("utf-8", "euc-kr", $row['cs_type_new1']);
+            $tempData['cs_type_new2'] = iconv("utf-8", "euc-kr", $row['cs_type_new2']);
+            $tempData['cs_nm'] = iconv("utf-8", "euc-kr", $row['cs_nm']);
+            $tempData['url'] = iconv("utf-8", "euc-kr", $row['url']);
+            $tempData['mg_nm'] = iconv("utf-8", "euc-kr", $row['mg_nm']);
+            $tempData['mg_cell'] = $row['mg_cell1'] .'-'. $row['mg_cell2'] .'-'. $row['mg_cell3'];
+            $tempData['mg_tel'] = $row['mg_tel1'] .'-'. $row['mg_tel2'] .'-'. $row['mg_tel3'];
+            $tempData['mg_email'] = iconv("utf-8", "euc-kr", $row['mg_email']);
+            $tempData['pay_price'] = iconv("utf-8", "euc-kr", $row['pay_price']);
+            $tempData['m_nm'] = iconv("utf-8", "euc-kr", $row['m_nm']);
+
+            $resultData[$colIndex] = $tempData;		
+
+        }
+
+        $sheetIndex = $objPHPExcel->setActiveSheetIndex(0);
+    
+        if(isset($resultData[$colIndex])){
+            $sheetIndex ->setCellValue('A1', 'From : '.$sDate)
+                        ->setCellValue('A2', 'To : '.$eDate)
+                        ->setCellValue('A3', 'Divide : '.$divide)
+						->setCellValue('N1', $divide.iconv("euc-kr", "utf-8", '개월 평균매출(').$sDate.'~'.$eDate.')')
+                        ->setCellValue('E'.$cellNo, iconv("euc-kr", "utf-8", $resultData[$colIndex]['cs_num']))
+                        ->setCellValue('F'.$cellNo, iconv("euc-kr", "utf-8", $resultData[$colIndex]['cs_type_new1']))
+                        ->setCellValue('G'.$cellNo, iconv("euc-kr", "utf-8", $resultData[$colIndex]['cs_type_new2']))
+                        ->setCellValue('H'.$cellNo, iconv("euc-kr", "utf-8", $resultData[$colIndex]['cs_nm']))
+                        ->setCellValue('I'.$cellNo, iconv("euc-kr", "utf-8", $resultData[$colIndex]['url']))
+                        ->setCellValue('J'.$cellNo, iconv("euc-kr", "utf-8", $resultData[$colIndex]['mg_nm']))
+                        ->setCellValue('K'.$cellNo, iconv("euc-kr", "utf-8", $resultData[$colIndex]['mg_tel']))
+                        ->setCellValue('L'.$cellNo, iconv("euc-kr", "utf-8", $resultData[$colIndex]['mg_cell']))
+                        ->setCellValue('M'.$cellNo, iconv("euc-kr", "utf-8", $resultData[$colIndex]['mg_email']))
+                        ->setCellValue('N'.$cellNo, iconv("euc-kr", "utf-8", $resultData[$colIndex]['pay_price']));
+        }
+        $cellNo++;
+    }        
+}
+
+
+$objPHPExcel->setActiveSheetIndex(0);
+
+
+header('Content-Disposition: attachment;filename='.date("Ymd").'_default_data.xlsx');
+header( "Content-type: application/vnd.ms-excel;charset=EUC-KR");
+header( "Expires: 0" );
+header( "Cache-Control: must-revalidate, post-check=0,pre-check=0" );
+header( "Pragma: public" );
+
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+
+ob_end_clean();
+
+$objWriter->save('php://output');
+
+que_close($db);
+
+exit;
+?>

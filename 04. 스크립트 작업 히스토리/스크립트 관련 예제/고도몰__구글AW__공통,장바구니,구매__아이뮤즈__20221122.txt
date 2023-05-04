@@ -1,0 +1,63 @@
+고도몰__구글AW__공통,장바구니,구매__아이뮤즈__20221122
+
+공통태그는 고도몰 스크립트 메뉴에 GA코드 넣는 부분 넣었다고 못뺴어서 그냥 그대로 넣어서 공통코드 해결하고
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-845811272"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-845811272');
+</script>
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+장바구니코드는 아래와 같이 전달 받아서
+
+<!-- Event snippet for 장바구니에 추가 conversion page -->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-845811272/MlY5COK8zIIYEMicqJMD',
+      'value': 1.0,
+      'currency': 'KRW'
+  });
+</script>
+
+<!-- Event snippet for 장바구니에 추가 conversion page 20221122 TripleHM-->
+<script type="text/javascript">
+	const cart_Btn = document.querySelector('#frmView > div > div > div.btn_choice_box > div > button.btn_add_cart');
+	const total_Price = {=gd_isset(goodsView['goodsPrice'],0)};
+	cart_Btn.addEventListener('click', event => {
+		  gtag('event', 'conversion', {
+		  'send_to': 'AW-845811272/MlY5COK8zIIYEMicqJMD',
+		  'value': total_Price,
+		  'currency': 'KRW'
+	  });
+	})	
+</script>
+
+위 코드를 삽입
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+구매코드는 아래와 같이 전달받아서
+
+<!-- Event snippet for 구매 conversion page -->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-845811272/6NGUCKKQz4IYEMicqJMD',
+      'value': 1.0,
+      'currency': 'KRW',
+      'transaction_id': ''
+  });
+</script>
+
+<!-- Event snippet for 구매 conversion page TripleHM 20221122-->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-845811272/6NGUCKKQz4IYEMicqJMD',
+      'value': '{=number_format(orderInfo.totalGoodsPrice)}'
+      'currency': 'KRW',
+      'transaction_id': "{orderInfo.orderNo}"
+  });
+</script>
+
+위 코드로 삽입

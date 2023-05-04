@@ -1,0 +1,183 @@
+<?
+ob_start();
+@session_start();
+//echo "<pre>";
+//print_R($_POST);
+//print_R($_GET);
+
+//$_GET['seq'] = $_POST['seq']; 
+
+//echo "</pre>";
+echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
+
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.arrayvalues.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.common.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/cls/cls.work41.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/cls/cls.employee.php';
+
+$clsWork			= new clsWork();
+
+$S_RETURNVAL_TITLE	= $clsWork->funcJoinProjectGetTitle();
+$S_RETURNVAL		= $clsWork->funcSelectProjectContent(down);
+$S_RETURNVAL_HISTORY= $clsWork->funcGetProjectHistory();
+
+$var=$S_RETURNVAL_HISTORY;
+$var1=json_decode($var,true);
+
+//echo $var1['project_nm'];
+
+//print_R($S_RETURNVAL_TITLE['connection_title']);
+
+//echo "<pre>";
+//print_R($S_RETURNVAL);
+//echo "</pre>";
+
+
+header("Content-Disposition: attachment; filename=".iconv('utf8', 'euckr', $var1['project_nm'])."_".date("Ymd").".xls"); //★파일이름.xls가 생성됨
+
+//header("Content-type: application/vnd.ms-excel");
+//header("Content-Description: PHP5 Generated Date");
+//header("pragma: no-cache");
+//header("expires: 0");
+header('Content-Type: application/vnd.ms-excel');
+header('Cache-Control: max-age=0');
+header('Content-type: application/vnd.ms-excel;charset=EUC-KR');
+
+
+
+/*--연결항목 찾아내기--*/
+foreach($S_RETURNVAL_TITLE['connection_title'] as $k1=>$v1){
+	if($v1){
+		$arr_connection_title[$v1]		= $k1;
+		$arr_connection_value[$v1][]	= $v1.",".$k1.",".$S_RETURNVAL_TITLE['connection_option'][$k1];
+	}
+}
+
+//연결항목에, 옵션번호 합치기 위해 연결항목, 옵션값 배열로 만들기
+if($arr_connection_value){
+	foreach($arr_connection_value as $k2=>$v2){
+		foreach($v2 as $k3=>$v3){
+			$exx = explode(",",$v3);		
+			$arr_option									= $clsWork->funcArrayProjectOption($exx[2],null);	//연결항목의 옵션값 뽑아오기
+			$arr_option_value_new[$exx[0]]				= $arr_option['optoin_value'][$exx[2]];
+			$arr_get_connection_option_code[$exx[0]]	= $exx[2];										//연결항목의 옵션코드를 배열로 만들기
+			$arr_get_title[$exx[0]][$exx[3]]			= $exx[1];										//연결항목의 연결항목타이틀을 배열로 만들기
+		}
+	}
+}
+//연결항목에, 옵션번호 합치기 위해 연결항목, 옵션값 배열로 만들기
+
+//연결항목이 있을 때 옵션번호와 합치기
+if($arr_option_value_new){
+	foreach($arr_option_value_new as $k4=>$v4){
+		if(!empty($v4)) {
+		foreach($v4 as $k5=>$v5){
+			$arr_get_connection_titile[$k4]	= $arr_get_title[$k4];
+		}
+		}
+	}
+}
+//연결항목이 있을 때 옵션번호와 합치기
+/*--연결항목 찾아내기 --*/
+
+
+foreach($S_RETURNVAL['title'] as $k=>$v){ 
+
+//공개일때만 뿌리기
+if($S_RETURNVAL_TITLE['open_yn'][$v]=="Y"){
+
+	$mystring = $v;
+	$findme   = 'title';
+	$pos = strpos($mystring, $findme);
+
+	if ($pos !== false) {	//title(n) 항목 가져오기
+
+		$title[]=$v;
+
+		$title_kr_name[$v]				= $S_RETURNVAL_TITLE['title_kr_name'][$v];
+		$title_bgcolor[$v]				= $S_RETURNVAL_TITLE['bg_color'][$v];	
+		$title_memo[$v]					= $S_RETURNVAL_TITLE['title_memo'][$v];	
+		
+		//컨텐츠가 있고
+		foreach($S_RETURNVAL['content'] as $kk=>$vv){	
+			//옵션타입이고
+			if($S_RETURNVAL_TITLE['option_type'][$v]){
+				//내가 연결항목일 때
+				if($S_RETURNVAL_TITLE['connection_title'][$v]){ 
+
+					$ex1 = explode(",",$S_RETURNVAL['content'][$kk][$v]);
+					$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v],null);
+					$content[$kk][$v] = $arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]][$ex1[1]];
+				
+				//내가 연결항목이 아닐때
+				}else{
+					//연결항목이 있을때
+					if($arr_connection_title[$v]){ 
+						
+						$ex2 = explode(",",$S_RETURNVAL['content'][$kk][$v]);
+						$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v],null);
+						$content[$kk][$v] = $arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]][$ex2[5]];
+
+					//연결항목이 없을뎨
+					}else{
+						
+						$ex3 = explode(",",$S_RETURNVAL['content'][$kk][$v]);
+						$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v],null);
+						$content[$kk][$v] = $arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]][$ex3[2]];
+				
+					}
+				}
+			//옵션타입이 아니고
+			}else{
+				$content[$kk][$v] = $S_RETURNVAL['content'][$kk][$v];
+			}
+		}
+	}
+}
+}
+?>
+<table width="100%" border="1" cellpadding="5" cellspacing="1" class="atable">
+			<tr align="center">
+				
+				<?foreach($title as $k=>$v){?>				
+				<td bgcolor="<?=$title_bgcolor[$v]?>"  title=<?=$title_memo[$v]?>><?=$title_memo[$v]?"<span class='ui-icon ui-icon-info'></span><br/>":""?>  <?=$title_kr_name[$v]?></td>
+				<?}?>
+<?if($_SESSION['em_level']==10){?>
+				<td bgcolor="#efefef"><?php echo iconv('euc-kr', 'utf-8', '확인여부') ?></td> 
+<?}?>
+			</tr>		
+
+			<?if(!$S_RETURNVAL['content']){?>
+			<tr>
+				<td colspan="<?=$cnt_title?>">데이터가 없습니다.</td>
+			</tr>
+			<?}?>
+
+			<?foreach($S_RETURNVAL['content'] as $kk=>$vv){?>
+			<tr>
+				
+				<?foreach($title as $k=>$v){?>
+				<td align="center">
+
+				<?
+				if($v=='title1'){
+					echo funcDiviKnm1($content[$kk][$v]);
+				}else if($v=='title2'){
+					echo funcDiviKnm1($content[$kk][$v]);
+				}else if($v=='title3'){
+					echo funSelectEmpNm($content[$kk][$v]);
+				}else{
+					echo $content[$kk][$v];
+				}
+				?>
+
+				</td>
+				<?}?>
+<?if($_SESSION['em_level']==10){?>
+				<td align="center">
+				<?=$S_RETURNVAL['content'][$kk]['upd_emp']?"Y":"N";?>
+				</td>
+<?}?>
+			</tr>
+			<?}?>
+		</table>

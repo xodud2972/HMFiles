@@ -1,0 +1,367 @@
+<?php
+include_once ($_SERVER['DOCUMENT_ROOT']."/board.path.php");
+include_once ($_SERVER['DOCUMENT_ROOT']."/".SP_BOARD_PATH."/config/common.php");
+
+if (!$_POST['wm_name']) { alert('이름을 입력하세요.'); }
+
+$wm_name = $_POST['wm_name'];
+$wm_kind = $_POST['wm_kind'];
+$wm_cns	= $_POST['wm_cns'];
+$wm_company = $_POST['wm_company'];
+$email = $_POST['wm_email1']?$_POST['wm_email1']."@".$_POST['wm_email2']:"";
+$tel = $_POST['wm_tel1']?$_POST['wm_tel1']."-".$_POST['wm_tel2']."-".$_POST['wm_tel3']:"";
+$hp = $_POST['wm_hp1']?$_POST['wm_hp1']."-".$_POST['wm_hp2']."-".$_POST['wm_hp3']:"";
+$wm_title = $_POST['wm_title'];
+$wm_area = $_POST['wm_area'];
+$wm_content = $_POST['wm_content'];
+$selfpage = $_POST['selfpage'];
+
+//자동등록 방지 서버단 체크 -> 관리자 세팅시 사용
+if ($config_online_recapcha_use == 'Y') {
+	check_recapcha($config_recapcha_secretkey);
+}
+
+
+
+$add_field = "";
+if($_POST['inq_type'] == "가맹상담신청"){
+
+	
+	$add_field = ",
+				wm_store_yn			=	'{$_POST['wm_store_yn']}',
+				wm_store_addr		=	'{$_POST['wm_store_addr']}',
+				wm_money			=	'{$_POST['wm_money']}',
+				wm_open_date		=	'{$_POST['wm_open_date']}',
+				wm_age				=	'{$_POST['wm_age']}'
+	
+				";
+}
+
+
+
+$sql_field =	"	wm_kind				= '{$wm_kind}',
+					wm_email			= '{$email}',
+					wm_company			= '{$wm_company}',
+					wm_name				= '{$wm_name}',
+					wm_tel				= '{$tel}',
+					wm_hp				= '{$hp}',
+					wm_title			= '{$wm_title}',
+					wm_open				= '{$_POST['wm_open']}',
+					wm_content			= '{$wm_content}',
+					wm_area				= '{$wm_area}',
+					wm_ip				= '".SP_REMOTE_ADDR."',
+					wm_wdate			= now(),
+					wm_1				= '{$_POST['wm_1']}',
+					wm_2				= '{$_POST['wm_2']}',
+					wm_3				= '{$_POST['wm_3']}',
+					wm_4				= '{$_POST['wm_4']}',
+					wm_5				= '{$_POST['wm_5']}',
+					wm_6				= '{$_POST['wm_6']}',
+					wm_7				= '{$_POST['wm_7']}',
+					wm_8				= '{$_POST['wm_8']}',
+					wm_9				= '{$_POST['wm_9']}',
+					wm_10				= '{$_POST['wm_10']}'".$add_field;
+
+if (empty($wm_cns) == false) {
+	$sql_field	.= ", wm_cns = '{$wm_cns}'";
+}
+
+
+	//online 디렉토리 생성
+	$board_path = SP_DATA_PATH.'/online';
+
+	@mkdir($board_path, SP_DIR_PERMISSION);
+	@chmod($board_path, SP_DIR_PERMISSION);
+
+	settype($file_sql_field, "string");
+
+	//파일 업로드
+	if($_FILES['wm_upfile']['tmp_name']) {
+
+		$tmp_file  = $_FILES['wm_upfile']['tmp_name'];
+		$original_name = $_FILES['wm_upfile']['name'];
+
+		//업로드 가능 파일인지 체크합니다.
+		if($tmp_file){
+			if( !preg_match('/\.('.SP_UPLOAD_EXT.')$/i', $original_name) ){
+				alert("해당파일은 업로드 할수 없습니다.");
+			}
+		}
+
+		preg_match('#.+\.([a-z]+)$#', $_FILES['wm_upfile']['name'], $m);
+		$filename = date('YmdHis').(microtime(true) * 10000).'.'.strtolower($m[1]);
+
+		upload_file($_FILES['wm_upfile']['tmp_name'], $filename, SP_DATA_PATH."/online");
+
+		//파일경로 생성
+		$dest_file = SP_DATA_PATH.'/online/'.$filename;
+
+		// 올라간 파일의 퍼미션을 변경합니다.
+		chmod($dest_file, SP_FILE_PERMISSION);
+
+		$file_sql_field = " , wm_upfile_name = '{$filename}', wm_upfile_rename = '{$original_name}' ";
+	}
+
+	//쿼리 업데이트
+	$update_sql = "insert into ".SP_ONLINE." SET ".$sql_field. $file_sql_field;
+	$sp = sql_query($update_sql);
+
+	if ($sp) {
+		include $_SERVER['DOCUMENT_ROOT']."/mms/component.php";
+		if($_POST['inq_type'] == "가맹상담신청"){
+
+			$hp = $tel.";"; //받을번호  여러번호를 보낼때는 예) 01000000001;0100000002;
+			$strTelList = str_replace("-","",$hp);
+			//$strSubject = "[샐러디 가맹 상담 신청 완료] 현재 문의량이 많아 약 3주 후 연락 드릴 예정입니다.";
+			$strData = "[샐러디]접수 완료. 현재 문의량이 많아 회신까지 약 4-6주 소요될 예정입니다. ";
+			
+			//메일보내기
+			$wm_title1 = "[{$config_company}] 온라인문의 접수 안내메일입니다.";
+			$wm_from = $config_email; //관리자 이메일 주소
+
+			$wm_title1 = "=?utf-8?B?".base64_encode($wm_title1)."?=";
+
+			$from2 = $config_email;
+			$name="=?utf-8?B?".($config_company)."?=";
+			$from=$name."<".$wm_from.">";
+
+			$contents = "";
+
+
+			$mhead = "From:".$wm_from."\r\n";
+			$mhead .= 'Reply-To: '.$wm_from."\r\n";
+			$mhead .= 'Organization: Sender Organization ' . "\r\n";
+			$mhead .= 'MIME-Version: 1.0 ' . "\r\n";
+			$mhead .= 'Content-type: text/html; charset=utf-8 ' . "\r\n";
+			$mhead .= 'X-Priority: 3 ' ."\r\n" ;
+			$mhead .= 'X-Mailer: PHP". phpversion() ' ."\r\n" ;
+
+			if($wm_store_yn=="Y"){
+				$wm_store_yn1 = '유';
+			}else{
+				$wm_store_yn1 = '무';
+			}
+			$wm_content = "안녕하세요, 샐러디 가맹영업팀입니다.<br>
+<br>
+가맹상담 신청 접수가 되셨습니다. 현재 문의량이 많아 순차적으로 연락드리고 있습니다. 접수일로부터 연락이 가기까지 약 3~5주 정도가 소요되고 있으며, 상황에 따라 더 짧아지거나 길어질 수 있습니다. 양해부탁드립니다.  <br>
+<br>
+기다리시는 동안 참고하실 수 있는 가맹문의 FAQ 질문답변을 함께 첨부해드리오니 확인 부탁드립니다. <br>
+<br>
+감사합니다.<br> ";
+			$wm_content .= '<table class="inqTable1">
+				<tbody>
+					<tr>
+						<th>성함</th>
+						<td>'.$wm_name.'</td>
+					</tr>
+					<tr>
+						<th>연령대</th>
+						<td>'.$_POST['wm_age'].'</td>
+					</tr>
+					<tr>
+						<th>연락처</th>
+						<td>'.$tel.'</td>
+					</tr>
+					<tr>
+						<th>이메일</th>
+						<td>'.$email.'</td>
+					</tr>
+					<tr>
+						<th>방문경로</th>
+						<td>'.$wm_title.'</td>
+					</tr>
+					<tr>
+						<th>희망지역</th>
+						<td>'.$wm_area.'</td>
+					</tr>
+					<tr>
+						<th>점포유무</th>
+						<td>'.$wm_store_yn1.'</td>
+					</tr>
+					<tr>
+						<th>점포주소</th>
+						<td>'.$wm_store_addr.'</td>
+					</tr>
+					<tr>
+						<th>사업예산</th>
+						<td>'.$wm_money.'</td>
+					</tr>
+					<tr>
+						<th>오픈 희망일</th>
+						<td>'.$wm_open_date.'</td>
+					</tr>
+					<tr>
+						<td colspan="2"><img src = "http://saladykorea.com/superboard/images/salady_img.jpg" width="800"></td>
+					</tr>
+				</tbody>
+			</table>';
+
+			$contents = emailSend($config_company, $config_logo_image, $wm_content, $config_wdate);
+
+			$contents = str_replace("\\","",$contents);
+			$mhead .= $contents . "\n";
+			$wm_to = $config_email; //관리자 이메일로 관리자에게 알림 (받는 사람)
+
+			//이메일 발송
+			if(filter_var($wm_to, FILTER_VALIDATE_EMAIL)){
+				mail($email, $wm_title1,"",$mhead);
+			}
+
+		
+		}
+		else if($_POST['inq_type'] == "가맹설명회 예약"){
+
+			$hp = $tel.";"; //받을번호  여러번호를 보낼때는 예) 01000000001;0100000002;
+			$strTelList = str_replace("-","",$hp);
+			//$strSubject = "[샐러디 가맹 상담 신청 완료] 현재 문의량이 많아 약 3주 후 연락 드릴 예정입니다.";
+			$strData = "[샐러디]접수 완료. 온라인 설명회로 진행되며, 20분 전 링크 발송해드리겠습니다. ";
+			
+			//메일보내기
+			$wm_title1 = "[{$config_company}] 온라인문의 접수 안내메일입니다.";
+			$wm_from = $config_email; //관리자 이메일 주소
+
+			$wm_title1 = "=?utf-8?B?".base64_encode($wm_title1)."?=";
+
+			$from2 = $config_email;
+			$name="=?utf-8?B?".($config_company)."?=";
+			$from=$name."<".$wm_from.">";
+
+			$contents = "";
+
+
+			$mhead = "From:".$wm_from."\r\n";
+			$mhead .= 'Reply-To: '.$wm_from."\r\n";
+			$mhead .= 'Organization: Sender Organization ' . "\r\n";
+			$mhead .= 'MIME-Version: 1.0 ' . "\r\n";
+			$mhead .= 'Content-type: text/html; charset=utf-8 ' . "\r\n";
+			$mhead .= 'X-Priority: 3 ' ."\r\n" ;
+			$mhead .= 'X-Mailer: PHP". phpversion() ' ."\r\n" ;
+
+			if($wm_store_yn=="Y"){
+				$wm_store_yn1 = '유';
+			}else{
+				$wm_store_yn1 = '무';
+			}
+			$wm_content = "안녕하세요, 샐러디 가맹영업팀입니다. <br>
+<br>
+가맹설명회 신청 접수가 되셨습니다. 설명회는 온라인(*ZOOM 사이트)를 통해 진행될 예정이며, 설명회 링크는 가맹설명회 시작 20~30분 전 문자로 발송해드릴 예정입니다. PC 혹은 핸드폰으로 참여 가능합니다. <br>
+<br>
+가맹설명회 참석 전 참고하실 수 있는 가맹문의 FAQ 질문답변을 함께 첨부해드리오니 확인 부탁드립니다. <br>
+<br>
+감사합니다. <br>
+<br>
+*ZOOM 사이트 접속 방법은 아래 링크를 참고해주시기 바랍니다. <br>
+<br>
+http://saladykorea.com/news/notice?viewMode=view&ca=&sel_search=&txt_search=&page=1&idx=75<br>  ";
+			$wm_content .= '<table class="form_tbl">
+						<colgroup>
+							<col style="width: 150px;">
+							<col style="width: auto;">
+						</colgroup>
+						<tbody>
+							<tr>
+								<th>*구분</th>
+								<td>'.$wm_kind.'</td>
+							</tr>
+							<tr>
+								<th>*방문경로</th>
+								<td>'.$wm_2.'</td>
+							</tr>
+							<tr style="display:none;">
+								<th>*회사명</th>
+								<td>'.$wm_company.'</td>
+							</tr>
+							<tr>
+								<th>*참석일시</th>
+								<td>'.$wm_1.'</td>
+							</tr>
+
+							<tr>
+								<th>*이름</th>
+								<td>'.$wm_name.'</td>
+							</tr>
+
+							<tr>
+								<th>*이메일</th>
+								<td>'.$email.'</td>
+							</tr>
+							<tr>
+								<th>*연락처</th>
+								<td>'.$tel.'</td>
+							</tr>
+							<tr>
+								<th>*내용 / 창업희망지역</th>
+								<td>'.nl2br($wm_content).'</td>
+							</tr>
+							<tr>
+								<td colspan="2"><img src = "http://saladykorea.com/superboard/images/salady_img.jpg"  width="800"></td>
+							</tr>
+						</tbody>
+					</table>';
+
+			$contents = emailSend($config_company, $config_logo_image, $wm_content, $config_wdate);
+
+			$contents = str_replace("\\","",$contents);
+			$mhead .= $contents . "\n";
+			$wm_to = $config_email; //관리자 이메일로 관리자에게 알림 (받는 사람)
+
+			//이메일 발송
+			if(filter_var($wm_to, FILTER_VALIDATE_EMAIL)){
+				mail($email, $wm_title1,"",$mhead);
+			}
+		
+		}
+		//문자 발송 Class 및 실행
+		include $_SERVER['DOCUMENT_ROOT']."/mms/mms.lib.php";
+
+
+		echo "<script type='text/javascript' charset='UTF-8' src='//t1.daumcdn.net/adfit/static/kp.js'></script>
+<script type='text/javascript'>
+      kakaoPixel('8579940701740383572').pageView();
+      kakaoPixel('8579940701740383572').completeRegistration();
+</script>";
+
+		// NAVER SCRIPT 20190405
+		// 카카오픽셀 2022-02-15 TripleHM
+		if ($selfpage == "/_subpage/franchise/application.php") {
+			echo "
+				<script type='text/javascript' src='//wcs.naver.net/wcslog.js'></script>
+				<script type='text/javascript'>
+				if (!wcs_add) var wcs_add={};
+				wcs_add['wa'] = 's_35cf321f24a7';
+				if (!_nasa) var _nasa={};
+				_nasa['cnv'] = wcs.cnv('4','1');
+				wcs_do(_nasa);
+				</script>
+
+			";
+		} else if ($selfpage == "/_subpage/contact_us/inquiry.php") {
+			echo "
+				<script type='text/javascript' src='//wcs.naver.net/wcslog.js'></script>
+				<script type='text/javascript'>
+				if (!wcs_add) var wcs_add={};
+				wcs_add['wa'] = 's_35cf321f24a7';
+				if (!_nasa) var _nasa={};
+				_nasa['cnv'] = wcs.cnv('5','1');
+				wcs_do(_nasa);
+				</script>
+			";
+		} else if ($selfpage == "/_subpage/franchise/reservation.php") {
+			echo "
+				<script type='text/javascript' src='//wcs.naver.net/wcslog.js'></script>
+				<script type='text/javascript'>
+				if (!wcs_add) var wcs_add={};
+				wcs_add['wa'] = 's_35cf321f24a7';
+				if (!_nasa) var _nasa={};
+				_nasa['cnv'] = wcs.cnv('4','1');
+				wcs_do(_nasa);
+				</script>
+			";
+		}
+		//NAVER SCRIPT End
+
+		alert("잘 접수 되었습니다. 감사합니다.", $selfpage);
+	} else {
+		alert("에러가 발생하였습니다.");
+	}
+?>

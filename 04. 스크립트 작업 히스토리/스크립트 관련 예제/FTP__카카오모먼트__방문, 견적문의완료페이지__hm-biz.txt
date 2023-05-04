@@ -1,0 +1,19 @@
+
+
+FTP접속 후 www/wp-content/themes/Avada/header.php 와 functions.php에 삽입
+
+방문이벤트 ( 모든 웹페이지에 설치하는 것을 권장합니다.)
+
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('6775802942790717040').pageView();
+</script>
+
+
+서비스신청 이벤트 전송(문의완료 페이지)
+
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('6775802942790717040').pageView();
+      kakaoPixel('6775802942790717040').signUp();
+</script>

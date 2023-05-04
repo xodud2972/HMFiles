@@ -1,0 +1,23 @@
+레이유로여성의원 구글AW FTP 예약문의 완료 및 공통태그
+(전체 사이트 태그 복사 후 웹사이트에 붙여넣기)
+
+아래에 이 계정의 전체 사이트 태그가 있습니다. 
+웹사이트와 Google Ads 간에 연결을 설정하려면 태그를 복사한 후 웹사이트의 각 페이지 코드에서 <head> 요소 바로 다음에 붙여 넣으세요. 
+전체 사이트 태그는 각 페이지에 하나씩만 추가하세요.
+
+공통 head파일
+<!-- Global site tag (gtag.js) - Google Ads: 797311588 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-797311588"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-797311588');
+</script>
+
+
+
+빠른상담신청			/	http://ladyuro.com/response/res_gather_request.php
+/ 실시간 온라인상담(비밀상담)	/	http://ladyuro.com/response/res_register_secret.php
+/ 온라인예약			/	http://ladyuro.com/response/res_gather_request.php

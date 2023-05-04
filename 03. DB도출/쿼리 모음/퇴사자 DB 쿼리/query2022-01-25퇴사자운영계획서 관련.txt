@@ -1,0 +1,39 @@
+SELECT c1.cs_num AS '사업자번호', getcomkrname(c1.cs_type_new1) AS '대카테고리', getcomkrname(c1.cs_type_new2) AS '소카테고리', 
+		c1.cs_nm AS 'rms업체명',c1.url AS url, c1.mg_nm AS '광고담당자이름', c1.cell1, c1.cell2, c1.cell3,
+		c1.mg_tel1, c1.mg_tel2, c1.mg_tel3, c1.mg_email, DATE_FORMAT(c2.pay_date,'%Y') AS 'year', round(SUM(c2.pay_price)/3,0) AS '3개월 평균 매출',
+		getcomkrname(c2.m_nm) AS '매체한글', c2.m_nm AS m_nm 
+FROM t_customer c1
+	INNER JOIN t_contract c2 ON c1.cs_seq = c2.cs_seq
+	INNER JOIN t_customer_md c3 ON c3.cs_seq = c1.cs_seq
+WHERE c3.cs_m_id = 'fimasia' AND c2.m_nm='264' AND c2.pay_date BETWEEN '2021-10-01' AND '2021-12-31' AND c2.del_date IS NULL 
+GROUP BY m_nm
+ORDER BY m_nm;
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SELECT c1.cs_num AS '사업자번호', getcomkrname(c1.cs_type_new1) AS '대카테고리', getcomkrname(c1.cs_type_new2) AS '소카테고리', 
+		 c1.cs_nm AS 'rms업체명',c1.url AS url, c1.mg_nm AS '광고담당자이름', c1.cell1, c1.cell2, c1.cell3,
+		 c1.mg_tel1, c1.mg_tel2, c1.mg_tel3, c1.mg_email, DATE_FORMAT(c2.pay_date,'%Y') AS 'year', round(SUM(c2.pay_price)/3,0) AS '3개월 평균 매출',
+		 getcomkrname(c2.m_nm) AS '매체한글', c2.m_nm AS m_nm
+FROM t_customer c1
+	INNER JOIN t_contract c2 ON c1.cs_seq = c2.cs_seq
+WHERE c2.cs_m_id = 'fimasia' 
+	AND c2.m_nm = '264'
+	AND c2.pay_date BETWEEN '2021-10-01' AND '2021-12-31' 
+GROUP BY c2.cs_m_id, m_nm
+ORDER BY m_nm;
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SELECT c1.cs_num AS '사업자번호', getcomkrname(c1.cs_type_new1) AS '대카테고리', getcomkrname(c1.cs_type_new2) AS '소카테고리', 
+		 c1.cs_nm AS 'rms업체명',c1.url AS url, c1.mg_nm AS '광고담당자이름', c1.cell1, c1.cell2, c1.cell3,
+		 c1.mg_tel1, c1.mg_tel2, c1.mg_tel3, c1.mg_email, DATE_FORMAT(c2.pay_date,'%Y') AS 'year', round(SUM(c2.pay_price)/3,0) AS '3개월 평균 매출',
+		 getcomkrname(c2.m_nm) AS '매체한글', c2.m_nm AS m_nm
+FROM t_customer c1
+	INNER JOIN 
+	(
+		SELECT cs_seq, cs_m_id, m_nm, pay_date, pay_price
+		from t_contract
+		WHERE cs_m_id = 'fimasia' 
+		AND m_nm = '264'
+		AND pay_date BETWEEN '2021-10-01' AND '2021-12-31' 
+	)c2 
+	ON c1.cs_seq = c2.cs_seq
+GROUP BY c2.cs_m_id, m_nm
+ORDER BY m_nm;

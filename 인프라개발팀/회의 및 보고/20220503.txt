@@ -1,0 +1,88 @@
+1. 매체공지
+	1) 파일업로드 영역
+	2) 다운로드시 xlsx 확장자로 수정 및 시트 분리 
+2. DB요청
+	1) 신규기존 리스트 도출  
+
+
+
+
+<script type="text/javascript" src="/thema/jquery-timepicker/jquery.timepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="/thema/jquery-timepicker/jquery.timepicker.css" />
+
+<script>
+var MouseEvent = function (e) {
+			this.x = e.pageX
+			this.y = e.pageY
+		}
+var Mouse = function (e) {
+	var kdheight = $(document).scrollTop();
+	mouse = new MouseEvent(e);
+	leftpos = mouse.x + 10;
+	toppos = mouse.y - kdheight + 10;
+}
+
+var target = $(this);
+
+var text = $("#dialog_content").html();
+
+$(".fileList").click(function(e){   
+
+	$("#dialog").dialog({
+		autoOpen: true,
+		dynamic: true
+	});
+	var position = $( "#dialog" ).dialog( "option", "position" );
+
+	$( "#dialog" ).dialog( "option", "position", { my: "right", at: "right", of: $(this) } );
+
+	$("#dialog_content").html(text);
+
+	$( "#dialog" ).dialog( "open" );
+
+	$( "#dialog" ).dialog( "close" );
+});
+
+
+
+
+
+var BtnFile = document.querySelectorAll('.fileList')
+console.log(BtnFile);
+//var fileList = 
+
+
+
+
+
+==========================
+<div id="listFile" hidden>
+	<ul>
+	<? 
+$filList = $clsWork->funcSelectEtcFile($S_RETURNVAL['seq'][$i]);	
+	for($j=0; $j<count($filList['file_nm']);$j++){ ?>
+		<li>
+			<a href='../data/work_project_etcFile/<?=$filList['file_tmp_nm'][$j]?>' download="<?=$filList['file_nm'][$j]?>">
+			<?=$filList['file_nm'][$j] ?>
+			</a>
+		</li>
+	<? } ?> 
+	</ul>
+</div>
+
+
+
+
+<div id="listFile" hidden>
+	<ul>
+	<? 
+$filList = $clsWork->funcSelectEtcFile($S_RETURNVAL['seq'][$i]);	
+	for($j=0; $j<count($filList['file_nm']);$j++){ ?>
+		<li>
+			<a href='../data/work_project_etcFile/<?=$filList['file_tmp_nm'][$j]?>' download="<?=$filList['file_nm'][$j]?>">
+			<?=$filList['file_nm'][$j] ?>
+			</a>
+		</li>
+	<? } ?> 
+	</ul>
+</div>

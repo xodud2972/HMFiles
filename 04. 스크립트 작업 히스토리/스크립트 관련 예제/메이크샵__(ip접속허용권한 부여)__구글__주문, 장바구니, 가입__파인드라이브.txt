@@ -1,0 +1,44 @@
+파인드라이브 메이크샵 (ip접속허용권한 부여) 주문, 장바구니, 가입 구글태그 
+1. 구매 -> 주문완료 페이지
+<!-- Event snippet for 구매전환_22 conversion page -->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-854106850/3cNaCLjMlLYDEOLFopcD',
+      'value': 1.0,
+      'currency': 'KRW',
+      'transaction_id': ''
+  });
+</script>
+<!-- Event snippet for 구매 TripleHM 20220426 -->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-854106850/3xcFCJmQzswBEOLFopcD',
+      'value': <!--/pay_price/-->,
+      'currency': 'KRW',
+      'transaction_id': '<!--/order_num/-->'
+  });
+</script>
+
+2. 장바구니 - 장바구니 페이지 
+<!-- Event snippet for 장바구니에 추가_22 conversion page -->
+<script>
+  gtag('event', 'conversion', {'send_to': 'AW-854106850/UpiBCNfZlLYDEOLFopcD'});
+</script>
+
+3. 가입
+<!-- Event snippet for 가입 20220426 TripleHM -->
+<script>
+  gtag('event', 'conversion', {'send_to': 'AW-854106850/VlH7CNrZlLYDEOLFopcD'});
+console.log(1);
+</script>
+
+4. 공통스크립트
+<!-- Global site tag (gtag.js) - Google Ads: 854106850 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-854106850"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-854106850');
+</script>

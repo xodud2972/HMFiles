@@ -1,0 +1,31 @@
+핸프 카페 24 구글 애널리틱스 공통(페이지뷰) 설치 
+위치 : header.html 파일에 설치
+
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics  TripleHM 20220504-->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-227900229-1">
+</script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-227900229-1');
+</script>
+
+
+
+ 2022 05 31 추가 전환스크립트 트리거 비활성화 오류 떠서 
+확인해보니까 전환설치 되어있지 않아서
+<!-- Event snippet for 구매 tripleHM 20220531 --> 
+<script> 
+    gtag('event', 'conversion', { 
+        'send_to': 'AW-10895752948/C4l6CNG8qLoDEPT9v8so',
+        'transaction_id': '{$order_id}',
+        'value': "{$payed_order_price_front}".replace(/[원,\D ]/g, ''),
+        'currency': 'KRW'
+    }); 
+</script>
+코드 추가함.

@@ -1,0 +1,1433 @@
+<?
+session_start();
+@include_once $_SERVER['DOCUMENT_ROOT'] . "/include/db.php";
+@include_once $_SERVER['DOCUMENT_ROOT'] . '/tool/shin_util.php';
+@include_once $_SERVER['DOCUMENT_ROOT'] . '/include/common.php';
+db_open();
+
+
+
+class clsGoodType{
+    // 기간 조회
+    public function funcSelectContract_date($cal_kind, $syear, $smonth, $sday, $eyear, $emonth, $eday){
+        // --------------------------------------------------날짜 계산----------------------------------------------------------------------------------------------
+            if ($_GET["dr_dr1_from"] && $_GET["dr_dr1_to"]) {
+                $dr_dr1_from = date("Y-m-d", strtotime($_GET["dr_dr1_from"]));
+                $dr_dr1_to = date("Y-m-d", strtotime($_GET["dr_dr1_to"]));
+                $Date1 = "pay_date BETWEEN '" . $dr_dr1_from . "' AND '" . $dr_dr1_to . "'";
+                $sdate = $dr_dr1_from;
+                $edate = $dr_dr1_to;
+            } else {
+                $today = date("Y-m-d");
+                $firstDay = date("Y-m-d", mktime(0, 0, 0, intval(date('m')), 1, intval(date('Y')) )); //이번달 1일 구하기
+                $Date1 = "pay_date BETWEEN '" . $firstDay . "' AND '" . $today . "'";
+                $timestamp = strtotime("-1 month");
+                $timestamp2 = strtotime("-1 day");
+                $sdate = date("Y-m-d H:i:s", $timestamp);
+                $edate = date("Y-m-d H:i:s", $timestamp2);
+                if($_GET["cal_kind"]=="m"){
+                    $month = date("Y-m");
+                    $Date1 = "pay_date BETWEEN  '".$month."-01' AND '".$month."-31'";
+                }
+                if($_GET["cal_kind"]=="y"){
+                    $year = date("Y");
+                    $Date1 = "pay_date BETWEEN  '".$year."-01-01' AND '".$year."-12-31'";
+                }
+            }
+            if ($_GET["dr_dr2_from"] && $_GET["dr_r2_to"]) {
+                $dr_dr2_from = date("Y-m-d", strtotime($_GET["dr_dr2_from"]));
+                $dr_r2_to = date("Y-m-d", strtotime($_GET["dr_r2_to"]));
+                $Date2 = "BETWEEN " . $dr_dr2_from . " AND '" . $dr_r2_to . "";
+            }
+            // 검색이 일요일일 경우 -1 day
+            $yoil = array("일", "월", "화", "수", "목", "금", "토");
+            if ($yoil[date('w', strtotime($sdate))] === '일') {
+                $sdate = date('Y-m-d', strtotime($sdate . '-1 days'));
+            }
+            if ($yoil[date('w', strtotime($edate))] === '일') {
+                $edate = date('Y-m-d', strtotime($edate . '-1 days'));
+            }
+            // 일주일 계산하기 위해 쪼개기
+            $sYY = date("Y", strtotime($sdate));
+            $sMM = date("m", strtotime($sdate));
+            $sDD = date("d", strtotime($sdate));
+            $sDay = date("w", strtotime($sdate)) - 1;
+            $eYY = date("Y", strtotime($edate));
+            $eMM = date("m", strtotime($edate));
+            $eDD = date("d", strtotime($edate));
+            $eDay = date("w", strtotime($edate)) - 1;
+            $sweek_start = date("Y-m-d", strtotime($sYY . "-" . $sMM . "-" . $sDD . " -" . $sDay . " day"));        // 주의 첫날1
+            $sweek_end = date("Y-m-d", strtotime($sweek_start . " +6 day"));                                        // 주의 마지막날1
+            $eweek_start = date("Y-m-d", strtotime($eYY . "-" . $eMM . "-" . $eDD . " -" . $eDay . " day"));        // 주의 첫날2
+            $eweek_end = date("Y-m-d", strtotime($eweek_start . " +6 day"));                                        // 주의 마지막날2
+            // 일주일 날짜 계산 => ex) '2021-03-15' ~ '2021-03-21'
+            // 날짜 차이
+            $diff_date    = strtotime($eweek_end) - strtotime($sweek_start);
+            $week_arr = array();
+            for ($i = 0; $i < ($diff_date / 86400 + 1) / 7; $i++) {
+                $b = 7 * $i;
+                $prev_date = date("Y-m-d", strtotime(date($sweek_start) . " +" . $b . " days")) . " ~ " . date("Y-m-d", strtotime(date($sweek_end) . "+" . $b . " days"));
+                array_push($week_arr, $prev_date);
+            }
+            // 주의 첫날과 마지막날 계산 END
+        // --------------------------------------------------날짜 계산 끝----------------------------------------------------------------------------------------------
+        
+        // ------------파라미터 변수 설정-------------------
+            if ($_GET["check1"]==1) {
+                $code4 = "b.code4";
+            }
+            if ($_GET["check1"]==2) {
+                $code4 = "b.code6";
+            }
+            if ($_GET["ad_type"]) {
+                $ad_type = implode(",", $_GET['ad_type']);
+                $where_code = "AND code4 IN (" . $ad_type . ")";
+            }
+            if ($_GET["m_nm"]) {
+                $m_nm = implode(",", $_GET["m_nm"]);
+                $where_code    = "AND code6 IN (" . $m_nm . ")";
+            }
+            if ($_GET["division1"]) { // 부문
+                $where_division1 = "AND division1 = '" . $_GET['division1'] . "'";
+            }
+            if ($_GET["division2"]) { // 팀
+                $where_division2 = "AND division2 = '" . $_GET['division2'] . "'";
+            }
+            if ($_GET["em_nm"]) { // 사원번호
+                $where_em_seq = "AND em_seq = '" . $_GET['em_nm'] . "'";
+            }
+            if ($_GET["s_item"]) {
+                if ($_GET["s_item"] == "cs_m_id") {
+                    $where_cs_m_id = "AND cs_m_id = '" . $_GET['s_string'] . "'";
+                }
+                if ($_GET["s_item"] == "cs_nm") {
+                    $where_cs_nm = "AND getCsKrName(cs_seq) = '" . $_GET['s_string'] . "'";
+                }
+                if ($_GET["s_item"] == "cs_num") {
+                    $where_cs_num = " AND cs_seq = (SELECT cs_seq from t_customer WHERE cs_num = '" . $_GET['s_string'] . "')";
+                }
+            }
+            switch ($_GET['cal_kind']) {
+                case "d":
+                    $sreg_date = "pay_date as pay_date";
+                    $sgroup_by = "GROUP BY pay_date ";
+                    break;
+                case "wk":
+                    $sreg_date = "pay_date as pay_date";
+                    $sgroup_by = "GROUP BY pay_date ";
+                    break;
+                case "m":
+                    $sreg_date = "left(pay_date,7) as pay_date";
+                    $sgroup_by = "GROUP BY left(pay_date,7)";
+                    break;
+                case "y":
+                    $sreg_date = "LEFT(pay_date,4) as pay_date";
+                    $sgroup_by = "GROUP BY LEFT(pay_date,4)";
+                    break;
+                case "w":
+                    $sreg_date = "WEEKDAY(pay_date) as pay_date";
+                    $sgroup_by = "GROUP BY WEEKDAY(pay_date)";
+                    break;
+                case "wd":
+                    $sreg_date = "WEEKDAY(pay_date) as pay_date";
+                    $sgroup_by = "GROUP BY WEEKDAY(pay_date)";
+                    $where_week = "AND WEEKDAY(pay_date) = '" . $_GET['week'] . "'";
+                    break;
+            }
+        // ---------일별 일 떄
+                if ($_GET['cal_kind'] != "wk") {
+        // --------기간비교 일 떄
+                if ($_GET["dr_dr1_from"] && $_GET["dr_r2_to"]) {
+                    $querySelectDailyTwoDate_date = "SELECT t_report.* FROM (
+                    SELECT CONCAT('" . $dr_dr1_from . "',' ~ ','" . $dr_dr1_to . "') as pay_date, SUM(a.pay_price) as pay_price, 
+                    code5 as good_type2, b.cm3_seq as m_nm1, b.code4 as code4, b.code5 as code5, $code4 as type_code,a.good_type2 as good_type2_1
+                    FROM ( 
+                            SELECT pay_date as pay_date , good_type2, SUM(pay_price) as pay_price, m_nm
+                            FROM t_contract 
+                            WHERE 1=1 
+                            AND agree_state = '3' 
+                            AND pay_date BETWEEN '" . $dr_dr1_from . "' AND '" . $dr_dr1_to . "' 
+                            " . $where_division1 . "
+                            " . $where_division2 . "
+                            " . $where_em_seq . "
+                            " . $where_week . "
+                            " . $where_cs_m_id . "
+                            " . $where_cs_nm . "                        
+                            AND del_date IS NULL 
+                            AND sales_type IN (1,3) 
+                            " . $where_cs_num . "
+                            GROUP BY pay_date , good_type2 
+                            ) AS a 
+                    INNER JOIN ( 
+                            SELECT cm2_seq, cm3_seq, code4, code5, code6
+                            FROM t_common2 
+                            WHERE use_yn='Y' 
+                            AND cm3_seq > 0 
+                            $where_code
+                            ) AS b ON a.good_type2=b.cm2_seq 	                        
+                    group BY a.pay_date, type_code, b.code5
+                                ) AS t_report
+                    INNER JOIN t_common2 AS t_comm
+                    ON t_report.code5 = t_comm.cm2_seq
+                    ORDER BY t_comm.sort asc";
+                    $Result = que($querySelectDailyTwoDate_date);
+
+                    $nListCnt = 0;
+                    while ($Row = @mysql_fetch_assoc($Result)) {
+                        $S_RETURNVAL['good_type2'][$Row['type_code']][$Row['code5']]                            = $Row['good_type2_1'];
+                        $S_RETURNVAL['m_nm'][$Row['type_code']]                                                      = $Row['type_code'];
+                        $S_RETURNVAL['good_type2_price'][$Row['pay_date']][$Row['type_code']][$Row['good_type2']]    += $Row['pay_price'];
+
+                        //$S_RETURNVAL['good_type2'][$Row['code4']][$Row['good_type2']]                            = $Row['code5'];
+                        //$S_RETURNVAL['m_nm'][$Row['code4']]                                                      = $Row['code4'];
+                        //$S_RETURNVAL['good_type2_price'][$Row['pay_date']][$Row['code4']][$Row['good_type2']]    += $Row['pay_price'];
+                        $S_RETURNVAL['pay_date'][$Row['pay_date']]                                               = $Row['pay_date'];
+                        $nListCnt++;
+                    }
+                    // echo $querySelectDailyTwoDate_date;
+                    // var_dump($Result);
+                    $querySelectDailyTwoDate_date2 = "SELECT t_report.* FROM (
+                        SELECT CONCAT('" . $dr_dr2_from . "',' ~ ','" . $dr_r2_to . "') as pay_date, SUM(a.pay_price) as pay_price, code5 as good_type2, 
+                                    b.cm3_seq as m_nm1, b.code4 as code4, b.code5 as code5,  $code4 as type_code, a.good_type2 as good_type2_1
+                    FROM ( 
+                            SELECT pay_date as pay_date , good_type2, SUM(pay_price) as pay_price, m_nm
+                            FROM t_contract 
+                            WHERE 1=1 
+                            AND agree_state = '3' 
+                            AND pay_date BETWEEN '" . $dr_dr2_from . "' AND '" . $dr_r2_to . "' 
+                            " . $where_division1 . "
+                            " . $where_division2 . "
+                            " . $where_em_seq . "
+                            " . $where_week . "
+                            " . $where_cs_m_id . "
+                            " . $where_cs_nm . "                        
+                            AND del_date IS NULL 
+                            AND sales_type IN (1,3) 
+                            " . $where_cs_num . "
+                            GROUP BY pay_date, good_type2 
+                            ) AS a 
+                    INNER JOIN ( 
+                            SELECT cm2_seq, cm3_seq, code4, code5, code6
+                            FROM t_common2 
+                            WHERE use_yn='Y' 
+                            AND cm3_seq > 0 
+                            $where_code
+                            ) AS b ON a.good_type2=b.cm2_seq 
+                    group BY a.pay_date, type_code, b.code5
+                                ) AS t_report
+                            INNER JOIN t_common2 AS t_comm
+                            ON t_report.code5 = t_comm.cm2_seq
+                            ORDER BY t_comm.sort asc";
+                    $Result = que($querySelectDailyTwoDate_date2);
+                    $nListCnt = 0;
+                    while ($Row = @mysql_fetch_assoc($Result)) {
+                        $S_RETURNVAL['good_type2'][$Row['type_code']][$Row['code5']]                            = $Row['good_type2_1'];
+                        $S_RETURNVAL['m_nm'][$Row['type_code']]                                                      = $Row['type_code'];
+                        $S_RETURNVAL['good_type2_price'][$Row['pay_date']][$Row['type_code']][$Row['good_type2']]    += $Row['pay_price'];
+
+                        // $S_RETURNVAL['good_type2'][$Row['code4']][$Row['good_type2']]                            = $Row['code5'];
+                        // $S_RETURNVAL['m_nm'][$Row['code4']]                                                      = $Row['code4'];
+                        // $S_RETURNVAL['good_type2_price'][$Row['pay_date']][$Row['code4']][$Row['good_type2']]    += $Row['pay_price'];
+                        $S_RETURNVAL['pay_date'][$Row['pay_date']]                                               = $Row['pay_date'];
+                        $nListCnt++;
+                    }            
+                    // echo '<pre>';
+                    // echo $querySelectDailyTwoDate_date2;
+                    // echo '</pre>';
+                    // var_dump($Result);    
+                    $S_RETURNVAL['nListCnt'] = $nListCnt;
+                    return $S_RETURNVAL;
+                    que_close();
+        // -- 단일 기간 조회 일 떄
+                } else { 
+                    $querySelectDailyOneDate_date = "SELECT t_report.* FROM (
+                    SELECT a.pay_date, code5 as good_type2 , a.m_nm, SUM(a.pay_price) AS pay_price, b.cm3_seq as m_nm1, code4 as code4, code5 as code5, $code4 as type_code, a.good_type2 as good_type2_1
+                                FROM (
+                                    SELECT $sreg_date , good_type2, SUM(pay_price) as pay_price,  m_nm
+                                    FROM t_contract		
+                                    WHERE $Date1
+                                    AND agree_state = '3'
+                                    " . $where_division1 . "
+                                    " . $where_division2 . "
+                                    " . $where_em_seq . "
+                                    " . $where_week . "
+                                    " . $where_cs_m_id . "
+                                    " . $where_cs_nm . "    
+                                    AND del_date IS NULL
+                                    AND sales_type IN (1,3)
+                                    " . $where_cs_num . "
+                                    $sgroup_by , good_type2
+                                ) AS a INNER JOIN (
+                                    SELECT cm2_seq, cm3_seq, code4, code5, code6
+                                    FROM t_common2 
+                                    WHERE use_yn='Y' 
+                                    $where_code
+                                ) AS b 
+                                ON a.good_type2=b.cm2_seq
+                                GROUP BY pay_date, type_code, code5
+                                                            ) AS t_report
+                                INNER JOIN t_common2 AS t_comm
+                                ON t_report.code5 = t_comm.cm2_seq
+                                ORDER BY t_report.pay_date, t_comm.sort asc";
+                    $Result = que($querySelectDailyOneDate_date);
+                    // echo '<pre>';
+                    // echo $querySelectDailyOneDate_date;
+                    // echo '</pre>';
+                    // var_dump($Result);
+                    $nListCnt = 0;
+                    while ($Row = @mysql_fetch_assoc($Result)) {
+                        $S_RETURNVAL['good_type2'][$Row['type_code']][$Row['code5']]                            = $Row['good_type2_1'];
+                        $S_RETURNVAL['m_nm'][$Row['type_code']]                                                      = $Row['type_code'];
+                        $S_RETURNVAL['good_type2_price'][$Row['pay_date']][$Row['type_code']][$Row['good_type2']]    += $Row['pay_price'];
+                        $S_RETURNVAL['pay_date'][$Row['pay_date']]                                               = $Row['pay_date'];
+                        $S_RETURNVAL['division1']                                                                = $Row['division1'];
+                        $nListCnt++;
+                    }
+                    $S_RETURNVAL['nListCnt'] = $nListCnt;
+                    return $S_RETURNVAL;
+                    que_close();
+                }
+
+            } else {
+        // ---------주별 일 떄
+            $querySelectWeekly_date = "SELECT t_report.* FROM (
+                            SELECT CONCAT(start,' ~ ',end) as pay_date, code5 AS good_type2, SUM(a.pay_price) as pay_price, b.cm3_seq as m_nm1,
+                            b.code4 as code4, b.code5 as CODE5, $code4 as type_code, good_type2 as good_type2_1
+                            FROM (
+                                SELECT $sreg_date , good_type2, SUM(pay_price) as pay_price,  m_nm,
+                                        DATE_FORMAT(DATE_SUB(pay_date, INTERVAL (WEEKDAY(pay_date)) DAY), '%Y-%m-%d') as start,
+                                        DATE_FORMAT(DATE_SUB(pay_date, INTERVAL (WEEKDAY(pay_date) - 6) DAY), '%Y-%m-%d') as end
+                                FROM t_contract		
+                                WHERE 1=1
+                                AND pay_date >= '$sweek_start'
+                                AND pay_date <= '$eweek_end'
+                                " . $where_division1 . "
+                                " . $where_division2 . "
+                                " . $where_em_seq . "
+                                " . $where_week . "
+                                " . $where_cs_m_id . "
+                                " . $where_cs_nm . "   
+                                AND del_date IS NULL
+                                AND sales_type IN (1,3)
+                                AND agree_state = '3'
+                                " . $where_cs_num . "
+                                $sgroup_by , good_type2				
+                            ) AS a INNER JOIN (
+                                SELECT cm2_seq, cm3_seq, code4, code5, code6
+                                FROM t_common2 
+                                WHERE use_yn='Y' 
+                                $where_code
+                            ) AS b 
+                            ON a.good_type2=b.cm2_seq
+                            group by pay_date, type_code, b.code5
+                        ) AS t_report
+                    INNER JOIN t_common2 AS t_comm
+                    ON t_report.code5 = t_comm.cm2_seq
+                    ORDER BY t_report.pay_date, t_comm.sort asc";
+                    
+            $Rst = que($querySelectWeekly_date);
+            // echo '<pre>';
+            // echo $querySelectWeekly_date;
+            // echo '</pre>';
+            // var_dump($Rst);
+            $nListCnt = 0;
+            while ($Row = @mysql_fetch_assoc($Rst)) {
+                $S_RETURNVAL['good_type2'][$Row['type_code']][$Row['good_type2']]                            = $Row['good_type2_1'];
+                $S_RETURNVAL['m_nm'][$Row['type_code']]                                                      = $Row['type_code'];
+                $S_RETURNVAL['good_type2_price'][$Row['pay_date']][$Row['type_code']][$Row['good_type2']]    += $Row['pay_price'];
+                $S_RETURNVAL['pay_date'][$Row['pay_date']]                                                = $Row['pay_date'];
+                $S_RETURNVAL['pay_date_1']                                                                = $Row['pay_date'];
+                $S_RETURNVAL['division1']                                                                = $Row['division1'];
+                $nListCnt++;
+            }
+            $S_RETURNVAL['nListCnt'] = $nListCnt;
+            return $S_RETURNVAL;
+            que_close();
+            }
+    }
+    // 고정차트데이터
+    public function funcGoogleChartData($ad_type, $good_type2, $code4){
+        if ($_GET["dr_dr1_from"] && $_GET["dr_dr1_to"]) {
+            $dr_dr1_from = date("Y-m-d", strtotime($_GET["dr_dr1_from"]));
+            $dr_dr1_to = date("Y-m-d", strtotime($_GET["dr_dr1_to"]));
+            $Date1 = "BETWEEN '" . $dr_dr1_from . "' AND '" . $dr_dr1_to . "'";
+        }
+        if ($_GET["dr_dr2_from"] && $_GET["dr_r2_to"]) {
+            $dr_dr2_from = date("Y-m-d", strtotime($_GET["dr_dr2_from"]));
+            $dr_r2_to = date("Y-m-d", strtotime($_GET["dr_r2_to"]));
+            $Date2 = "BETWEEN '" . $dr_dr2_from . "' AND '" . $dr_r2_to . "'";
+        }
+        if ($_GET["check1"]==1) {
+            $code4 = "b.code4";
+        }
+        if ($_GET["check1"]==2) {
+            $code4 = "b.code6";
+        }
+        if ($_GET["ad_type"]) {
+            $ad_type = implode(",", $_GET['ad_type']);
+            $where_code = "AND code4 IN (" . $ad_type . ")";
+        }
+        if ($_GET["m_nm"]) {
+            $m_nm = implode(",", $_GET["m_nm"]);
+            $where_code    = "AND code6 IN (" . $m_nm . ")";
+        }
+        if ($_GET["division1"]) { // 부문
+            $where_division1 = "AND division1 = '" . $_GET['division1'] . "'";
+        }
+        if ($_GET["division2"]) { // 팀
+            $where_division2 = "AND division2 = '" . $_GET['division2'] . "'";
+        }
+        if ($_GET["em_nm"]) { // 사원번호
+            $where_em_seq = "AND em_seq = '" . $_GET['em_nm'] . "'";
+        }
+        if ($_GET["s_item"]) {
+            if ($_GET["s_item"] == "cs_m_id") {
+                $where_cs_m_id = "AND cs_m_id = '" . $_GET['s_string'] . "'";
+            }
+            if ($_GET["s_item"] == "cs_nm") {
+                $where_cs_nm = "AND getCsKrName(cs_seq) = '" . $_GET['s_string'] . "'";
+            }
+            if ($_GET["s_item"] == "cs_num") {
+                $where_cs_num = " AND cs_seq = (SELECT cs_seq from t_customer WHERE cs_num = '" . $_GET['s_string'] . "')";
+            }
+        }
+
+
+        if ($_GET["dr_dr1_from"] && $_GET["dr_dr1_to"]) {
+            $Qry = "SELECT a.*, b.cm3_seq as m_nm1, code4 as code4 
+            FROM ( 
+                    SELECT pay_date as pay_date , good_type2, SUM(pay_price) as pay_price, m_nm, cs_m_id 
+                    FROM t_contract 
+                    WHERE pay_date $Date1
+                    " . $where_division1 . "
+                    " . $where_division2 . "
+                    " . $where_em_seq . "
+                    " . $where_cs_m_id . "
+                    " . $where_cs_nm . "    
+                    AND del_date IS NULL
+                    AND sales_type IN (1,3) 
+                    AND agree_state = '3' 
+                    GROUP BY pay_date 
+                    ) AS a 
+            INNER JOIN ( 
+                    SELECT cm2_seq, cm1_seq, CODE1, CODE2, kr_name, cm3_seq, code4 
+                    FROM t_common2 
+                    WHERE cm3_seq > 0 
+                    AND use_yn='Y' 
+                    ) AS b ON a.good_type2=b.cm2_seq
+            ORDER BY pay_date";
+            $Rst = que($Qry);
+            // var_dump($Rst);
+            // echo '<pre>';
+            // echo $Qry;
+            // echo '</pre>';
+            $nListCnt = 0;
+
+
+            $a = (date("d", strtotime($_GET["dr_dr1_to"]))*1 )- (date("d", strtotime($_GET["dr_dr1_from"]))*1 );
+            $b = (date("d", strtotime($_GET["dr_r2_to"]))*1 )- (date("d", strtotime($_GET["dr_dr2_from"]))*1 );
+            $c = $a > $b ? $a : $b;
+        
+            $tempDate = array();
+            for($i=0; $i<=$c;$i++){
+                array_push($tempDate,$i);
+            }
+            $tempDate2 = array();
+            for($i=0; $i<=$c;$i++){
+                array_push($tempDate2,date("Y-m-d", strtotime("+".$i." day", strtotime($_GET["dr_dr1_from"]))));
+            }
+
+            $count = 0;
+            while ($Row = @mysql_fetch_assoc($Rst)) {
+                $S_RETURNVAL['pay_price'][1][$count]    += $Row['pay_price'];
+                $S_RETURNVAL['pay_price2'][1][$Row['pay_date']]    += $Row['pay_price'];
+                $S_RETURNVAL['pay_date'] = $tempDate;
+                $S_RETURNVAL['pay_date2'] = $tempDate2;
+                $S_RETURNVAL['sales_type'][1]    = "1";
+                $nListCnt++;
+                $count++;
+            }
+            if ($_GET["dr_dr2_from"] && $_GET["dr_r2_to"]) {
+                $Qry2 = " SELECT a.*, b.cm3_seq as m_nm1, code4 as code4 
+                            FROM ( 
+                                    SELECT pay_date as pay_date , good_type2, SUM(pay_price) as pay_price, m_nm, cs_m_id 
+                                    FROM t_contract 
+                                    WHERE pay_date $Date2
+                                    " . $where_division1 . "
+                                    " . $where_division2 . "
+                                    " . $where_em_seq . "
+                                    " . $where_cs_m_id . "
+                                    " . $where_cs_nm . "    
+                                    AND del_date IS NULL
+                                    AND sales_type IN (1,3) 
+                                    AND agree_state = '3' 
+                                    GROUP BY pay_date 
+                                    ) AS a 
+                            INNER JOIN ( 
+                                    SELECT cm2_seq, cm1_seq, CODE1, CODE2, kr_name, cm3_seq, code4 
+                                    FROM t_common2 
+                                    WHERE cm3_seq > 0 
+                                    AND use_yn='Y' 
+                                    ) AS b ON a.good_type2=b.cm2_seq
+                                    order by pay_date";
+                $Rst = que($Qry2);
+                $nListCnt = 0;
+                $count = 0;
+                while ($Row = @mysql_fetch_assoc($Rst)) {
+                    $S_RETURNVAL['pay_price']["3"][$count]    += $Row['pay_price'];
+                    $S_RETURNVAL['pay_price2']["3"][$Row['pay_date']]    += $Row['pay_price'];
+                    $S_RETURNVAL['sales_type']["3"]    = "3";
+                    $nListCnt++;
+                    $count++;
+                }
+            }
+            return $S_RETURNVAL;
+            que_close();
+        }
+    }
+    // 계정 리스트
+    public function funcSelectCsList($date, $good_type2, $code4){
+        //-- 변수 설정 
+            if ($_GET["sdate1"] && !$_GET["sdate2"]) {
+                $sdate01 = "'" . $_GET['sdate1'] . "'";
+                $sdate = "pay_date = ".$sdate01."";
+                if($_GET['cal_kind']== 'm'){
+                    $sdate = "pay_date BETWEEN  '".$_GET["getDate1"]."' AND '".$_GET["getDate2"]."'";
+                }
+                if($_GET["cal_kind"]=="y"){
+                    $sdate = "pay_date BETWEEN  '".$_GET["getDate1"]."' AND '".$_GET["getDate2"]."'";
+                }
+            }
+            if ($_GET["sdate1"] && $_GET["sdate2"]) {
+                $sdate01 = "'" . $_GET['sdate1'] . "'";
+                $sdate02 = "'" . $_GET['sdate2'] . "'";
+                $sdate = "pay_date BETWEEN " . $sdate01 . "AND ".$sdate02."";
+
+                if(strlen($_GET['sdate1'])==8){
+                    if(!$_GET["cal_kind"]=="m"){
+                        $sdate01 = "'" . $_GET['sdate1'] . "'";
+                        $s_year = $sdate01[1].$sdate01[2].$sdate01[3].$sdate01[4];
+                        $s_month = $sdate01[5].$sdate01[6];
+                        $s_day = $sdate01[7].$sdate01[8];
+                        $sdate_ymd = $s_year.'-'.$s_month.'-'.$s_day;
+
+                        $sdate02 = "'" . $_GET['sdate2'] . "'";
+                        $e_year = $sdate02[1].$sdate02[2].$sdate02[3].$sdate02[4];
+                        $e_month = $sdate02[5].$sdate02[6];
+                        $e_day = $sdate02[7].$sdate02[8];
+                        $edate_ymd = $e_year.'-'.$e_month.'-'.$e_day;
+
+                        $sdate = "pay_date BETWEEN '".$sdate_ymd."' AND '".$edate_ymd."'";
+                    }
+                    if($_GET['type']=='customer'){
+                        $sdate01 = "'" . $_GET['sdate1'] . "'";
+                        $sdate02 = "'" . $_GET['sdate2'] . "'";
+                        $sdate = "pay_date BETWEEN " . $sdate01 . "AND ".$sdate02."";
+                    }
+                }
+                if($_GET['type']=='division'){
+                    $sdate01 = "'" . $_GET['sdate1'] . "'";
+                    $s_year = $sdate01[1].$sdate01[2].$sdate01[3].$sdate01[4];
+                    $s_month = $sdate01[5].$sdate01[6];
+                    $s_day = $sdate01[7].$sdate01[8];
+                    $sdate_ymd = $s_year.'-'.$s_month.'-'.$s_day;
+
+                    $sdate02 = "'" . $_GET['sdate2'] . "'";
+                    $e_year = $sdate02[1].$sdate02[2].$sdate02[3].$sdate02[4];
+                    $e_month = $sdate02[5].$sdate02[6];
+                    $e_day = $sdate02[7].$sdate02[8];
+                    $edate_ymd = $e_year.'-'.$e_month.'-'.$e_day;
+
+                    $sdate = "pay_date BETWEEN '".$sdate_ymd."' AND '".$edate_ymd."'";
+                    if($_GET['cal_kind']== 'wk'){
+                        echo 'wkDate : ';
+                    }
+                }
+            }
+            if (!$_GET["sdate1"]) {
+                $day_7ago = date("Y-m-d", strtotime("-7 Day"));
+                $today = date("Y-m-d");
+                $day_1ago = date("Y-m-d", strtotime("-1 Day"));
+                $sdate = "pay_date BETWEEN  '".$day_7ago."-1' AND '".$today."-31'";
+                if($_GET['cal_kind']== 'd'){
+                    if ($_GET["sdate"] && $_GET["edate"]) {
+                        $sdate_8 = "'" . $_GET['sdate'] . "'";
+                        $s_year = $sdate_8[1].$sdate_8[2].$sdate_8[3].$sdate_8[4];
+                        $s_month = $sdate_8[5].$sdate_8[6];
+                        $s_day = $sdate_8[7].$sdate_8[8];
+                        $sdate_8 = $s_year.'-'.$s_month.'-'.$s_day;
+                        $edate_8 = "'" . $_GET['edate'] . "'";
+                        $e_year = $edate_8[1].$edate_8[2].$edate_8[3].$edate_8[4];
+                        $e_month = $edate_8[5].$edate_8[6];
+                        $e_day = $edate_8[7].$edate_8[8];
+                        $edate_8 = $e_year.'-'.$e_month.'-'.$e_day;
+                        $sdate = "pay_date BETWEEN '".$sdate_8."' AND '".$edate_8."'";
+                    }else{
+                        $sdate = "pay_date BETWEEN  '".$day_7ago."' AND '".$day_1ago."'";
+                    }
+                }
+                if($_GET['cal_kind']== 'wk'){
+                    if($_GET['type']=='date'){
+                        if ($_GET["sdate"] && $_GET["edate"]) {
+                            $sdate_8 = "'" . $_GET['sdate'] . "'";
+                            $s_year = $sdate_8[1].$sdate_8[2].$sdate_8[3].$sdate_8[4];
+                            $s_month = $sdate_8[5].$sdate_8[6];
+                            $s_day = $sdate_8[7].$sdate_8[8];
+                            $sdate_8 = $s_year.'-'.$s_month.'-'.$s_day;
+                            $edate_8 = "'" . $_GET['edate'] . "'";
+                            $e_year = $edate_8[1].$edate_8[2].$edate_8[3].$edate_8[4];
+                            $e_month = $edate_8[5].$edate_8[6];
+                            $e_day = $edate_8[7].$edate_8[8];
+                            $edate_8 = $e_year.'-'.$e_month.'-'.$e_day;
+                            $sdate = "pay_date BETWEEN '".$sdate_8."' AND '".$edate_8."'";
+                        }        
+                    }else{
+                        $day_7ago = date("Y-m-d", strtotime("-7 Day"));
+                        $day_yesterday = date("Y-m-d", strtotime("-1 Day"));
+                        $sdate01 = "'" . $day_yesterday . "'";
+                        $sdate = "pay_date BETWEEN  '".$day_7ago."' AND '".$day_yesterday."'";
+                        $timestamp = strtotime("-1 month");
+                        $timestamp2 = strtotime("-1 day");
+                        $sdate = date("Y-m-d H:i:s", $timestamp);
+                        $edate = date("Y-m-d H:i:s", $timestamp2);
+                        $yoil = array("일", "월", "화", "수", "목", "금", "토");
+                        if ($yoil[date('w', strtotime($sdate))] === '일') {
+                            $sdate = date('Y-m-d', strtotime($sdate . '-1 days'));
+                        }
+                        if ($yoil[date('w', strtotime($edate))] === '일') {
+                            $edate = date('Y-m-d', strtotime($edate . '-1 days'));
+                        }
+                        $sYY = date("Y", strtotime($sdate));
+                        $sMM = date("m", strtotime($sdate));
+                        $sDD = date("d", strtotime($sdate));
+                        $sDay = date("w", strtotime($sdate)) - 1;
+                        $eYY = date("Y", strtotime($edate));
+                        $eMM = date("m", strtotime($edate));
+                        $eDD = date("d", strtotime($edate));
+                        $eDay = date("w", strtotime($edate)) - 1;
+                        $sweek_start = date("Y-m-d", strtotime($sYY . "-" . $sMM . "-" . $sDD . " -" . $sDay . " day"));    // 주의 첫날1
+                        $sweek_end = date("Y-m-d", strtotime($sweek_start . " +6 day"));                        // 주의 마지막날1
+                        $eweek_start = date("Y-m-d", strtotime($eYY . "-" . $eMM . "-" . $eDD . " -" . $eDay . " day"));    // 주의 첫날2
+                        $eweek_end = date("Y-m-d", strtotime($eweek_start . " +6 day"));                        // 주의 마지막날2
+                        $sdate = "pay_date BETWEEN  '".$sweek_start."' AND '".$eweek_end."'";
+                    }
+                }            
+
+            }
+            //echo $sdate;
+        
+            if ($_GET["good_type2"]) {
+                $good_type2 = $_GET['good_type2'];
+                $where_goodtype2 = "AND good_type2 = " . $good_type2;
+            }
+            if ($_GET["good_type2"]) {
+                $code5 = $_GET['good_type2'];
+                $where_code5 = "AND code5 = " . $code5;
+            }
+            if ($_GET["code4"]) {
+                $code4 = $_GET['code4'];
+                $where_code4 = "AND CODE4 = " . $code4;
+            }
+            if ($_GET["division1"]) {
+                $division1 = $_GET['division1'];
+                $where_division1 = "AND division1 = " . $division1;
+            }
+            if ($_GET["division2"]) {
+                $division2 = $_GET['division2'];
+                $where_division2 = "AND division2 = " . $division2;
+            }
+            if ($_GET["em_seq"]) {
+                $em_seq = $_GET['em_seq'];
+                $where_em_seq = "AND em_seq = " . $em_seq;
+            }
+            if ($_GET["cs_nm"]) {
+                $cs_nm = $_GET['cs_nm'];
+                $where_cs_nm = "AND getCsKrname(cs_seq) = '" . $cs_nm . "'";
+            }
+            if($_GET['division_type']){
+                if($_GET['division_type'] == '대대행'){
+                    $where_division1 = "AND division1 = 6";
+                }
+                else if($_GET['division_type'] == '디지털플래닝'){
+                    $where_division1 = "AND division1 = 809";
+                }            
+                else if($_GET['division_type'] == '광고사업1부문'){
+                    $where_division1 = "AND division1 = 926";
+                }
+                else if($_GET['division_type'] == '광고사업2부문'){
+                    $where_division1 = "AND division1 = 927";
+                }
+                else if($_GET['division_type'] == '광고사업3부문'){
+                    $where_division1 = "AND division1 = 928";
+                }
+                else if($_GET['division_type'] == '미래사업부문'){
+                    $where_division1 = "AND division1 = 930";
+                }
+                else if($_GET['division_type'] == '경영지원부문'){
+                    $where_division1 = "AND division1 = 929";
+                }            
+                else if($_GET['division_type'] == '지사'){
+                    $where_division1 = "AND division1 = 1204";
+                }
+            }
+        
+        //-- 조회쿼리
+            $selectCsListQry = sprintf("SELECT a.*, getcomkrname(b.code4) AS code4, getcomkrname(b.code5) AS code5, getcomkrname(b.code6) AS code6
+            FROM ( 
+                    SELECT 
+                        getcomkrname(division1) AS 'division1', 
+                        getcomkrname(division2) AS 'division2', 
+                        getemkrname(em_seq) AS 'em_seq', 
+                        getCsKrname(cs_seq) AS 'cs_seq', 
+                        cs_m_id AS 'cs_m_id', 
+                        getcomkrname(m_nm) as 'm_nm',
+                        sum(pay_price) AS 'pay_price', 
+                        good_type2
+                    FROM t_contract 
+                    WHERE %s
+                    AND del_date IS NULL 
+                    AND sales_type IN (1,3) 
+                    AND agree_state = '3' 
+                    %s
+                    %s
+                    %s
+                    GROUP BY good_type2, t_contract.cs_seq
+                    ) AS a 
+            INNER JOIN ( 
+                    SELECT cm2_seq, kr_name, cm3_seq, code4, code5, code6
+                    FROM t_common2 b 
+                    WHERE use_yn='Y'
+                    %s
+                    %s
+                    ) AS b ON a.good_type2=b.cm2_seq
+                    order by pay_price desc"
+                    , $sdate, $where_division1, $where_division2, $where_em_seq, $where_cs_nm, $where_code5);
+
+        $Rst = que($selectCsListQry);
+
+        // echo '<pre>';
+        // echo $selectCsListQry;
+        // echo'</pre>';
+        // var_dump($Rst);
+
+        while ($Row = @mysql_fetch_assoc($Rst)) {
+            $S_RETURNVAL['division1'][]                = $Row['division1'];
+            $S_RETURNVAL['division2'][]                = $Row['division2'];
+            $S_RETURNVAL['em_seq'][]                   = $Row['em_seq'];
+            $S_RETURNVAL['cs_seq'][]                   = $Row['cs_seq'];
+            $S_RETURNVAL['cs_m_id'][]                  = $Row['cs_m_id'];
+            $S_RETURNVAL['pay_price'][]                = $Row['pay_price'];
+            $S_RETURNVAL['code4'][]                    = $Row['code4'];
+            $S_RETURNVAL['code5'][]                    = $Row['code5'];
+            $S_RETURNVAL['code6'][]                    = $Row['code6'];
+        }
+        return $S_RETURNVAL;
+    }
+    // 부문 조회
+    public function funcSelectContract_division($cal_kind, $syear, $smonth, $sday, $eyear, $emonth, $eday){
+            if ($_GET["dr_dr1_from"] && $_GET["dr_dr1_to"]) {
+                $dr_dr1_from = date("Y-m-d", strtotime($_GET["dr_dr1_from"]));
+                $dr_dr1_to = date("Y-m-d", strtotime($_GET["dr_dr1_to"]));
+                $Date1 = "pay_date BETWEEN '" . $dr_dr1_from . "' AND '" . $dr_dr1_to . "'";
+                $sdate = $dr_dr1_from;
+                $edate = $dr_dr1_to;
+                if($_GET["cal_kind"]=="m"){
+                    $month = date("Y-m", strtotime($_GET["dr_dr1_from"]));
+                    $Date1 = "pay_date BETWEEN  '".$month."-01' AND '".$month."-31'";
+                }
+                if($_GET["cal_kind"]=="y"){
+                    $year = date("Y", strtotime($_GET["dr_dr1_from"]));
+                    $Date1 = "pay_date BETWEEN  '".$year."-01-01' AND '".$year."-12-31'";
+                }
+            } else {
+                $today = date("Y-m-d");
+                $firstDay = date("Y-m-d", mktime(0, 0, 0, intval(date('m')), 1, intval(date('Y')) )); //이번달 1일 구하기
+                $Date1 = "pay_date BETWEEN '" . $firstDay . "' AND '" . $today . "'";
+                $timestamp = strtotime("-1 month");
+                $timestamp2 = strtotime("-1 day");
+                $sdate = date("Y-m-d H:i:s", $timestamp);
+                $edate = date("Y-m-d H:i:s", $timestamp2);
+                if($_GET["cal_kind"]=="m"){
+                    $month = date("Y-m");
+                    $Date1 = "pay_date BETWEEN  '".$month."-01' AND '".$month."-31'";
+                }
+                if($_GET["cal_kind"]=="y"){
+                    $year = date("Y");
+                    $Date1 = "pay_date BETWEEN  '".$year."-01-01' AND '".$year."-12-31'";
+                }
+            }
+            if ($_GET["dr_dr2_from"] && $_GET["dr_r2_to"]) {
+                $dr_dr2_from = date("Y-m-d", strtotime($_GET["dr_dr2_from"]));
+                $dr_r2_to = date("Y-m-d", strtotime($_GET["dr_r2_to"]));
+                $Date2 = "BETWEEN " . $dr_dr2_from . " AND '" . $dr_r2_to . "";
+            }
+            $yoil = array("일", "월", "화", "수", "목", "금", "토");
+            if ($yoil[date('w', strtotime($sdate))] === '일') {
+                $sdate = date('Y-m-d', strtotime($sdate . '-1 days'));
+            }
+            if ($yoil[date('w', strtotime($edate))] === '일') {
+                $edate = date('Y-m-d', strtotime($edate . '-1 days'));
+            }
+            $sYY = date("Y", strtotime($sdate));
+            $sMM = date("m", strtotime($sdate));
+            $sDD = date("d", strtotime($sdate));
+            $sDay = date("w", strtotime($sdate)) - 1;
+            $eYY = date("Y", strtotime($edate));
+            $eMM = date("m", strtotime($edate));
+            $eDD = date("d", strtotime($edate));
+            $eDay = date("w", strtotime($edate)) - 1;
+            $sweek_start = date("Y-m-d", strtotime($sYY . "-" . $sMM . "-" . $sDD . " -" . $sDay . " day"));    // 주의 첫날1
+            $sweek_end = date("Y-m-d", strtotime($sweek_start . " +6 day"));                        // 주의 마지막날1
+            $eweek_start = date("Y-m-d", strtotime($eYY . "-" . $eMM . "-" . $eDD . " -" . $eDay . " day"));    // 주의 첫날2
+            $eweek_end = date("Y-m-d", strtotime($eweek_start . " +6 day"));                        // 주의 마지막날2
+            $diff_date    = strtotime($eweek_end) - strtotime($sweek_start);
+            $week_arr = array();
+            for ($i = 0; $i < ($diff_date / 86400 + 1) / 7; $i++) {
+                $b = 7 * $i;
+                $prev_date = date("Y-m-d", strtotime(date($sweek_start) . " +" . $b . " days")) . " ~ " . date("Y-m-d", strtotime(date($sweek_end) . "+" . $b . " days"));
+                array_push($week_arr, $prev_date);
+            }
+            // --------------------------------------------------날짜 계산 끝----------------------------------------------------------------------------------------------
+            if ($_GET["check1"]==1) {
+                $code4 = "b.code4";
+            }
+            if ($_GET["check1"]==2) {
+                $code4 = "b.code6";
+            }
+            if ($_GET["ad_type"]) {
+                $ad_type = implode(",", $_GET['ad_type']);
+                $where_code = "AND code4 IN (" . $ad_type . ")";
+            }
+            if ($_GET["m_nm"]) {
+                $m_nm = implode(",", $_GET["m_nm"]);
+                $where_code    = "AND code6 IN (" . $m_nm . ")";
+            }
+            if (!$_GET["division1"]) { // 부문
+                $division_col = "a.division1 ";
+                $first_groupBy_col = "division1";
+            }        
+            if ($_GET["division1"]) { // 부문
+                $division_col = "a.division2 ";
+                $where_division1 = "AND division1 = '" . $_GET['division1'] . "'";
+                $first_groupBy_col = "division2";
+            }
+            if ($_GET["division2"]) { // 팀
+                $division_col = "a.em_seq ";
+                $where_division2 = "AND division2 = '" . $_GET['division2'] . "'";
+                $first_groupBy_col = "em_seq";
+            }
+            if ($_GET["em_nm"]) { // 사원번호
+                $where_em_seq = "AND em_seq = '" . $_GET['em_nm'] . "'";
+            }
+            if ($_GET["s_item"]) {
+                if ($_GET["s_item"] == "cs_m_id") {
+                    $where_cs_m_id = "AND cs_m_id = '" . $_GET['s_string'] . "'";
+                }
+                if ($_GET["s_item"] == "cs_nm") {
+                    $where_cs_nm = "AND getCsKrName(cs_seq) = '" . $_GET['s_string'] . "'";
+                }
+                if ($_GET["s_item"] == "cs_num") {
+                    $where_cs_num = " AND cs_seq = (SELECT cs_seq from t_customer WHERE cs_num = '" . $_GET['s_string'] . "')";
+                }
+            }
+            switch ($_GET['cal_kind']) {
+                case "d":
+                    $sreg_date = "pay_date as pay_date";
+                    $sgroup_by = "GROUP BY pay_date ";
+                    break;
+                case "wk":
+                    $sreg_date = "pay_date as pay_date";
+                    $sgroup_by = "GROUP BY pay_date ";
+                    break;
+                case "m":
+                    $sreg_date = "left(pay_date,7) as pay_date";
+                    $sgroup_by = "GROUP BY left(pay_date,7)";
+                    break;
+                case "y":
+                    $sreg_date = "LEFT(pay_date,4) as pay_date";
+                    $sgroup_by = "GROUP BY LEFT(pay_date,4)";
+                    break;
+                case "w":
+                    $sreg_date = "WEEKDAY(pay_date) as pay_date";
+                    $sgroup_by = "GROUP BY WEEKDAY(pay_date)";
+                    break;
+                case "wd":
+                    $sreg_date = "WEEKDAY(pay_date) as pay_date";
+                    $sgroup_by = "GROUP BY WEEKDAY(pay_date)";
+                    $where_week = "AND WEEKDAY(pay_date) = '" . $_GET['week'] . "'";
+                    break;
+            }
+
+            //-----------------------------------------------------------조회 쿼리 -----------------------------------------------------------------
+            if ($_GET['cal_kind'] != "wk") {
+                if (!$_GET["dr_dr2_from"]) {
+                    $querySelectDivisionOneDate = "SELECT t_report.* FROM (
+                    SELECT code5 as good_type2 , a.m_nm, SUM(a.pay_price) AS pay_price, $division_col as division1, 
+                            b.cm3_seq as m_nm1, code4 as code4, code5 as code5, $code4 as type_code, good_type2 as good_type2_1, a.div1 as div1
+                FROM ( 
+                        SELECT good_type2, SUM(pay_price) as pay_price, m_nm,  getcomkrname(division2) as division2, getcomkrname(division1) as division1, 
+                                getEmkrName(em_seq) as em_seq, division1 AS DIV1
+                        FROM t_contract 
+                        WHERE $Date1
+                        $where_division1
+                        $where_division2
+                        $where_em_seq
+                        AND del_date IS NULL 
+                        AND sales_type IN (1,3) 
+                        AND agree_state = '3' 
+                        GROUP BY em_seq, good_type2
+                        ) AS a 
+                INNER JOIN ( 
+                        SELECT cm2_seq, cm3_seq, code4, code5, code6 
+                        FROM t_common2
+                        WHERE cm3_seq > 0
+                        AND use_yn='Y' 
+                        $where_code
+                        ) AS b 
+                        ON a.good_type2=b.cm2_seq
+                        GROUP BY $first_groupBy_col, type_code, b.code5
+                        ) AS t_report
+                            INNER JOIN t_common2 AS t_comm
+                            ON t_report.code5 = t_comm.cm2_seq
+                            ORDER BY FIELD(t_report.div1, '926','927','928', '809', '6', '1204','929'), t_comm.sort";
+
+                    $Rst = que($querySelectDivisionOneDate);
+                    // echo '<pre>';
+                    // echo $querySelectDivisionOneDate;
+                    // echo '</pre>';
+                    // var_dump($Rst);
+                    $nListCnt = 0;
+                    while ($Row = @mysql_fetch_assoc($Rst)) {
+                        $S_RETURNVAL['good_type22'][$Row['type_code']][$Row['code5']]                            = $Row['good_type2_1'];
+                        $S_RETURNVAL['m_nm2'][$Row['type_code']]                                                      = $Row['type_code'];
+                        $S_RETURNVAL['good_type2_price2'][$Row['division1']][$Row['type_code']][$Row['good_type2']]    += $Row['pay_price'];
+                        $S_RETURNVAL['division1'][$Row['division1']]                                               = $Row['division1'];
+                        $S_RETURNVAL['division12']                                                                = $Row['division1'];
+                        $nListCnt++;
+                    }
+                    $S_RETURNVAL['nListCnt'] = $nListCnt;
+                    return $S_RETURNVAL;
+                    que_close();
+
+                }else{
+                    //--------------------------------부문 비교일자----------------------------------
+                    $querySelectDivisionTwoDate_date = "SELECT t_report.* FROM (
+                    SELECT CONCAT('" . $dr_dr1_from . "',' ~ ','" . $dr_dr1_to . "') as pay_date, SUM(a.pay_price) as pay_price, 
+                                                    code5 as good_type2, b.cm3_seq as m_nm1, b.code4 as code4, b.code5 as code5,
+                                                    a.division1_kr as division1_kr, $division_col as division1, $code4 as type_code, good_type2 as good_type2_1, a.div1 as div1 
+                    FROM ( 
+                            SELECT pay_date as pay_date , good_type2, SUM(pay_price) as pay_price, m_nm, 
+                                        getcomkrname(division1) as division1_kr, 
+                                        getcomkrname(division1) as division1, 
+                                        getcomkrname(division2) as division2, 
+                                        getEmkrName(em_seq) as em_seq, division1 AS DIV1
+                                        FROM t_contract 
+                            WHERE 1=1 
+                            AND agree_state = '3' 
+                            AND pay_date BETWEEN '" . $dr_dr1_from . "' AND '" . $dr_dr1_to . "' 
+                            " . $where_division1 . "
+                            " . $where_division2 . "
+                            " . $where_em_seq . "
+                            " . $where_cs_m_id . "
+                            " . $where_cs_nm . "                        
+                            AND del_date IS NULL 
+                            AND sales_type IN (1,3) 
+                            " . $where_cs_num . "
+                            GROUP BY pay_date , good_type2 
+                            ) AS a 
+                    INNER JOIN ( 
+                            SELECT cm2_seq, cm3_seq, code4, code5, code6 
+                            FROM t_common2 
+                            WHERE use_yn='Y' 
+                            AND cm3_seq > 0 
+                            $where_code
+                            ) AS b ON a.good_type2=b.cm2_seq 	                        
+                    group BY $first_groupBy_col, type_code, b.code5
+                    ) AS t_report
+                            INNER JOIN t_common2 AS t_comm
+                            ON t_report.code5 = t_comm.cm2_seq
+                            ORDER BY FIELD(t_report.div1, '926','927','928', '809', '6', '1204','929'), t_comm.sort";
+
+                    $Result = que($querySelectDivisionTwoDate_date);
+                    // echo '<pre>';
+                    // echo $querySelectDivisionTwoDate_date;
+                    // echo '</pre>';
+                    // var_dump($Result);
+                    $nListCnt = 0;
+                    while ($Row = @mysql_fetch_assoc($Result)) {
+                        $S_RETURNVAL['good_type22'][$Row['type_code']][$Row['good_type2']]                            = $Row['good_type2_1'];
+                        $S_RETURNVAL['m_nm2'][$Row['type_code']]                                                      = $Row['type_code'];
+                        $S_RETURNVAL['good_type2_price2'][$Row['pay_date']][$Row['type_code']][$Row['good_type2']]    += $Row['pay_price'];
+                        $S_RETURNVAL['pay_date'][$Row['pay_date']]                                               = $Row['pay_date'];
+                        $S_RETURNVAL['price_compare'][$Row['division1']][$Row['pay_date']][$Row['type_code']][$Row['good_type2']]    += $Row['pay_price'];
+                        
+                        $S_RETURNVAL['division1_kr_list'][$Row['division1']]                   = $Row['division1'];
+                        $nListCnt++;
+                    }
+                    $querySelectDivisionTwoDate_date2 = "SELECT t_report.* FROM (
+                        SELECT CONCAT('" . $dr_dr2_from . "',' ~ ','" . $dr_r2_to . "') as pay_date, SUM(a.pay_price) as pay_price, 
+                                                    code5 as good_type2, b.cm3_seq as m_nm1, b.code4 as code4, b.code5 as code5,
+                                                    a.division1_kr as division1_kr, $division_col as division1, $code4 as type_code, good_type2 as good_type2_1, a.div1 as div1 
+                    FROM ( 
+                            SELECT pay_date as pay_date , good_type2, SUM(pay_price) as pay_price, m_nm, 
+                                        getcomkrname(division1) as division1_kr, 
+                                        getcomkrname(division1) as division1, 
+                                        getcomkrname(division2) as division2, 
+                                        getEmkrName(em_seq) as em_seq, division1 AS DIV1
+                                        FROM t_contract 
+                            WHERE 1=1 
+                            AND agree_state = '3' 
+                            AND pay_date BETWEEN '" . $dr_dr2_from . "' AND '" . $dr_r2_to . "' 
+                            " . $where_division1 . "
+                            " . $where_division2 . "
+                            " . $where_em_seq . "
+                            " . $where_week . "
+                            " . $where_cs_m_id . "
+                            " . $where_cs_nm . "                        
+                            AND del_date IS NULL 
+                            AND sales_type IN (1,3) 
+                            " . $where_cs_num . "
+                            GROUP BY pay_date , good_type2 
+                            ) AS a 
+                    INNER JOIN ( 
+                            SELECT cm2_seq, cm3_seq, code4, code5, code6
+                            FROM t_common2 
+                            WHERE use_yn='Y' 
+                            AND cm3_seq > 0 
+                            $where_code
+                            ) AS b ON a.good_type2=b.cm2_seq 
+                    group BY $first_groupBy_col, type_code, b.code5
+                    ) AS t_report
+                    INNER JOIN t_common2 AS t_comm
+                    ON t_report.code5 = t_comm.cm2_seq
+                    ORDER BY FIELD(t_report.div1, '926','927','928', '809', '6', '1204','929'), t_comm.sort";
+                    $Result = que($querySelectDivisionTwoDate_date2);
+                    // echo '<pre>';
+                    // echo $querySelectDivisionTwoDate_date2;
+                    // echo '</pre>';
+                    // var_dump($Result);
+                $nListCnt = 0;
+                while ($Row = @mysql_fetch_assoc($Result)) {
+                    $S_RETURNVAL['good_type22'][$Row['type_code']][$Row['good_type2']]                            = $Row['good_type2_1'];
+                    $S_RETURNVAL['m_nm2'][$Row['type_code']]                                                      = $Row['type_code'];
+                    $S_RETURNVAL['good_type2_price2'][$Row['pay_date']][$Row['type_code']][$Row['good_type2']]    += $Row['pay_price'];
+                    $S_RETURNVAL['pay_date'][$Row['pay_date']]                                               = $Row['pay_date'];
+                    $S_RETURNVAL['price_compare'][$Row['division1']][$Row['pay_date']][$Row['type_code']][$Row['good_type2']]    += $Row['pay_price'];
+                    $S_RETURNVAL['division1_kr_list'][$Row['division1']]                     = $Row['division1'];
+                    
+                    $nListCnt++;
+                }                
+                $S_RETURNVAL['nListCnt'] = $nListCnt;
+                return $S_RETURNVAL;
+                que_close();
+            }
+        } else {
+                // -------------------------------------주별일때-----------------------------------------------------
+                $querySelectDivisionWeekly = "SELECT t_report.* FROM (
+                SELECT CONCAT(start,' ~ ',end) as pay_date, SUM(a.pay_price) as pay_price, 
+                code5 as good_type2,a.m_nm, getcomkrname($division_col) as division1 ,a.division2, a.em_seq, b.cm3_seq as m_nm1, b.code4 as code4, b.code5 as code5, $code4 as type_code, good_type2 as good_type2_1, a.div1 as div1 
+            FROM (
+                    SELECT $sreg_date , good_type2, SUM(pay_price) as pay_price,  m_nm, division1, division2, em_seq,
+                            DATE_FORMAT(DATE_SUB(pay_date, INTERVAL (WEEKDAY(pay_date)) DAY), '%Y-%m-%d') as start,
+                            DATE_FORMAT(DATE_SUB(pay_date, INTERVAL (WEEKDAY(pay_date) - 6) DAY), '%Y-%m-%d') as end, division1 AS DIV1
+                    FROM t_contract		
+                    WHERE 1=1
+                    AND pay_date >= '$sweek_start'
+                    AND pay_date <= '$eweek_end'
+                    " . $where_division1 . "
+                    " . $where_division2 . "
+                    " . $where_em_seq . "
+                    " . $where_week . "
+                    " . $where_cs_m_id . "
+                    " . $where_cs_nm . "   
+                    AND del_date IS NULL
+                    AND sales_type IN (1,3)
+                    AND agree_state = '3'
+                    " . $where_cs_num . "
+                    $sgroup_by , division1, division2, em_seq, good_type2				
+                ) AS a INNER JOIN (
+                    SELECT cm2_seq, cm3_seq, code4, code5, code6 
+                    FROM t_common2 
+                    WHERE cm3_seq > 0 
+                    AND use_yn='Y' 
+                    $where_code
+                ) AS b 
+                ON a.good_type2=b.cm2_seq
+                group by pay_date, $first_groupBy_col, type_code, b.code5
+                ) AS t_report
+                            INNER JOIN t_common2 AS t_comm
+                            ON t_report.code5 = t_comm.cm2_seq
+                            ORDER BY t_report.pay_date, FIELD(t_report.div1, '926','927','928', '809', '6', '1204','929'), t_comm.sort";
+
+                $Rst = que($querySelectDivisionWeekly);
+                    // echo '<pre>';
+                    // echo $querySelectDivisionWeekly;
+                    // echo '</pre>';
+                    // var_dump($Rst);                
+                $nListCnt = 0;
+                while ($Row = @mysql_fetch_assoc($Rst)) {
+                    $S_RETURNVAL['good_type22'][$Row['type_code']][$Row['code5']]                                   = $Row['good_type2_1'];
+                    $S_RETURNVAL['m_nm2'][$Row['type_code']]                                                        = $Row['type_code'];
+                    $S_RETURNVAL['good_type2_price2'][$Row['division1']][$Row['type_code']][$Row['good_type2']]      += $Row['pay_price'];
+                    $S_RETURNVAL['pay_date'][$Row['pay_date']]                                                      = $Row['pay_date'];
+                    $S_RETURNVAL['division1'][$Row['division1']]                                                    = $Row['division1'];
+                    $S_RETURNVAL['division12']                                                                      = $Row['division1'];
+                    $S_RETURNVAL['division1_kr_list'][$Row['division1']]                   = $Row['division1'];
+                    $S_RETURNVAL['price_compare'][$Row['division1']][$Row['pay_date']][$Row['type_code']][$Row['good_type2']]    += $Row['pay_price'];
+
+                    
+                    $nListCnt++;
+                }
+                $S_RETURNVAL['nListCnt'] = $nListCnt;
+                return $S_RETURNVAL;
+                que_close();
+            }
+    }
+    // 광고주 조회
+    public function funcSelectContract_customer($cal_kind, $syear, $smonth, $sday, $eyear, $emonth, $eday){
+         if ($_GET["dr_dr1_from"] && $_GET["dr_dr1_to"]) {
+            $dr_dr1_from = date("Y-m-d", strtotime($_GET["dr_dr1_from"]));
+            $dr_dr1_to = date("Y-m-d", strtotime($_GET["dr_dr1_to"]));
+            $Date1 = "pay_date BETWEEN '" . $dr_dr1_from . "' AND '" . $dr_dr1_to . "'";
+            $sdate = $dr_dr1_from;
+            $edate = $dr_dr1_to;
+            // if($_GET["cal_kind"]=="m"){
+            //     $month = date("Y-m", strtotime($_GET["dr_dr1_from"]));
+            //     $Date1 = "pay_date BETWEEN  '".$month."-01' AND '".$month."-31'";
+            //  }
+            //  if($_GET["cal_kind"]=="y"){
+            //     $year = date("Y", strtotime($_GET["dr_dr1_from"]));
+            //     $Date1 = "pay_date BETWEEN  '".$year."-01-01' AND '".$year."-12-31'";
+            //  }
+        } else {
+            $today = date("Y-m-d");
+            $firstDay = date("Y-m-d", mktime(0, 0, 0, intval(date('m')), 1, intval(date('Y')) )); //이번달 1일 구하기
+            $Date1 = "pay_date BETWEEN '" . $firstDay . "' AND '" . $today . "'";
+            $timestamp = strtotime("-1 month");
+            $timestamp2 = strtotime("-1 day");
+            $sdate = date("Y-m-d H:i:s", $timestamp);
+            $edate = date("Y-m-d H:i:s", $timestamp2);
+            if($_GET["cal_kind"]=="m"){
+                $month = date("Y-m");
+                $Date1 = "pay_date BETWEEN  '".$month."-01' AND '".$month."-31'";
+             }
+            if($_GET["cal_kind"]=="y"){
+                $year = date("Y");
+                 $Date1 = "pay_date BETWEEN  '".$year."-01-01' AND '".$year."-12-31'";
+             }
+        }
+        if ($_GET["dr_dr2_from"] && $_GET["dr_r2_to"]) {
+            $dr_dr2_from = date("Y-m-d", strtotime($_GET["dr_dr2_from"]));
+            $dr_r2_to = date("Y-m-d", strtotime($_GET["dr_r2_to"]));
+            $Date2 = "BETWEEN " . $dr_dr2_from . " AND '" . $dr_r2_to . "";
+        }
+        $yoil = array("일", "월", "화", "수", "목", "금", "토");
+        if ($yoil[date('w', strtotime($sdate))] === '일') {
+            $sdate = date('Y-m-d', strtotime($sdate . '-1 days'));
+        }
+        if ($yoil[date('w', strtotime($edate))] === '일') {
+            $edate = date('Y-m-d', strtotime($edate . '-1 days'));
+        }
+        $sYY = date("Y", strtotime($sdate));
+        $sMM = date("m", strtotime($sdate));
+        $sDD = date("d", strtotime($sdate));
+        $sDay = date("w", strtotime($sdate)) - 1;
+        $eYY = date("Y", strtotime($edate));
+        $eMM = date("m", strtotime($edate));
+        $eDD = date("d", strtotime($edate));
+        $eDay = date("w", strtotime($edate)) - 1;
+        $sweek_start = date("Y-m-d", strtotime($sYY . "-" . $sMM . "-" . $sDD . " -" . $sDay . " day"));    // 주의 첫날1
+        $sweek_end = date("Y-m-d", strtotime($sweek_start . " +6 day"));                        // 주의 마지막날1
+        $eweek_start = date("Y-m-d", strtotime($eYY . "-" . $eMM . "-" . $eDD . " -" . $eDay . " day"));    // 주의 첫날2
+        $eweek_end = date("Y-m-d", strtotime($eweek_start . " +6 day"));                        // 주의 마지막날2
+        $diff_date    = strtotime($eweek_end) - strtotime($sweek_start);
+        $week_arr = array();
+        for ($i = 0; $i < ($diff_date / 86400 + 1) / 7; $i++) {
+            $b = 7 * $i;
+            $prev_date = date("Y-m-d", strtotime(date($sweek_start) . " +" . $b . " days")) . " ~ " . date("Y-m-d", strtotime(date($sweek_end) . "+" . $b . " days"));
+            array_push($week_arr, $prev_date);
+        }
+
+        // --------------------------------------------------날짜 계산 끝----------------------------------------------------------------------------------------------
+        if ($_GET["check1"]==1) {
+            $code4 = "b.code4";
+        }
+        if ($_GET["check1"]==2) {
+            $code4 = "b.code6";
+        }
+        if ($_GET["ad_type"]) {
+            $ad_type = implode(",", $_GET['ad_type']);
+            $where_code = "AND code4 IN (" . $ad_type . ")";
+        }
+        if ($_GET["m_nm"]) {
+            $m_nm = implode(",", $_GET["m_nm"]);
+            $where_code    = "AND code6 IN (" . $m_nm . ")";
+        }
+        if ($_GET["division1"]) { // 부문
+            $where_division1 = "AND division1 = '" . $_GET['division1'] . "'";
+        }
+        if ($_GET["division2"]) { // 팀
+            $where_division2 = "AND division2 = '" . $_GET['division2'] . "'";
+        }
+        if ($_GET["em_nm"]) { // 사원번호
+            $where_em_seq = "AND em_seq = '" . $_GET['em_nm'] . "'";
+        }
+        if ($_GET["s_item"]) {
+            if ($_GET["s_item"] == "cs_m_id") {
+                $where_cs_m_id = "AND cs_m_id = '" . $_GET['s_string'] . "'";
+            }
+            if ($_GET["s_item"] == "cs_nm") {
+                $where_cs_nm = "AND getCsKrName(cs_seq) = '" . $_GET['s_string'] . "'";
+            }
+            if ($_GET["s_item"] == "cs_num") {
+                $where_cs_num = " AND cs_seq = (SELECT cs_seq from t_customer WHERE cs_num = '" . $_GET['s_string'] . "')";
+            }
+        }
+        switch ($_GET['cal_kind']) {
+            case "d":
+                $sreg_date = "pay_date as pay_date";
+                $sgroup_by = "GROUP BY pay_date ";
+                break;
+            case "wk":
+                $sreg_date = "pay_date as pay_date";
+                $sgroup_by = "GROUP BY pay_date ";
+                break;
+            case "m":
+                $sreg_date = "left(pay_date,7) as pay_date";
+                $sgroup_by = "GROUP BY left(pay_date,7)";
+                break;
+            case "y":
+                $sreg_date = "LEFT(pay_date,4) as pay_date";
+                $sgroup_by = "GROUP BY LEFT(pay_date,4)";
+                break;
+            case "w":
+                $sreg_date = "WEEKDAY(pay_date) as pay_date";
+                $sgroup_by = "GROUP BY WEEKDAY(pay_date)";
+                break;
+            case "wd":
+                $sreg_date = "WEEKDAY(pay_date) as pay_date";
+                $sgroup_by = "GROUP BY WEEKDAY(pay_date)";
+                $where_week = "AND WEEKDAY(pay_date) = '" . $_GET['week'] . "'";
+                break;
+        }
+
+        //-----------------------------------------------------------조회 쿼리 -----------------------------------------------------------------
+        if ($_GET['cal_kind'] != "wk") {
+            if (!$_GET["dr_dr2_from"]) {
+                $querySelectCustomerOneDate = "SELECT t_report.* FROM (
+                    SELECT a.*, b.cm3_seq as m_nm1, code4 as code4, code5 as code5, $code4 as type_code, good_type2 as good_type2_1
+                    FROM ( 
+                    SELECT getCsKrname(cs_seq) AS cs_seq, good_type2,  m_nm,  getcomkrname(division1) as division1, SUM(pay_price) AS pay_price
+                    FROM t_contract 
+                    WHERE $Date1
+                    " . $where_division1 . "
+                    " . $where_division2 . "
+                    " . $where_em_seq . "
+                    " . $where_cs_m_id . "
+                    " . $where_cs_nm . "                        
+                    AND del_date IS NULL 
+                    AND sales_type IN (1,3) 
+                    AND agree_state = '3' 
+                    " . $where_cs_num . "
+                    GROUP BY cs_seq
+                    ) AS a 
+                    INNER JOIN ( 
+                        SELECT cm2_seq, cm3_seq, code4, code5, code6
+                        FROM t_common2
+                        WHERE cm3_seq > 0
+                        AND use_yn='Y' 
+                        $where_code
+                            ) AS b 
+                            ON a.good_type2=b.cm2_seq
+                GROUP BY cs_seq, type_code, b.code5
+                ) AS t_report
+                INNER JOIN t_common2 AS t_comm
+                ON t_report.code5 = t_comm.cm2_seq
+                ORDER BY t_report.cs_seq, t_comm.sort asc";
+                $Rst = que($querySelectCustomerOneDate);
+                // echo '<pre>';
+                // echo $querySelectCustomerOneDate;
+                // echo '</pre>';
+                // var_dump($Rst);
+                $nListCnt = 0;
+                while ($Row = @mysql_fetch_assoc($Rst)) {
+                    $S_RETURNVAL['cs_seq1']                                                                  = $Row['cs_seq'];
+                    $S_RETURNVAL['good_type23'][$Row['type_code']][$Row['code5']]                            = $Row['good_type2_1'];
+                    $S_RETURNVAL['m_nm3'][$Row['type_code']]                                                      = $Row['type_code'];
+                    $S_RETURNVAL['good_type2_price3'][$Row['cs_seq']][$Row['type_code']][$Row['code5']]    += $Row['pay_price'];
+                    $S_RETURNVAL['cs_seq'][$Row['cs_seq']]                                                  = $Row['cs_seq'];
+                    $nListCnt++;
+                }
+                $S_RETURNVAL['nListCnt'] = $nListCnt;  
+                return $S_RETURNVAL;
+                que_close();
+
+            } else {
+
+
+                //----------------------- 광고주 비교일자 -----------------------------------
+                $querySelectCustomerTwoDate_date = "SELECT t_report.* FROM (
+                    SELECT CONCAT('" . $dr_dr1_from . "',' ~ ','" . $dr_dr1_to . "') as pay_date, SUM(a.pay_price) as pay_price, a.good_type2, b.cm3_seq as m_nm1, a.cs_seq, b.code4 as code4 , b.code5 as code5
+                     FROM ( 
+                        SELECT pay_date as pay_date, getCsKrname(cs_seq) AS cs_seq , good_type2, SUM(pay_price) as pay_price, m_nm
+                        FROM t_contract 
+                        WHERE 1=1 
+                        AND agree_state = '3' 
+                        AND pay_date BETWEEN '" . $dr_dr1_from . "' AND '" . $dr_dr1_to . "' 
+                        " . $where_division1 . "
+                        " . $where_division2 . "
+                        " . $where_em_seq . "
+                        " . $where_week . "
+                        " . $where_cs_m_id . "
+                        " . $where_cs_nm . "                        
+                        AND del_date IS NULL 
+                        AND sales_type IN (1,3) 
+                        " . $where_cs_num . "
+                        GROUP BY t_contract.cs_seq
+                ) AS a 
+                INNER JOIN ( 
+                SELECT cm2_seq, cm3_seq, code4, code5 
+                FROM t_common2 
+                WHERE cm3_seq > 0
+                AND use_yn='Y' 
+                $where_code
+                ) AS b ON a.good_type2=b.cm2_seq 	                        
+                group BY cs_seq, b.code5
+                ) AS t_report
+                INNER JOIN t_common2 AS t_comm
+                ON t_report.code5 = t_comm.cm2_seq
+                ORDER BY t_report.cs_seq, t_report.pay_date, t_comm.sort asc";
+    
+                $Result = que($querySelectCustomerTwoDate_date);
+                // echo '<pre>';
+                // echo $querySelectCustomerTwoDate_date.'<br>';
+                // echo '</pre>';
+                // var_dump($Result);
+            $nListCnt = 0;
+             while ($Row = @mysql_fetch_assoc($Result)) {
+                //$S_RETURNVAL['good_type2_price3'][$Row['pay_date']][$Row['code4']][$Row['good_type2']]    += $Row['pay_price'];
+                $S_RETURNVAL['good_type23'][$Row['code4']][$Row['code5']]                              = $Row['code5'];
+                $S_RETURNVAL['code5'][$Row['code5']]                                                                   = $Row['code5'];
+                $S_RETURNVAL['m_nm3'][$Row['code4']]                                                        = $Row['code4'];
+                $S_RETURNVAL['good_type2_price3'][$Row['pay_date']][$Row['code4']][$Row['code5']]      += $Row['pay_price'];
+                $S_RETURNVAL['pay_date'][$Row['pay_date']]                                                  = $Row['pay_date'];
+                $S_RETURNVAL['price_compare3'][$Row['cs_seq']][$Row['pay_date']][$Row['code4']][$Row['code5']]    += $Row['pay_price'];
+                
+                $S_RETURNVAL['cs_seq1']                                                                     = $Row['cs_seq'];
+                $S_RETURNVAL['cs_seq'][$Row['cs_seq']]                                                      = $Row['cs_seq'];
+                $nListCnt++;
+            }
+            $querySelectCustomerTwoDate_date2 = "SELECT t_report.* FROM (
+                SELECT CONCAT('" . $dr_dr2_from . "',' ~ ','" . $dr_r2_to . "') as pay_date, SUM(a.pay_price) as pay_price, a.good_type2, b.cm3_seq as m_nm1, a.cs_seq, b.code4 as code4 , b.code5 as code5
+                                        FROM ( 
+                                            SELECT pay_date as pay_date, getCsKrname(cs_seq) AS cs_seq , good_type2, SUM(pay_price) as pay_price, m_nm
+                                            FROM t_contract 
+                                            WHERE 1=1 
+                                            AND agree_state = '3' 
+                                            AND pay_date BETWEEN '" . $dr_dr2_from . "' AND '" . $dr_r2_to . "' 
+                                            " . $where_division1 . "
+                                            " . $where_division2 . "
+                                            " . $where_em_seq . "
+                                            " . $where_week . "
+                                            " . $where_cs_m_id . "
+                                            " . $where_cs_nm . "                        
+                                            AND del_date IS NULL 
+                                            AND sales_type IN (1,3) 
+                                            " . $where_cs_num . "
+                                            GROUP BY t_contract.cs_seq
+                                        ) AS a 
+                                        INNER JOIN ( 
+                                            SELECT cm2_seq, cm3_seq, code4, code5 
+                                            FROM t_common2 
+                                            WHERE cm3_seq > 0
+                                            AND use_yn='Y' 
+                                            $where_code
+                                        ) AS b ON a.good_type2=b.cm2_seq 	                        
+                                        group BY cs_seq, b.code5
+                                        ) AS t_report
+                                        INNER JOIN t_common2 AS t_comm
+                                        ON t_report.code5 = t_comm.cm2_seq
+                                        ORDER BY t_report.cs_seq, t_report.pay_date, t_comm.sort asc";
+            $Result = que($querySelectCustomerTwoDate_date2);
+            // echo '<pre>';
+            // echo $querySelectCustomerTwoDate_date2.'<br>';
+            // echo '</pre>';
+            // var_dump($Result);
+            $nListCnt = 0;
+            while ($Row = @mysql_fetch_assoc($Result)) {
+                $S_RETURNVAL['code5'][$Row['code5']]                                                                   = $Row['code5'];
+                $S_RETURNVAL['cs_seq1']                                                                                 = $Row['cs_seq'];
+                $S_RETURNVAL['good_type23'][$Row['code4']][$Row['code5']]                                          = $Row['code5'];
+                $S_RETURNVAL['good_type2_price3'][$Row['pay_date']][$Row['code4']][$Row['code5']]                  += $Row['pay_price'];
+                $S_RETURNVAL['m_nm3'][$Row['code4']]                                                                    = $Row['code4'];
+                $S_RETURNVAL['price_compare3'][$Row['cs_seq']][$Row['pay_date']][$Row['code4']][$Row['code5']]     += $Row['pay_price'];
+                
+                $S_RETURNVAL['cs_seq'][$Row['cs_seq']]                                                      = $Row['cs_seq'];
+                $S_RETURNVAL['nListCnt'] = $nListCnt;
+                $nListCnt++;
+            }                
+            return $S_RETURNVAL;
+            que_close();
+
+        }
+        }else{
+
+            // -------------------------------------주별일때-----------------------------------------------------
+                $querySelectCustomerWeekly = "SELECT t_report.* FROM (
+                   SELECT CONCAT(start,' ~ ',end) as pay_date, SUM(a.pay_price) as pay_price, a.good_type2,
+                    b.cm3_seq as m_nm1, getCsKrName(a.cs_seq) AS cs_seq, b.code5 as code5, $code4 as type_code
+            FROM ( 
+                        SELECT $sreg_date , cs_seq, SUM(pay_price) AS pay_price, good_type2,
+                        DATE_FORMAT(DATE_SUB(pay_date, INTERVAL (WEEKDAY(pay_date)) DAY), '%Y-%m-%d') as start, 
+                        DATE_FORMAT(DATE_SUB(pay_date, INTERVAL (WEEKDAY(pay_date) - 6) DAY), '%Y-%m-%d') as end 
+                        FROM t_contract 
+                        WHERE 1=1 
+                        AND pay_date >= '$sweek_start'
+                        AND pay_date <= '$eweek_end'
+                        " . $where_division1 . "
+                        " . $where_division2 . "
+                        " . $where_em_seq . "
+                        " . $where_cs_m_id . "
+                        " . $where_cs_nm . "                        
+                        AND del_date IS NULL 
+                        AND sales_type IN (1,3) 
+                        AND agree_state = '3' 
+                        " . $where_cs_num . "
+                        GROUP BY cs_seq
+                        ) AS a 
+                        INNER JOIN ( 
+                            SELECT cm2_seq, cm3_seq, code4, code5, code6
+                            FROM t_common2
+                            WHERE cm3_seq > 0
+                            AND use_yn='Y' 
+                            $where_code
+                                ) AS b 
+                                ON a.good_type2=b.cm2_seq
+                    GROUP BY cs_seq, type_code, b.code5
+                    ) AS t_report
+                    INNER JOIN t_common2 AS t_comm
+                    ON t_report.code5 = t_comm.cm2_seq
+                    ORDER BY t_report.cs_seq, t_comm.sort asc";
+                $Rst = que($querySelectCustomerWeekly);
+
+                // echo '<pre>';
+                // echo $querySelectCustomerWeekly;
+                // echo '</pre>';
+                // var_dump($Rst);
+                $nListCnt = 0;
+                while ($Row = @mysql_fetch_assoc($Rst)) {
+                    $S_RETURNVAL['cs_seq1']                                                                  = $Row['cs_seq'];
+                    $S_RETURNVAL['good_type23'][$Row['type_code']][$Row['code5']]                            = $Row['code5'];
+                    $S_RETURNVAL['m_nm3'][$Row['type_code']]                                                      = $Row['type_code'];
+                    $S_RETURNVAL['good_type2_price3'][$Row['cs_seq']][$Row['type_code']][$Row['code5']]    += $Row['pay_price'];
+                    $S_RETURNVAL['cs_seq'][$Row['cs_seq']]                                                  = $Row['cs_seq'];
+                    $nListCnt++;
+                }
+                $S_RETURNVAL['nListCnt'] = $nListCnt;
+                return $S_RETURNVAL;
+                que_close();
+        }
+    }
+
+    
+}

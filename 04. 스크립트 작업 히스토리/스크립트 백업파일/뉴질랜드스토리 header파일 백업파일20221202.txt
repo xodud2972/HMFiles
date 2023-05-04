@@ -1,0 +1,169 @@
+{*** 상단레이아웃 | main/index.php ***}
+<html>
+<head>
+<meta name="naver-site-verification" content="9ca0bd9a4cf273d7e65f70d2998d0ef1c6b5badc"/>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-kr">
+<meta name="description" content="{_meta_title}">
+<meta name="keywords" content="{_meta_keywords}">
+<link rel="shortcut icon" href="/shop/data/skin/fashion_ari_re_C_C/img/favicon.ico" type="image/x-icon" >
+<title>{_meta_title}</title>
+<!--{ ?_SERVER.PHP_SELF == '/shop/goods/goods_view.php' }-->
+ <meta property="og:type" content="product">
+ <meta property="og:title" content="{goodsnm}">
+ <meta property="og:image" content="http://{_SERVER.HTTP_HOST}/shop/data/goods/{img_s}">
+ <meta property="og:url" content="http://{_SERVER.HTTP_HOST}{_SERVER.REQUEST_URI}">
+ <meta property="og:description" content="mascota">
+ <meta property="og:image:width" content="290">
+ <meta property="og:image:height" content="290">
+ <!--{ : }-->
+ <meta property="og:title" content="{_cfg.shopName}">
+ <meta property="og:image" content="http://www.newzealandstory.co.nz/shop/data/skin/fashion_ari_re_C/img/600x300_nstory_logo_20200805.jpg" />
+ <!--{ / }-->
+ <script type="text/javascript" src="{jQueryPath}"></script>
+
+<!--{ ? _POST }-->
+
+<script>
+
+history.back = function() {
+
+    var step = (document.location.protocol == 'https:' ? 2 : 1) * -1;
+
+    history.go( step );
+
+}
+
+</script>
+
+<!--{ / }-->
+<!--{ ? connInterpark == 'ok' // 인터파크 헤더 호출 }-->
+<script type="text/javascript">var entr_nm = "<a href='/'>{_cfg.shopName}</a>"; // 상점명</script>
+<script type="text/javascript" src="http://www.interpark.com/gate/minm/topnav_shopplus_soho.js"></script>
+<!--{ / }-->
+<!--{ ? _COOKIE['cc_inflow'] == 'yahoo_fss' || _GET['ref'] == 'yahoo_fss' }-->
+<script language="javascript" src="http://kr.ysp.shopping.yahoo.com/ysp/ysp_fss.js"></script>
+<script> ykfss_bar();</script>
+<!--{ / }-->
+<script src="../common.js"></script>
+
+<link rel="styleSheet" href="../cart_tab/style.css">
+<link rel="styleSheet" href="../style.css">
+<style type="text/css">
+.outline_both {
+border-left-style:solid;
+border-right-style:solid;
+border-left-width:{_cfg['shopLineWidthL']};
+border-right-width:{_cfg['shopLineWidthR']};
+border-left-color:{_cfg['shopLineColorL']};
+border-right-color:{_cfg['shopLineColorR']};
+}
+
+{ ? this->tpl_['side_inc'] && _cfg['outline_sidefloat'] == 'left' // 측면위치가 좌측인 경우 }
+.outline_side {
+border-left-style:solid;
+border-left-width:{_cfg['shopLineWidthC']};
+border-left-color:{_cfg['shopLineColorC']};
+}
+{ : this->tpl_['side_inc'] && _cfg['outline_sidefloat'] == 'right' // 측면위치가 우측인 경우 }
+.outline_side {
+border-right-style:solid;
+border-right-width:{_cfg['shopLineWidthC']};
+border-right-color:{_cfg['shopLineColorC']};
+{ / }
+</style>
+<!--{ ? _overture_cc }-->{ # overture_cc }<!--{ / }-->
+{=customHeader}
+
+	
+<!-- Facebook Pixel Code -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1928357907188101');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1928357907188101&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Facebook Pixel Code -->
+
+</head>
+
+<!-- //베러데이 광고관련_뉴질랜드마트 _체류시간입찰솔류션_스크립트 시작 -->
+<!--  KOIS ADVERTISEMENT SCRIPT V1.0 -->
+<script type='text/javascript'>
+ var advertisement_site = 7029;
+ (function(){
+ var _script = document.createElement('script'); _script.id= 'include_advertisement_script'; _script.type = 'text/javascript'; _script.charset = 'utf-8'; _script.async = true; _script.src = (document.location.protocol || 'http:') + '//advertisement.kois.co.kr/advertisement/advertisement_script.js';
+ var _node = document.getElementsByTagName('script')[0]; _node.parentNode.insertBefore(_script, _node);
+ })();
+</script>
+<!-- KOIS ADVERTISEMENT SCRIPT V1.0 END -->
+<!-- //베러데이 광고관련_뉴질랜드마트 _체류시간입찰솔류션_스크립트 끝 -->
+
+
+{=copyProtect()}
+<!--<body bgcolor="{_cfg['outbg_color']}" {?_mainpage}style="background:url(../img/main/bg_main.gif) repeat-x;background-position-y:1490px" {/} {=copyProtect(true)}>-->
+
+
+{ # myBoxLayer }
+<!--{? useMyLevelLayerBox == 'y'}-->
+{ # myLevelLayer }
+<!--{/}-->
+<!--{ ? alertCoupon == true}-->
+{ # myCouponLayer }
+<!--{ / }-->
+<table width=100% height=100% cellpadding=0 cellspacing=0 border=0>
+<!--{ ? this->tpl_['header_inc'] }-->
+<tr>
+<td>{ # header_inc // 상단디자인 }</td>
+</tr>
+<tr>
+	<td height="10"></td>
+</tr>
+<!--{ / }--> 
+<tr>
+<td height=100% align={_cfg['shopAlign']}>
+
+<table width={_cfg['shopSize']} height=100% cellpadding=0 cellspacing=0 border=0 class="outline_both">
+<tr>
+<td width=0 valign=top>  
+  <div id=rpos_scroll style="position:relative; top:0;">
+  <!-- 왼쪽 스크롤 배너 -->
+  <div id=rscroll style="position:absolute; left:-100;">
+  <!--<div><img src="../img/quick_right_bn4.gif"></div>-->
+  <!--<div style="height:4px;"></div>-->
+     <div><!-- 왼쪽_스크롤배너 (배너관리에서 수정가능) --><!--{ @ dataBanner( 70 ) }-->{.tag}<!--{ / }--></div>
+     <div style="height:10px;"><!-- 여백 --></div>
+     <div><!-- 왼쪽_스크롤배너 (배너관리에서 수정가능) --><!--{ @ dataBanner( 71 ) }-->{.tag}<!--{ / }--></div>
+     <div style="height:10px;"><!-- 여백 --></div>
+     <div><!--  72--></div>
+
+  <!-- 스크롤 배너 활성화 -->
+  <script>rScrollBanner('rscroll','rpos_scroll');</script>
+  </td>
+
+
+	
+	
+<!--{ ? this->tpl_['side_inc'] && _cfg['outline_sidefloat'] == 'left' }-->
+<td valign=top width={_cfg['shopSideSize']} nowrap>{ # side_inc // 측면디자인 }</td>
+<!--{ / }-->
+<td valign=top width=100% height=100% bgcolor="{_cfg['inbg_color']}" background="{_cfg['inbg_img']}" class=outline_side>
+
+
+<style>
+@font-face { font-family: 'DungGeunMo'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/DungGeunMo.woff') format('woff'); font-weight: normal; font-style: normal; } 
+</style>
+
+<!--메인화면 롤링 스크립트-->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+<!-- 아래 이징 플러그인은 부드러운 모션 처리를 위해서 필요 -->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+<script src="../jquery.motionj.sbanner-1.1.js"></script>

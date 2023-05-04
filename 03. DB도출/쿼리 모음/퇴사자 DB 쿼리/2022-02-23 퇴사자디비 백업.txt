@@ -1,0 +1,205 @@
+<?php
+/**
+	작성자 : 엄태영
+	작성일 : 2022.02.23
+**/
+session_start();
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/db.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.common.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/PHPExcel_2022/PHPExcel.php';
+
+db_open();
+
+if (isset($_POST['divide'])) {
+    $divide = $_POST['divide'];
+}
+if (isset($_POST['startDate'])) {
+    $sDate = $_POST['startDate'];
+}
+if (isset($_POST['endDate'])) {
+    $eDate = $_POST['endDate'];
+}
+// 파일 업로드
+if (isset($_FILES['file']['name'])) {
+    $file = $_FILES['file']['name'];
+    $tmpName = $_FILES['file']['tmp_name'];
+    $filePath = '../file/retiree/';
+    $fileName = iconv('UTF-8', 'EUC-KR', $_FILES['file']['name']);
+    move_uploaded_file($tmpName, $filePath.$file);
+}
+
+
+// ------------- PHPExcel ----------------
+ob_start(); 
+
+$objPHPExcel = new PHPExcel(); 
+
+if (isset($fileName)) {
+    $objPHPExcel = PHPExcel_IOFactory::load('../file/retiree/'.$fileName);
+}
+
+$objPHPExcel->setActiveSheetIndex(0);			// 첫번째 시트 선택
+$sheet = $objPHPExcel->getActiveSheet();		// 시트 지정
+$highestRow = $sheet->getHighestRow();          // 마지막 행
+$highestColumn = $sheet->getHighestColumn();    // 마지막 컬럼
+
+$allData = array(); // 엑셀파일의 모든 데이터 저장
+$colData = array(); // 엑셀 파일의 읽어들인 cs_m_id 와 m_nm를 저장.
+
+for ($row = 3; $row <= $highestRow; $row++) {
+    $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE); // 시트의 모든 데이터 읽기
+    $allData[$row] = $rowData[0];
+//	print_r(iconv('utf-8', 'euc-kr', $rowData[0][2]));
+    if($row >= 3){
+		// 인코딩 후 배열의 담기
+		$mediaKrName = iconv('utf-8', 'euc-kr', $allData[$row][2]);
+
+		if( $mediaKrName == '구글'){
+			$allData[$row][2] = 265;
+		}else if($mediaKrName == '네이버'){
+			$allData[$row][2] = 264;
+		}else if($mediaKrName == '카카오'){
+            $allData[$row][2] = 41;
+		}else if($mediaKrName == '기타'){
+            $allData[$row][2] = 302;
+        }else if($mediaKrName == '페이스북'){
+            $allData[$row][2] = 845;
+        }else if($mediaKrName == '티몬'){
+            $allData[$row][2] = 820;
+        }else if($mediaKrName == '인터파크'){
+            $allData[$row][2] = 844;
+        }else if($mediaKrName == '위메프'){
+            $allData[$row][2] = 847;
+        }else if($mediaKrName == '카카오모먼트'){
+            $allData[$row][2] = 881;
+        }else if($mediaKrName == '와이더플래닛'){
+            $allData[$row][2] = 520;
+        }else if($mediaKrName == '인라이플(모비온)'){
+            $allData[$row][2] = 504;
+        }else if($mediaKrName == '네이트'){
+            $allData[$row][2] = 853;
+        }else if($mediaKrName == '크리테오'){
+            $allData[$row][2] = 454;
+        }else if($mediaKrName == '바이럴'){
+            $allData[$row][2] = 1213;
+        }else if($mediaKrName == '다음브랜드검색'){
+            $allData[$row][2] = 839;
+        }else if($mediaKrName == '네이버GFA'){
+            $allData[$row][2] = 969;
+        }else if($mediaKrName == '다음키워드광고'){
+            $allData[$row][2] = 839;
+        }else if($mediaKrName == '11번가'){
+            $allData[$row][2] = 808;
+        }else if($mediaKrName == '이베이'){
+            $allData[$row][2] = 496;
+        }else if($mediaKrName == '타게팅게이츠'){
+            $allData[$row][2] = 438;
+        }else if($mediaKrName == 'ADN'){
+            $allData[$row][2] = 963;
+        }else if($mediaKrName == '인터파크'){
+            $allData[$row][2] = 844;
+        }else if($mediaKrName == '다나와-애드스마트'){
+            $allData[$row][2] = 1198;
+        }else if($mediaKrName == '롯데온'){
+            $allData[$row][2] = 974;
+        }else if($mediaKrName == '지그재그'){
+            $allData[$row][2] = 889;
+        }else{
+            $allData[$row][2] = '';
+        } 
+
+        $tempList['col2'] = $allData[$row][2]; // 매체코드
+        $tempList['col3'] = $allData[$row][3]; // 광고주ID
+
+        $colData[] = $tempList;
+    }
+}
+
+
+$resultData = array(); // 쿼리 결과 데이터 저장
+
+$cellNo = 3;
+
+for($colIndex = 0; $colIndex < sizeof($colData); $colIndex++){
+// sales_type =  1:cpc 소진액, 2:cpt입금액, 3:cpc 입금액
+// agree_state =  3: 승인금액
+    if(isset($colData[$colIndex]['col3']) !== '' && isset($colData[$colIndex]['col2']) !== ''){
+        $querySelectDataList = sprintf(
+            'SELECT c1.cs_num, getcomkrname(c1.cs_type_new1) AS cs_type_new1 , getcomkrname(c1.cs_type_new2) AS cs_type_new2, 
+				c1.cs_nm,c1.url AS url, c1.mg_nm, c1.mg_cell1, c1.mg_cell2, c1.mg_cell3,
+				c1.mg_tel1, c1.mg_tel2, c1.mg_tel3, c1.mg_email, 
+				round(SUM(c2.pay_price)/%d,0) AS pay_price, getcomkrname(c2.m_nm) AS m_nm
+			FROM t_customer c1
+			INNER JOIN(
+						SELECT cs_seq, cs_m_id, m_nm, pay_date, pay_price
+							from t_contract
+						WHERE cs_m_id ="%s"
+							AND m_nm = "%s"
+							AND pay_date BETWEEN "%s" AND "%s"
+							AND del_date is null
+							AND sales_type="1" 
+							AND agree_state="3"  
+					)c2 
+			ON c1.cs_seq = c2.cs_seq
+			GROUP BY c2.cs_m_id, m_nm
+			ORDER BY m_nm',
+        $divide, $colData[$colIndex]['col3'], $colData[$colIndex]['col2'], $sDate, $eDate);
+
+        $result = que($querySelectDataList);
+
+		// 모든 row데이터를 인코딩
+        while ($row = @mysql_fetch_assoc($result)) {
+            $tempData['cs_num'] = iconv('utf-8', 'euc-kr', $row['cs_num']);
+            $tempData['cs_type_new1'] = iconv('utf-8', 'euc-kr', $row['cs_type_new1']);
+            $tempData['cs_type_new2'] = iconv('utf-8', 'euc-kr', $row['cs_type_new2']);
+            $tempData['cs_nm'] = iconv('utf-8', 'euc-kr', $row['cs_nm']);
+            $tempData['url'] = iconv('utf-8', 'euc-kr', $row['url']);
+            $tempData['mg_nm'] = iconv('utf-8', 'euc-kr', $row['mg_nm']);
+            $tempData['mg_cell'] = $row['mg_cell1'] .'-'. $row['mg_cell2'] .'-'. $row['mg_cell3'];
+            $tempData['mg_tel'] = $row['mg_tel1'] .'-'. $row['mg_tel2'] .'-'. $row['mg_tel3'];
+            $tempData['mg_email'] = iconv('utf-8', 'euc-kr', $row['mg_email']);
+            $tempData['pay_price'] = iconv('utf-8', 'euc-kr', $row['pay_price']);
+            $tempData['m_nm'] = iconv('utf-8', 'euc-kr', $row['m_nm']);
+
+            $resultData[$colIndex] = $tempData;		
+
+        }
+
+        $sheetIndex = $objPHPExcel->setActiveSheetIndex(0); // 값을 넣을 시트 활성화.
+    
+        if(isset($resultData[$colIndex])){
+            $sheetIndex ->setCellValue('A1', 'From : '.$sDate)
+                        ->setCellValue('A2', 'To : '.$eDate)
+                        ->setCellValue('A3', 'Divide : '.$divide)
+						->setCellValue('N1', $divide.iconv('euc-kr', 'utf-8', '개월 평균매출(').$sDate.'~'.$eDate.')')
+                        ->setCellValue('E'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['cs_num']))
+                        ->setCellValue('F'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['cs_type_new1']))
+                        ->setCellValue('G'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['cs_type_new2']))
+                        ->setCellValue('H'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['cs_nm']))
+                        ->setCellValue('I'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['url']))
+                        ->setCellValue('J'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['mg_nm']))
+                        ->setCellValue('K'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['mg_tel']))
+                        ->setCellValue('L'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['mg_cell']))
+                        ->setCellValue('M'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['mg_email']))
+                        ->setCellValue('N'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['pay_price']));
+        }
+        $cellNo++;
+    }        
+}
+
+header('Content-Disposition: attachment;fileName='.date('Ymd').'_default_data.xlsx');
+header('Content-type: application/vnd.ms-excel;charset=EUC-KR');
+header('Expires: 0');
+header('Cache-Control: must-revalidate, post-check=0,pre-check=0');
+header('Pragma: public');
+
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007'); // Excel 2016 버전의 xlsx 확장자인 경우 2007로 설정
+
+ob_end_clean();
+
+$objWriter->save('php://output');
+
+que_close($db);
+
+exit;
+?>

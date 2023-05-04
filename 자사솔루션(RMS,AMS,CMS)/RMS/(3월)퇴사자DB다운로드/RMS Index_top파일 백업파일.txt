@@ -1,0 +1,464 @@
+<?
+/**********************************************
+Author              : 김민주
+Create Date			: 2010.12.16
+Comment             : 탑메뉴
+-----------------------------------------------
+Modify Author		:
+Modify date			:
+Comment             :
+***********************************************/
+
+	session_start(); 
+	//echo "<pre>";
+	//print_r($_SESSION);
+    //echo "</pre>";
+	@include_once $_SERVER['DOCUMENT_ROOT']."/log_record/log_write.php";
+	include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.common.php';
+	@include_once $_SERVER['DOCUMENT_ROOT']."/include/db.php";
+	@include_once $_SERVER['DOCUMENT_ROOT'].'/cls/cls.support_board.php';
+
+	$boardNo = getMyBoard2($_SESSION['s_em_seq'], '');
+
+	$m_em_seq = $_SESSION['m_em_seq'];
+	//echo $m_em_seq;
+    $cm_returnval = funSelectEmpSEmSeqList($m_em_seq);
+?>
+<head>
+<title>HM 매출관리시스템</title>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-32798572-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="/js/ddsmoothmenu.js"></script>
+<script type="text/javascript" src="/tool/shin_util_js.js"></script>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="/css/ddsmoothmenu.css" />
+
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+<meta name="googlebot" content="noindex">
+<script type="text/javascript">
+ddsmoothmenu.init({
+	mainmenuid: "smoothmenu1", // 메뉴의 div 아이디값
+	orientation: 'h', // h : 세로형 v :가로형
+	classname: 'ddsmoothmenu', // 메뉴의 div 클래스값
+	//customtheme: ["#1c5a80", "#18374a"], // 다양한 색을 적용하고 싶을때 색값을 지정하세요
+	contentsource: "markup" //"markup" or ["container_id", "path_to_menu_file"]
+})
+	/**
+	 * 2015-05-26 신현준 추가
+	 * event 페이지에서 ddsmoothmenu css가 BootStrap css로 적용되어
+	 * ddsmoothmenu 패딩 5px 적용
+	 */
+    $( document ).ready(function() {
+
+		// 해당 URL에 event가 포함되어 있다면 smoothmenu1 padding 5px 적용
+		/*
+		if(location.href.match("event") || location.href.indexOf("employee/?nc=03") > 0 || location.href.match("03_detail_view") || location.href.match("work_warning_list") || location.href.indexOf("file/?nc=25") > 0 || location.href.indexOf("file/?nc=26") > 0 || location.href.indexOf("work/?nc=17")  > 0|| location.href.indexOf("work/?nc=18")  > 0|| location.href.indexOf("report/sales/?nc=67")  > 0|| location.href.indexOf("report/sales/?nc=66")  > 0|| location.href.indexOf("customer/?nc=20")  > 0) {
+			$("#smoothmenu1").css("padding", "6px");
+		}
+		*/
+
+		if(location.href.match("03_detail_all")) {
+			$("#smoothmenu1").css("padding", "0px");
+		}
+
+		if(location.href.match("03_new") || location.href.match("03_detail_view") || location.href.indexOf("employee/?nc=03") > 0 || location.href.match("work_warning_list") || location.href.indexOf("file/?nc=25") > 0|| location.href.indexOf("file/?nc=26") > 0|| location.href.indexOf("work/?nc=17")  > 0|| location.href.indexOf("work/?nc=18")  > 0|| location.href.indexOf("report/sales/?nc=67")  > 0|| location.href.indexOf("report/sales/?nc=66")  > 0|| location.href.indexOf("customer/?nc=20")  > 0|| location.href.indexOf("product/?nc=12")>0|| location.href.indexOf("product/?nc=13")>0|| location.href.indexOf("product/?nc=14")>0||location.href.indexOf("work/?nc=38")>0) {
+			$("body").css("margin", "8px");
+			$("#smoothmenu1").css("padding", "6px");
+		}
+    });
+</script>
+
+</head>
+
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" >
+<tr>
+	<td width="20%"><a href="/main"><img src="/images/main/rmslogo4.jpg"></a></td>
+	<td class="left" valign="bottom"><?//@include_once $_SERVER['DOCUMENT_ROOT']."/index_top_submenu.php";?></td>
+	<td width="30%" bgcolor="#FFFFFF" class="right" valign="bottom">
+        <select name="select_employee" onchange="getEmSeq(this)">
+            <option value="">선택해주세요</option>
+            <?foreach($cm_returnval['em_seq'] as $key=>$item){?>
+                <option value="<?=$key?>" <?=$_SESSION['s_em_seq']==$key?"selected":"";?> ><?=$item?></option>
+            <?}?>
+        </select>
+        <script>
+            function getEmSeq(e){
+                if(e.value){
+                var selectValue = e.value;
+                //alert(selectValue);
+                <?
+                $http_host = $_SERVER['HTTP_HOST'];             // 192.168.101.79
+                $request_uri = $_SERVER['REQUEST_URI'];         // /contract/?nc=01
+                $url = 'http://' . $http_host . $request_uri;   // http://192.168.101.79:8080/contract/?nc=01
+                $_SESSION['urlAddr'] = $url;
+                ?>
+
+                $.post("/multi_login.php", {
+                    suggest: e.value
+                }, function(result){
+                    //console.log(result);
+                });
+                location.reload(true);
+                location.href = location.href;
+                history.go(0);
+            } else {
+                return false;
+                }
+            }
+        </script>
+	<?
+	if($_SESSION['s_em_seq']){
+	//."-".$_SESSION['em_level']."-".$_SESSION['s_em_seq']."-".$_SESSION['em_division1']."-".$_SESSION['em_division2']."
+		echo "<a href=\"/employee/?nc=02\">회원정보변경</a><br>&nbsp;&nbsp;<a href=\"\index_logout.php\"><b>로그아웃</b></a> ";
+	}else{
+		echo "<a href=\"/\"><b>로그인</b></a>";
+	}
+	?>
+	</td>
+</tr>
+</table>
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="1" bgcolor='cccccc'>
+<tr>
+	<td align='center' bgcolor='EFEFEF' valign='top'>
+        <table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+		<tr>
+			<!--<td bgcolor="#1c7b91">-->
+			<td bgcolor="#1C5A80">
+<!--------------------------------------------------------------------------------------------------------------------->
+<div id="smoothmenu1" class="ddsmoothmenu">
+<ul>
+
+<li><a href="#">매출관리리포트</a>
+  <ul>
+  <li><a href="#">매출현황</a>
+    <ul>
+    <li><a href="/report/sales/?nc=07">일자별매출요약</a></li>
+    <li><a href="/report/sales/?nc=08">본부별매출요약</a></li>
+	<li><a href="/report/sales/?nc=20">계정별매출</a></li>		
+	<li><a href="/report/sales/?nc=62">상품별매출</a></li>		
+    </ul>
+  </li>
+
+  <li><a href="#">매출분석</a>
+    <ul>
+    <li><a href="#">매출분석</a>
+		<ul>
+    		<li><a href="/report/sales/?nc=53">전주대비매출</a></li>
+    		<li><a href="/report/sales/?nc=51">구간대별매출현황</a></li>
+			<li><a href="/report/sales/?nc=19">본부별CPC증감추이</a></li>
+    		<li><a href="/report/sales/?nc=64">팀/개인별매출분석</a></li>
+    		<!--<li><a href="/report/sales/?nc=64">팀/개인별매출추이</a></li>-->
+		</ul>
+    </li>
+    <li><a href="#">예상매출</a>
+		<ul>
+    		<li><a href="/report/sales/?nc=21">익월예상매출</a></li>
+    		<li><a href="/report/sales/?nc=35">계정별예상매출</a></li>
+    		<li><a href="/report/sales/?nc=52">계정/개인별익월예상매출</a></li>
+		</ul>
+    </li>
+	<li><a href="#">RMS기준-인입/이탈</a>
+		<ul>
+    		<li><a href="/report/sales/?nc=65">인입/이탈현황-요약</a></li>
+			<li><a href="/report/sales/?nc=66">인입현황-상세</a></li>
+			<li><a href="/report/sales/?nc=67">이탈현황-상세</a></li>
+		</ul>
+    </li>
+    <li><a href="#">매체기준-휴면/이관/피이관</a>
+		<ul>
+    		<li><a href="/report/sales/?nc=54">휴면계정조회</a></li>
+    		<li><a href="/report/sales/?nc=55">이관/피이관현황-요약</a></li>
+			<li><a href="/report/sales/?nc=59">이관/피이관현황-추이</a></li>
+			<li><a href="/report/sales/?nc=56">이관현황-상세</a></li>
+			<li><a href="/report/sales/?nc=58">피이관현황-상세</a></li>
+			<li><a href="/report/sales/?nc=57">이관후피이관현황-상세</a></li>
+		</ul>
+    </li>
+    </ul>
+  </li>
+
+  <li><a href="#">계약현황</a>
+	<ul>
+    <li><a href="/report/sales/?nc=14">취합현황</a></li>
+    </ul>
+  </li>
+
+
+  </ul>
+</li>
+
+
+<li><a href="#">광고주관리리포트</a>
+	<ul>
+		<li><a href="/report/customer/?nc=01">광고주조회</a></li>
+		<li><a href="/report/customer/?nc=16">광고주현황</a></li>
+		<li><a href="/report/customer/?nc=09">광고주통계</a></li>
+		<li><a href="/report/customer/?nc=04">광고주매출순위(매출)</a></li>
+		<!--<li><a href="/report/customer/?nc=11">광고주매출순위(요율)</a></li>
+		<li><a href="/report/customer/?nc=20">광고주관리조회</a></li>-->
+	</ul>
+</li>
+<li><a href="#">생산성관리리포트</a>
+	<ul>
+		<li><a href="/report/product/?nc=05">목표매출/달성률조회</a></li>
+	</ul>
+</li>
+<li><a href="#">직원관리리포트</a>
+	<ul>
+		<li><a href="/report/employee/?nc=01">직원조회</a></li>
+		<!-- 2021.02.18 주석처리 <li><a href="/report/employee/?nc=04">직원통계</a></li> -->
+		<li><a href="/report/employee/?nc=06">직원매출순위</a></li>
+		<li><a href="/report/employee/?nc=08">근태통계</a></li>
+		<li><a href="/report/employee/?nc=10">업무량통계</a></li>
+		<li><a href="/report/employee/?nc=12">연차조회</a></li>
+	</ul>
+</li>
+<li><a href="#">계약관리</a>
+	<ul>
+		<li><a href="/contract/?nc=01">계약등록-CPC</a></li>
+		<!--li><a href="/contract/?nc=10">계약등록-기타CPC</a></li-->
+		<li><a href="/contract/?nc=12">계약등록-CPT</a></li>
+		<li><a href="/contract/?nc=02">계약등록-기타CPT</a></li>
+<?if($_SESSION['em_division2']=="472"){?>
+		<li><a href="/contract/?nc=13">계약등록-기타CPT-바이럴</a></li>
+<?}?>
+		<!--<li><a href="/contract/?nc=07">계약등록-CPM(대량등록)</a></li>
+		<li><a href="/contract/?nc=06">계약등록-모바일</a></li>	-->	
+		<li><a href="/contract/?nc=03">계약목록</a></li>
+		<li><a href="/contract/?nc=05">계약목록-관리자</a></li>
+	</ul>
+</li>
+<li><a href="#">광고주관리</a>
+	<ul>
+		<li><a href="/customer/?nc=01">광고주등록</a></li>
+<?if($_SESSION['em_level']=="10"){?>
+		<li><a href="/customer/?nc=02">담당자일괄추가</a></li>
+
+		<li><a href="/customer/?nc=20">사업자번호발급</a></li>
+<?}?>
+<!--
+		<li><a href="/customer/?nc=03">광고주관리등록</a></li>
+		<li><a href="/customer/?nc=10">파컨광고주등록</a></li>
+		<li><a href="/customer/?nc=11">파컨데이터등록</a></li>
+		<li><a href="/customer/?nc=12">파컨데이터목록</a></li>
+		<li><a href="/customer/?nc=13">파컨데이터통계</a></li>
+-->
+<!--
+		<li><a href="/customer/?nc=14">포스터데이터등록</a></li>
+		<li><a href="/customer/?nc=15">포스터데이터통계</a></li>
+-->
+	</ul>
+</li>
+<li><a href="#">생산성관리</a>
+	<ul>
+		<li><a href="/product/?nc=08">목표매출관리</a>
+			<ul>
+				<li><a href="/product/?nc=08">예상매출조회</a></li>
+				<li><a href="/product/?nc=09">목표매출등록</a></li>
+				<li><a href="/product/?nc=10">목표매출목록</a></li>
+			</ul>
+		</li>
+		<!--
+		<li><a href="/product/?nc=08">예상매출조회</a></li>
+		<li><a href="/product/?nc=09">목표매출등록</a></li>
+		<li><a href="/product/?nc=10">목표매출목록</a></li>
+		-->
+	</ul>
+</li>
+<li><a href="#">직원관리</a>
+	<ul>
+		<li><a href="/employee/?nc=01">직원등록</a></li>
+		<li><a href="/employee/?nc=03">근태등록</a></li>
+		<li><a href="/employee/?nc=05">업무량등록</a></li>
+		<li><a href="/employee/?nc=08">업무량목록</a></li>
+		<li><a href="/employee/?nc=09">연차등록</a></li>
+	</ul>
+</li>
+<!--
+<li>
+	<a href="#">프로모션</a>
+	<ul>	
+		<li><a href="/promotion/naver/?nc=01">네이버 서비스</a></li>		
+		<li><a href="/promotion/pc/?nc=01">파워컨텐츠</a></li>			
+	</ul>
+</li>
+-->
+<!--
+<li><a href="#">생산성관리</a>
+	<ul>
+		<!--li><a href="/product/?nc=01">목표매출등록</a></li-->
+		<!--
+		<li><a href="/product/?nc=02">상품별요율등록</a></li>
+		<li><a href="/product/?nc=03">예상마감매출등록</a></li>
+	
+	</ul>
+</li>
+-->
+<li><a href="#">파일관리</a>
+	<ul>
+		<li><a href="/file/?nc=01">일일소진액파일등록-CPC</a></li>		
+		<li><a href="/file/?nc=18">일일소진액파일등록-CPT</a></li>
+		<li><a href="/file/?nc=22">기타매체매출파일등록</a></li>
+		<!--<li><a href="/contract/?nc=11">기타CPC소진액목록</a></li>-->
+		
+		<li><a href="/file/?nc=14">신규/이관/피이관계정등록</a></li>
+		<li><a href="/file/?nc=21">신규/이관/피이관계정목록</a></li>
+		<li><a href="/file/?nc=06">매출파일다운로드</a></li>
+		<!-- 2021.02.18 주석처리 <li><a href="/file/?nc=07">타사광고진행파일다운로드</a></li> -->
+		<li><a href="/file/?nc=08">광고주파일다운로드</a></li>
+		<!--
+		<li><a href="/file/?nc=25">라이브계정파일다운로드</a></li>
+		-->
+		<li><a href="/file/?nc=26">라이브계정파일다운로드</a></li>
+		<?
+			if($_SESSION['em_kr_nm'] == "신현준" || $_SESSION['em_kr_nm'] == "김민주" || $_SESSION['em_kr_nm'] == "홍수민" ) {
+		?>
+				<li><a href="/file/?nc=26_test">라이브계정파일다운로드2</a></li>
+		<?
+			}
+		?>
+		<!--
+		<li><a href="/file/?nc=09">신규인큐베이팅계정등록</a></li>
+		<li><a href="/file/?nc=12">목표매출등록</a></li>
+		-->
+
+	</ul>
+</li>
+<li><a href="#">게시판관리</a>
+	<ul>
+		<li><a href="/bbs/?nc=01">공지사항</a></li>
+	</ul>
+</li>
+<li><a href="#">업무관리</a>
+	<ul>
+		<!--
+		<li><a href="/work/?nc=01&type=1">업무보고</a></li>
+		<li><a href="/work/?nc=04&type=1">인바운드보고</a></li>
+		-->
+		<!-- <li><a href="/work/?nc=06&type=1">업무지원</a></li> -->
+		<!-- 2021.02.18 주석처리 <li><a href="/work/?nc=08&category=1">보고서지원</a></li> -->
+		<li><a href="#">내부이관관리</a>
+			<ul>
+				<li><a href="/work/?nc=17&category=5">내부이관동의요청</a></li>
+				<li><a href="/work/?nc=18&category=5">내부이관동의목록</a></li>
+			</ul>
+		</li>
+
+		<li><a href="#">업무지원</a> 
+		<ul>
+    		<li><a href="/work/?nc=36&category=2">본부지원요청게시판</a></li>
+				<!-- 게시판 설정 페이지 -->
+				<?
+					if($_SESSION['s_em_seq'] == '14' || $_SESSION['s_em_seq'] == '1161' || $_SESSION['s_em_seq'] == '1573' || $_SESSION['s_em_seq'] == '1618' || $_SESSION['s_em_seq'] == '1658' || $_SESSION['s_em_seq'] == '339' || $boardNo || $_SESSION['em_position1'] == '74') { 
+				?>
+						<li><a href="#">게시판 관리</a>	
+								<ul>
+									<li><a href="/work/?nc=27&category=4">게시판 설정</a></li>
+								<?
+									if($_SESSION['s_em_seq'] == '14' || $_SESSION['s_em_seq'] == '1161' || $_SESSION['s_em_seq'] == '1573' || $_SESSION['s_em_seq'] == '1618' || $_SESSION['s_em_seq'] == '1535' || $_SESSION['s_em_seq'] == '335' || $_SESSION['s_em_seq'] == '1658') {
+								?>
+										<li><a href="/work/?nc=35&category=4">게시판 통계</a></li>
+								<?
+									}
+								?>
+							</ul>
+						</li>
+				<?
+					}
+				?>
+    		<!--<li><a href="/report/sales/?nc=64">팀/개인별매출추이</a></li>-->
+		</ul>
+		</li>
+		<!-- <li><a href="/work/?nc=20&id=17&category =2">본부지원게시판</a></li> -->
+
+		<?if($_SESSION['em_level'] <= '10'){ //김민주추가 삭제하지 말것?>
+			<li><a href="/work/?nc=23&category=3">매체공지/취합지원</a></li>
+		<?}else{?>
+			<li><a href="/work/?nc=28&category=3">매체공지/취합지원</a></li>
+		<?}?>
+		<li><a href="/work/?nc=30&category=6">배너템플릿지원</a></li>
+
+		<?if($_SESSION['em_level'] <= '10'){ //김민주추가 삭제하지 말것?>
+			<li><a href="/work/?nc=37&category=7">매체오픈광고주관리</a></li>
+		<?}else{?>
+			<li><a href="/work/?nc=40&category=7">매체오픈광고주관리</a></li>
+		<?}?>
+
+	</ul>
+</li>
+<li><a href="#">툴관리</a>
+	<ul>		
+		<!--<li><a href="#">기타현황</a>
+			<ul>-->
+			<li><a href="/tool/?nc=09">매체계약현황</a></li>
+			<li><a href="/tool/?nc=10">프로모션현황</a></li>
+			<!--</ul>
+		</li>	-->	
+<!--
+		<li><a href="#">솔루션현황</a>
+			<ul>
+			<li><a href="/tool/?nc=08">자동입찰솔루션현황</a></li>
+			<li><a href="/tool/?nc=05">로가디비현황</a></li>
+			</ul>
+		</li>
+-->
+		<li><a href="/tool/?nc=03">회사조직도</a></li>
+		<?if($_SESSION['em_division1']=='929' || $_SESSION['em_division2']=='953'){?> <!--경영관리본부. 개발팀 오픈-->
+		<li><a href="/tool/?nc=03_bs">회사조직도-경영관리본부</a></li>
+		<?}?>
+		<li><a href="/tool/?nc=04">사이트맵</a></li>
+	</ul>
+</li>
+<!-- 2016.04.21 신현준 추가 -->
+<!-- 
+	<li>
+		<a href="/event/index.php">이벤트</a>
+		<?if($_SESSION['s_em_seq']!="14" || $_SESSION['s_em_seq']!="1161") {?>
+ 		<a href="javascript:alert('이벤트가 종료되었습니다')">이벤트</a>
+		<?}?>
+		<ul>
+			<li><a href="./event/send_">선물주기</a></li>
+			<li><a href="./event/event_view.php">진행중 이벤트</a></li>
+			<li><a href="./event/send_">나의당첨현황</a></li>
+			<li><a href="./event/send_">당첨리스트</a></li>
+		</ul>
+	</li>
+-->
+<!--
+<li><a href="#">설문조사관리</a>
+	<ul>
+		<li><a href="/survey/?nc=01">설문조사</a></li>
+	</ul>
+</li>
+-->
+</ul>
+<br style="clear: left" />
+</div>
+<!--------------------------------------------------------------------------------------------------------------------->
+			</td>
+		</tr>
+        </table>
+    </td>
+</tr>
+</table>

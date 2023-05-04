@@ -1,0 +1,22 @@
+SEO 작업예정 프로세스_20221024
+​
+1. 구글서치콘솔 연결
+2. 카페24에서 제공하는 SEO메뉴 내용 점검
+3. 사이트맵 및 RSS 생성여부 및 사용여부 확인
+4. robot.txt 내용 확인
+5. 실제 페이지 소스코드 확인
+6. 구글 서치콘솔을 통한 모니터링 후 추가 작업검토
+
+추가 작업 예정
+키워드 발굴 후 meta og:description 태그 수정
+
+2022/10/25/화
+    색인이 생성되지 않은 80여 개 페이지 중 8개 페이지 색인 요청
+https://sleepycat.co.kr/product/구름-모달-트렁크-여성3c/64/
+https://sleepycat.co.kr/product/굿데이-파자마팬츠-남성3c/83/
+https://sleepycat.co.kr/product/굿데이-파자마팬츠-여성3c/82/
+https://sleepycat.co.kr/product/굿데이-파자마팬츠-커플3c/84/
+https://sleepycat.co.kr/product/그린메모리-파자마-남성/101/
+https://sleepycat.co.kr/product/그린메모리-파자마-여성/100/
+https://sleepycat.co.kr/product/그린메모리-파자마-커플/102/
+https://sleepycat.co.kr/product/그린하이웨이-파자마-남성/92/

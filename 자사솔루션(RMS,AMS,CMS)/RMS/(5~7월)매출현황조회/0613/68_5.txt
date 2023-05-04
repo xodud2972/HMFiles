@@ -1,0 +1,2196 @@
+<? /**********************************************
+Author				: 엄태영
+Create Date			: 2022.05.11
+Comment				: 매출현황조회
+-----------------------------------------------
+Modify Author		:
+Modify date			:
+Comment				:
+ ***********************************************/
+$N_ChkLevelValue = 40;
+@include_once $_SERVER['DOCUMENT_ROOT'] . '/include/inc.level.php';
+@include_once $_SERVER['DOCUMENT_ROOT'] . '/report/cls/cls.sales68.php';
+@include_once $_SERVER['DOCUMENT_ROOT'] . '/cls/cls.employee.php';
+
+// 변수생성
+    $dateList = $_GET['dateList'];
+    $s_date                = $_GET['s_date'] ? $_GET['s_date'] : date("Y-m-01");
+    $e_date                = $_GET['e_date'] ? $_GET['e_date'] : date("Y-m-d");
+
+    $cal_kind            = $_GET['cal_kind'];
+    $syear                = $_GET['syear'];
+    $smonth                = $_GET['smonth'];
+    $sday                = $_GET['sday'];
+    $eyear                 = $_GET['eyear'];
+    $emonth                = $_GET['emonth'];
+    $eday                = $_GET['eday'];
+
+    $syear                 = $syear ? $syear     : date('Y');
+    $smonth                = $smonth ? $smonth    : date('m');
+    $sday                 = $sday ? $sday         : "01";
+    $eyear                 = $eyear ? $eyear     : date('Y');
+    $emonth                = $emonth ? $emonth    : date('m');
+    $eday                 = $eday ? $eday         : date('d') - 1;
+
+    $s_date                = $_GET['s_date'];
+    $e_date                = $_GET['e_date'];
+    $week                = $_GET['week'];
+    $weekdayyn            = $_GET['weekdayyn'];
+
+    $division1            = $_GET['division1'];
+    $division2            = $_GET['division2'];
+    $em_nm                = $_GET['em_nm'];
+
+    $ad_type              = $_GET['ad_type'];
+    $m_nm             = $_GET['m_nm'];
+    $cs_nm        = $_GET['cs_nm'];
+    $cs_m_id          = $_GET['cs_m_id'];
+    $cs_num         = $_GET['cs_num'];
+
+    // 주의 첫날과 마지막날 계산 START
+    $sdate = "$syear-$smonth-$sday";
+    $edate = "$eyear-$emonth-$eday";
+    // 검색이 일요일일 경우 -1 day
+    $yoil = array("일", "월", "화", "수", "목", "금", "토");
+    if ($yoil[date('w', strtotime($sdate))] === '일') {
+        $sdate = date('Y-m-d', strtotime($sdate . '-1 days'));
+    }
+    if ($yoil[date('w', strtotime($edate))] === '일') {
+        $edate = date('Y-m-d', strtotime($edate . '-1 days'));
+    }
+
+
+
+// 권한 설정    
+    if ($_SESSION['em_level'] == 40) {
+        $division1        = $_SESSION['em_division1'];
+        $division2        = $_SESSION['em_division2'];
+        $em_nm            = $_SESSION['s_em_seq'];
+        $em_nm_1        = $_GET['em_nm'];
+    } else if ($_SESSION['em_level'] == 30) {
+        $division1        = $_SESSION['em_division1'];
+        $division2        = $_SESSION['em_division2'];
+        $em_nm            = $_GET['em_nm'];
+        $em_nm_1        = $_GET['em_nm'];
+    } else if ($_SESSION['em_level'] == 20) {
+        $division1        = $_SESSION['em_division1'];
+        $division2        = $_GET['division2'];
+        $em_nm            = $_GET['em_nm'];
+        $em_nm_1        = $_GET['em_nm'];
+    } else if ($_SESSION['em_level'] == 10) {
+        $division1        = $_GET['division1'];
+        $division2        = $_GET['division2'];
+        $em_nm            = $_GET['em_nm'];
+        $em_nm_1        = $_GET['em_nm'];
+    }
+// S_RETURNVAL 가져오기
+    $clsEmp            = new clsEmp();
+    $clsGoodType    = new clsGoodType();
+    $S_RETURNVAL        = $clsGoodType->funcSelectContract_date($cal_kind, $syear, $smonth, $sday, $eyear, $emonth, $eday); //  report -> cls -> cls.sales.php
+    $S_RETURNVAL2       = $clsGoodType->funcSelectContract_division($cal_kind, $syear, $smonth, $sday, $eyear, $emonth, $eday); //  report -> cls -> cls.sales.php
+    $S_RETURNVAL3       = $clsGoodType->funcSelectContract_customer($cal_kind, $syear, $smonth, $sday, $eyear, $emonth, $eday); //  report -> cls -> cls.sales.php
+    $chart_RETURNVAL    = $clsGoodType->funcGoogleChartData($ad_type, $good_type2, $code4);
+    $S_RETURNVAL_EMP = $clsEmp->funSelectEmpAll(1);                                                         //  report -> cls -> cls.employee.php
+    //  echo '<pre>'; 
+    // // print_r($S_RETURNVAL);
+    // // // print_r($S_RETURNVAL2);
+    // // // print_r($S_RETURNVAL3);
+    // // // print_r(($chart_RETURNVAL));
+    // // // print_r($chart_RETURNVAL);
+    //  echo '</pre>';
+
+
+
+
+
+
+// GET넘어온 날짜 변수 가공
+    $sdate_one = $_GET['dr_dr1_from'];
+    $sdate_two = $_GET['dr_dr1_to'];
+    $start_date = $sdate_one . " ~ " . $sdate_two;
+
+    if (!$_GET['dr_dr1_from']) {
+        $today = date("Y-m-d");
+        $day_7ago = date("Y-m-d", strtotime("-7 Day"));
+        $sdate_one = $day_7ago;
+        $sdate_two = $today;
+        $start_date = $sdate_one . " ~ " . $sdate_two;
+    }
+    if ($_GET['cal_kind'] == 'm') {
+        $start_date = substr($start_date, 0, 7);
+    }
+    if ($_GET['dr_dr2_from']) {
+        $edate_one = $_GET['dr_dr2_from'];
+        $edate_two = $_GET['dr_r2_to'];
+        $end_date = $edate_one . " ~ " . $edate_two;
+    }
+
+
+// 광고유형, 광고매체, 광고상품 목록 관련
+    $array_adtype           = @funSelectCom6('27');
+    $array_producttype       = @funSelectCom6('28');
+    $array_m_nmtype           = @funSelectCom6('29');
+
+    if($_GET['check1']==1){
+        $array_adtype = $array_adtype;
+    }else if($_GET['check1']==2){
+        $array_adtype = $array_m_nmtype;
+    }
+
+    //상품유형 키 밸류 번역해서 넣기
+    foreach ($array_adtype as $k => $v) {
+        if (in_array($k, $S_RETURNVAL['m_nm'])) {
+            $array_nm_matching[$k] = $v;
+            // $k 1230,1231.... $v검색유형 배너유형....
+        }
+    }
+
+    if($_GET['search_type']=='customer'){
+        foreach ($array_adtype as $k => $v) {
+            if (in_array($k, $S_RETURNVAL3['m_nm3'])) {
+                $array_m_nm_matching[$k] = $v;
+                $array_m_nm[$k] = $v;
+
+            }
+        }
+    }else{
+        foreach ($array_adtype as $k => $v) {
+            if (in_array($k, $S_RETURNVAL['m_nm'])) {
+                $array_m_nm_matching[$k] = $v;
+            }
+        }
+    }
+
+    if($_GET['check1']==1){
+        $array_nm_matching = $array_m_nm_matching;
+    }else{
+        $array_nm_matching = $array_m_nm_matching;
+    } 
+
+    if($_GET['check1']==2){
+        $theadd           = @funSelectTheadCode2();
+    }else{
+        $theadd           = @funSelectTheadCode1();
+    }
+    // echo '<pre>';  
+    // print_r($theadd);
+    // echo '</pre>';  
+
+    
+
+// 최대값 최소값 구하기
+    function chnageMaxMinTextColor($value, $max, $min){
+        echo $value . " " . $max . " " . $min . "</br>";
+    }
+    /* 최대값 최소값 찾기 START */
+    $maxDateValue = 0;
+    $minDateValue = 9999999999;
+    $maxValue = array();
+    $minValue = array();
+    $maxDateValue_wk = 0;
+    $minDateValue_wk = 9999999999;
+    $maxValue_wk = array();
+    $minValue_wk = array();
+// 주간 제외 나머지
+    if ($cal_kind != "wk") {
+        foreach ($S_RETURNVAL['good_type2'] as $k => $v) {
+            foreach ($v as $k1 => $v1) {
+                $maxValue[$k1] = 0; // 0도 빨간색으로 되어버려서 -1로 변경
+                $minValue[$k1] = 9999999999;
+
+                $maxValue_wk[$k1] = 0;
+                $minValue_wk[$k1] = 9999999999;
+            }
+            $good_type2_cnt[$k] = count($v);
+        }
+        foreach ($theadd as $k => $v) {
+            foreach ($v as $k1 => $v1) {
+                $maxValue_thead[$k1] = 0;
+                $minValue_thead[$k1] = 9999999999;
+            }
+            $good_type2_cnt_thead[$k] = count($v);
+            //  echo count($v);
+        }
+        // print_r($good_type2_cnt_thead);
+
+        foreach ($S_RETURNVAL['good_type2_price'] as $k => $v) {
+            foreach ($v as $k1 => $v1) {
+                foreach ($v1 as $k2 => $v2) {
+                    $tt[$k] += $v2;
+                    if ($v2 > $maxValue[$k2]) {
+                        $maxValue[$k2] = $v2;
+                    }
+                    if ($v2 < $minValue[$k2]) {
+                        $minValue[$k2] = $v2;
+                    }
+                }
+            }
+            if ($tt[$k] > $maxDateValue) {
+                $maxDateValue = $tt[$k];
+            }
+            if ($tt[$k] < $minDateValue) {
+                $minDateValue = $tt[$k];
+            }
+        }
+    //  -----------------부문테이블--------------------
+        foreach ($S_RETURNVAL2['good_type22'] as $k => $v) {
+            foreach ($v as $k1 => $v1) {
+                $maxValue2[$k1] = 0;
+                $minValue2[$k1] = 9999999999;
+
+                $maxValue_wk2[$k1] = 0;
+                $minValue_wk2[$k1] = 9999999999;
+            }
+            $good_type2_cnt2[$k] = count($v);
+        }
+        foreach ($S_RETURNVAL2['good_type2_price2'] as $k => $v) {
+            foreach ($v as $k1 => $v1) {
+                foreach ($v1 as $k2 => $v2) {
+                    $tt2[$k] += $v2;
+
+                    if ($v2 > $maxValue2[$k2]) {
+                        $maxValue2[$k2] = $v2;
+                    }
+                    if ($v2 < $minValue2[$k2]) {
+                        $minValue2[$k2] = $v2;
+                    }
+                }
+            }
+            if ($tt2[$k] > $maxDateValue2) {
+                $maxDateValue2 = $tt2[$k];
+            }
+            if ($tt2[$k] < $minDateValue2) {
+                $minDateValue2 = $tt2[$k];
+            }
+        }
+    //  -----------------광고주테이블--------------------
+        foreach ($S_RETURNVAL3['good_type23'] as $k => $v) {
+            foreach ($v as $k1 => $v1) {
+                $maxValue3[$k1] = 0;
+                $minValue3[$k1] = 9999999999;
+
+                $maxValue_wk3[$k1] = 0;
+                $minValue_wk3[$k1] = 9999999999;
+            }
+            $good_type2_cnt3[$k] = count($v);
+            
+        }
+        foreach ($S_RETURNVAL3['good_type2_price3'] as $k => $v) {
+            foreach ($v as $k1 => $v1) {
+                foreach ($v1 as $k2 => $v2) {
+                    $tt3[$k] += $v2;
+                    if ($v2 > $maxValue3[$k2]) {
+                        $maxValue3[$k2] = $v2;
+                    }
+                    if ($v2 < $minValue3[$k2]) {
+                        $minValue3[$k2] = $v2;
+                    }
+                }
+            }
+            if ($tt3[$k] > $maxDateValue3) {
+                $maxDateValue3 = $tt3[$k];
+            }
+            if ($tt3[$k] < $minDateValue3) {
+                $minDateValue3 = $tt3[$k];
+            }
+        }
+
+
+
+// 주간일때
+    } else {
+        foreach ($S_RETURNVAL['good_type2'] as $k => $v) {
+            foreach ($v as $k1 => $v1) {
+                $maxValue_wk[$k1] = 0;
+                $minValue_wk[$k1] = 9999999999;
+            }
+            $good_type2_cnt[$k] = count($v);
+        }
+        foreach ($S_RETURNVAL['good_type2_price'] as $k => $v) {
+            foreach ($v as $k1 => $v1) {
+                foreach ($v1 as $k2 => $v2) {
+                    $tt_wk[$k] += $v2;
+                    if ($v2 > $maxValue_wk[$k2]) {
+                        $maxValue_wk[$k2] = $v2;
+                    }
+                    if ($v2 < $minValue_wk[$k2]) {
+                        $minValue_wk[$k2] = $v2;
+                    }
+                    // print_r($maxValue_wk);
+                }
+            }
+            if ($tt_wk[$k] > $maxDateValue_wk) {
+                $maxDateValue_wk = $tt_wk[$k];
+                // echo $maxDateValue_wk;
+            }
+            if ($tt_wk[$k] < $minDateValue_wk) {
+                $minDateValue_wk = $tt_wk[$k];
+            }
+        }
+
+
+    // ---------------부문테이블--------------------------
+        foreach ($S_RETURNVAL2['good_type22'] as $k => $v) {
+            foreach ($v as $k1 => $v1) {
+                $maxValue_wk2[$k1] = 0;
+                $minValue_wk2[$k1] = 9999999999;
+            }
+            $good_type2_cnt2[$k] = count($v);
+        }
+        foreach ($S_RETURNVAL2['good_type2_price2'] as $k => $v) {
+            foreach ($v as $k1 => $v1) {
+                foreach ($v1 as $k2 => $v2) {
+                    $tt_wk2[$k] += $v2;
+                    if ($v2 > $maxValue_wk2[$k2]) {
+                        $maxValue_wk2[$k2] = $v2;
+                    }
+                    if ($v2 < $minValue_wk2[$k2]) {
+                        $minValue_wk2[$k2] = $v2;
+                    }
+                }
+            }
+            if ($tt_wk2[$k] > $maxDateValue_wk2) {
+                $maxDateValue_wk2 = $tt_wk2[$k];
+            }
+            if ($tt_wk2[$k] < $minDateValue_wk2) {
+                $minDateValue_wk2 = $tt_wk2[$k];
+            }
+        }
+
+
+    // ---------------광고주테이블--------------------------
+        foreach ($S_RETURNVAL3['good_type23'] as $k => $v) {
+            foreach ($v as $k1 => $v1) {
+                $maxValue_wk3[$k1] = 0;
+                $minValue_wk3[$k1] = 9999999999;
+            }
+            $good_type2_cnt3[$k] = count($v);
+        }
+        foreach ($S_RETURNVAL3['good_type2_price3'] as $k => $v) {
+            foreach ($v as $k1 => $v1) {
+                foreach ($v1 as $k2 => $v2) {
+                    $tt_wk3[$k] += $v2;
+                    if ($v2 > $maxValue_wk3[$k2]) {
+                        $maxValue_wk3[$k2] = $v2;
+                    }
+                    if ($v2 < $minValue_wk3[$k2]) {
+                        $minValue_wk3[$k2] = $v2;
+                    }
+                }
+            }
+            if ($tt_wk3[$k] > $maxDateValue_wk3) {
+                $maxDateValue_wk3 = $tt_wk3[$k];
+            }
+            if ($tt_wk3[$k] < $minDateValue_wk3) {
+                $minDateValue_wk3 = $tt_wk3[$k];
+            }
+        }
+    }
+/* 최대값 최소값 찾기 END */
+
+?>
+
+<title>매출관리리포트>매출현황조회</title>
+
+<!-- iframe 관련 -->
+    <script language='javascript'>
+        function selectDivi1(division1, type) {
+            iFrmSubmit.location.href = "/frame_division/select_division2.php?division1=" + division1 + "&type=" + type;
+        }
+
+        function selectDivi2(division1, division2, type) {
+            iFrmSubmit.location.href = "/frame_division/select_division2.php?division1=" + division1 + "&division2=" + division2 + "&type=" + type;
+        }
+
+        function s_mode(lname) {
+            if (lname == 'm' || lname == 'y') {
+                document.all.spanStartDay.style.display = 'none';
+                document.all.spanEndDay.style.display = 'none';
+                document.all.divWeek.style.display = 'none';
+                document.all.divWeekDayYn.style.display = 'none';
+            } else if (lname == 'd') {
+                document.all.spanStartDay.style.display = 'inline';
+                document.all.spanEndDay.style.display = 'inline';
+                document.all.divWeek.style.display = 'none';
+                document.all.divWeekDayYn.style.display = 'none';
+            } else if (lname == 'wk') {
+                document.all.spanStartDay.style.display = 'inline';
+                document.all.spanEndDay.style.display = 'none';
+                document.all.divWeek.style.display = 'none';
+                document.all.divWeekDayYn.style.display = 'none';
+            } else if (lname == 'wd') {
+                document.all.spanStartDay.style.display = 'inline';
+                document.all.spanEndDay.style.display = 'inline';
+                document.all.divWeek.style.display = 'inline';
+                document.all.divWeekDayYn.style.display = 'inline';
+            } else if (lname == 'w') {
+                document.all.spanStartDay.style.display = 'inline';
+                document.all.spanEndDay.style.display = 'inline';
+                document.all.divWeek.style.display = 'none';
+                document.all.divWeekDayYn.style.display = 'inline';
+            }
+        }
+
+        // 광고유형, 광고매체 +, - 항목 처리
+        $(function() {
+            var productState = true;
+            $("#titleProductType").on("click", function() {
+                if ($("#btnProduct").text() == "-") {
+                    $("#btnProduct").text("+");
+                    $("#productType").attr("style", "display:none");
+                } else {
+                    $("#btnProduct").text("-");
+                    $("#productType").attr("style", "display:inline");
+                }
+                if (productState) {
+                    $("#productType").animate({
+                        color: "#330000",
+                    }, 0);
+                    $('#productType').css('height', 'auto');
+                } else {
+                    $("#productType").animate({
+                        color: "#000",
+                        height: 00
+                    }, 0);
+                }
+                productState = !productState;
+            });
+            var divState1 = true;
+            $("#ad_type_td").on("click", function() {
+                if ($("#btndiv1").html() == '<span class="ui-icon ui-icon-minusthick"></span>') {
+                    $("#btndiv1").html('<span class="ui-icon ui-icon-plusthick"></span>');
+                } else {
+                    $("#btndiv1").html('<span class="ui-icon ui-icon-minusthick"></span>')
+                }
+                if (divState1) {
+                    $("#divType1").animate({
+                        color: "#fff",
+                        height: 200
+                    }, 0);
+                    $('#divType1').css('height', 'auto');
+                } else {
+                    $("#divType1").animate({
+                        color: "#000",
+                        height: 20
+                    }, 0);
+                }
+                divState1 = !divState1;
+            });
+            var divState2 = true;
+            $("#m_nm_td").on("click", function() {
+                console.log($("#btndiv2").html());
+                if ($("#btndiv2").html() == '<span class="ui-icon ui-icon-minusthick"></span>') {
+                    $("#btndiv2").html('<span class="ui-icon ui-icon-plusthick"></span>');
+
+                } else {
+                    $("#btndiv2").html('<span class="ui-icon ui-icon-minusthick"></span>');
+                }
+                if (divState2) {
+                    $("#divType2").animate({
+                        color: "#fff",
+                        height: 200
+                    }, 0);
+                    $('#divType2').css('height', 'auto');
+                } else {
+                    $("#divType2").animate({
+                        color: "#000",
+                        height: 20
+                    }, 0);
+                }
+                divState2 = !divState2;
+            });
+        });
+    </script>
+
+<!-- 계정리스트 팝업 함수 -->
+    <script>
+        function openWindowPop(url, name) {
+            var options = 'top=10, left=10, width=1300, height=600, status=no, menubar=no, toolbar=no, resizable=no, location=no';
+            window.open(url, name, options);
+        }
+    </script>
+
+<!-- src link 목록 -->
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=css&amp;skin=doxy"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript" src="/lib/datePicker/js/datepicker_copy.js"></script>
+    <script type="text/javascript" src="/lib/datePicker/js/DateRange.js"></script>
+    <script type="text/javascript" src="/lib/datePicker/js/DateRangesWidget.js"></script>
+    <link rel="stylesheet" href="/lib/datePicker/css/datepicker/base.css" />
+    <link rel="stylesheet" href="/lib/datePicker/css/DateRangesWidget/base.css" />
+
+
+
+<!-- 로딩 실행 -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#loading').fadeOut(500);
+        });
+    </script>
+
+<!-- 테이블 다운로드 관련 -->
+    <script>
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = ('0' + (today.getMonth() + 1)).slice(-2);
+        var day = ('0' + today.getDate()).slice(-2);
+        var dateString = year + month + day;
+        var filename = "매출현황조회" + dateString + "_default_data";
+
+
+        function tableToExcel(id, title) {
+            var data_type = 'data:application/vnd.ms-excel;charset=utf-8';
+            // a 태그가 있어서 엑셀다운시 하이퍼링크가 생성되어서 컬러가 들어가지 않음. 때문에 a태그 자체를 아래와 같이 제거해줘야한다.
+            var table_html = encodeURIComponent(document.getElementById(id).outerHTML.replace(/<(\/a|a)([^>]*)>/gi, ""));
+            //console.log(document.getElementById(id).outerHTML.replace(/<(\/a|a)([^>]*)>/gi, ""))
+            var a = document.createElement('a');
+            a.href = data_type + ',%EF%BB%BF' + table_html;
+            a.download = title + '.xls';
+            a.click();
+        }
+    </script>
+
+<!-- Style 추가 -->
+    <style>
+        label {
+            display: inline-block;
+            width: 100px;
+            line-height: 50px;
+        }
+
+        table.dataTable thead th {
+            text-align: center;
+        }
+
+        table.dataTable tfoot th,
+        table.dataTable tfoot td {
+            text-align: right;
+        }
+
+        table.dataTable tfoot th.center {
+            text-align: center;
+        }
+
+        #tablereport_date thead{
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            
+        }
+
+        #tablereport_date tfoot{
+            position: sticky;
+            bottom: 0;
+            z-index: 99;
+        }
+    
+        #tablereport_date tbody tr td.center,
+        .tablereport tfoot .center{
+            position: sticky;
+            left: 0;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+        float: left;
+        text-align: right;
+        padding-top: 0.25em;
+        position: sticky;
+        left: 0;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            box-sizing: border-box;
+            display: inline-block;
+            min-width: 1.5em;
+            padding: 0.5em 1em;
+            margin-left: 2px;
+            text-align: center;
+            text-decoration: none !important;
+            cursor: pointer;
+            color: #333 !important;
+            border: 1px solid transparent;
+            border-radius: 2px;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:active {
+            cursor: default;
+            color: #666 !important;
+            border: 1px solid transparent;
+            background: transparent;
+            box-shadow: none;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            color: #333 !important;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            background-color: rgba(230, 230, 230, 0.1);
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(230, 230, 230, 0.1)), color-stop(100%, rgba(0, 0, 0, 0.1)));
+            background: -webkit-linear-gradient(top, rgba(230, 230, 230, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+            background: -moz-linear-gradient(top, rgba(230, 230, 230, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+            background: -ms-linear-gradient(top, rgba(230, 230, 230, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+            background: -o-linear-gradient(top, rgba(230, 230, 230, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+            background: linear-gradient(to bottom, rgba(230, 230, 230, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+        }
+        #tablereport_date {
+            width: 100%;
+            margin-top:0em !important;  
+            margin-bottom:0em !important;      
+            text-align: center;
+            border-spacing: 0;
+        }
+
+        #tablereport_date th {
+            border-top: 1px solid #cccccc;
+            border-bottom: 1px solid #cccccc;
+            border-right: 1px solid #cccccc;
+        }
+
+        #tablereport_date td {
+            border-bottom: 1px solid #cccccc;
+            border-right: 1px solid #cccccc;
+        }
+
+        #tablereport_date thead th {
+            position: sticky;
+            top: 0;
+        }
+    </style>
+
+<div style="float:left; width:100%"><br>
+    <div style="float:left; margin-top:5px;">매출관리리포트 > 매출현황조회</div><br>
+    <?  // $title = '매출현황조회';
+        // $pageIndex = '7';
+        // @include_once $_SERVER['DOCUMENT_ROOT'] . '/tool/initBookMark.php'; ?>
+
+    <!-- 조회영역 -->
+    <div>
+        <form method='GET' action='/report/sales/' name='frm1' onsubmit='return funcSubmit(this)'>
+        <input type="hidden" name="em_seq1" value='<?=$_GET['em_seq1']?>'>
+            <input type='hidden' name='nc' value='<?= $_GET['nc'] ?>'>
+            <table width="100%" border="0" cellpadding="5" cellspacing="1" bgcolor="CCCCCC" align="left">
+                <tr bgcolor="#FFFFFF">
+                    <td bgcolor="#EFEFEF" id="ad_type_td" style="width: 100px">광고유형
+                        <font id="btndiv1"><span class="ui-icon ui-icon-plusthick"></span></font>
+                    </td>
+                    <td valign="top">
+                        <div id="divType1" class="ui-widget-content ui-corner-all" style="width:100%; height:20; overflow:auto; overflow-y:hidden; border:0px solid #FFF;">
+                            <table cellpadding="0" cellspacing="0" border='0'>
+                                <tr>
+                                    <td width="100%" valign="top">
+                                        <input type="radio" name="check1" id="ad_type" value="1" <?= $_GET['check1'] == '1' ? "checked" : "" ?> checked>유형별<br><br>
+                                        <? foreach (funSelectCom6('27') as $key => $val) { ?>
+                                            <input type="checkbox" value='<?= $key ?>' name="ad_type[]" id="ad_type" style="margin-left: 35px; border-radius: 100%;" <? foreach ($_GET['ad_type'] as $key1 => $val1) {
+                                                                                                                                                                            echo $val1 == $key ? "checked" : "";
+                                                                                                                                                                        } ?>><?= $val ?></input>
+                                        <? } ?>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                <tr bgcolor="#FFFFFF" style="cursor:pointer">
+                    <td bgcolor="#EFEFEF" id="m_nm_td">광고매체
+                        <font id="btndiv2"><span class="ui-icon ui-icon-plusthick"></font>
+                    </td>
+                    <td valign="top">
+                        <div id="divType2" class="ui-widget-content ui-corner-all" style="width:100%; height:20; overflow:auto; overflow-y:hidden; border:0px solid #FFF;">
+                            <table cellpadding="0" cellspacing="0" border='0'>
+                                <tr>
+                                    <td width="100%" valign="top">
+                                        <input type="radio" name="check1" id="m_nm" value="2" <?= $_GET['check1'] == '2' ? "checked" : "" ?>>매체별<br><br>
+                                        <? $idx = 1; ?>
+                                        <? foreach (funSelectCom6('29') as $key => $val) { ?>
+                                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                                            <span style="margin-right: 30px;  ">
+                                                <input type="checkbox" value='<?= $key ?>' name="m_nm[]" id="m_nm" style="border-radius: 100%;" <? foreach ($_GET['m_nm'] as $key1 => $val1) {
+                                                                                                                                                    echo $val1 == $key ? "checked" : "";
+                                                                                                                                                } ?> /><?= $val ?>
+                                            </span>
+                                        <? $idx++;
+                                            if ($idx % 14 == 0) {
+                                                echo '<br>';
+                                            }
+                                        } ?>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                <tr bgcolor="#FFFFFF" class="toggler">
+                    <td bgcolor="#EFEFEF" height="auto">소속</td>
+                    <td>
+                        <select style="font-size:9pt" name='division1' class='adminSelect' onchange="selectDivi1(this.value,3)">
+                            <option value=''>본부전체</option>
+                            <? foreach (funSelectCom('1', '', '1', 'Y') as $key => $val) { ?>
+                                <option value='<?= $key ?>' <?= $key == $division1 ? "selected" : "" ?>><?= $val ?></option>
+                            <? } ?>
+                        </select>
+                        <span id="division2"></span>
+                        <select name="division2" class='adminSelect' onchange="selectDivi2(frm1.division1.value,this.value,3)">
+                            <option value="">팀선택</option>
+                        </select>
+                        <select name="em_nm" class='adminSelect'>
+                            <option value="">직원선택</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr bgcolor="#FFFFFF">
+                    <td bgcolor="#EFEFEF"> 광고주 </td>
+                    <td>
+                        <select id="searchSelect" name="s_item" style="width:100px">
+                            <option value="1">선택</option>
+                            <option value="cs_nm" <?= "cs_nm" == $_GET['s_item'] ? "selected" : "" ?>>광고주명</option>
+                            <option value="cs_m_id" <?= "cs_m_id" == $_GET['s_item'] ? "selected" : "" ?>>광고계정</option>
+                            <option value="cs_num" <?= "cs_num" == $_GET['s_item'] ? "selected" : "" ?>>사업자번호</option>
+                        </select>
+                        </select>
+                        <input autocomplete="off" style="background-color: #EFEFEF" id="inputString" type="text" name="s_string" class='adminInputTxt' value="<?= $_GET['s_string'] ?>">
+                    </td>
+                </tr>
+                <tr bgcolor="#FFFFFF">
+                    <td bgcolor="#EFEFEF">조회유형 </td>
+                    <td>
+                        <input type="radio" value="d" name="cal_kind" checked onclick="s_mode('d')" <?= "d" == $cal_kind ? "checked" : "" ?>>일별
+                        <input type="radio" value="wk" name="cal_kind" onclick="s_mode('wk')" <?= "wk" == $cal_kind ? "checked" : "" ?>>주별
+                        <input type="radio" value="m" name="cal_kind" onclick="s_mode('m')" <?= "m" == $cal_kind ? "checked" : "" ?>>월별
+                        <input type="radio" value="y" name="cal_kind" onclick="s_mode('y')" <?= "y" == $cal_kind ? "checked" : "" ?>>연별
+                    </td>
+                </tr>
+                <tr bgcolor="#FFFFFF">
+                    <td bgcolor="#EFEFEF">조회기간</td>
+                    <td>
+                        <div id="container" style="margin: 0; width: 200px;">
+                            <div class="item" style="height: auto;">
+                                <div class="pickerContainer widget" style="margin: 0">
+
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr bgcolor="#FFFFFF">
+                    <td colspan="2" align="center" height="30">
+                        <button class="ui-button ui-widget ui-corner-all" type="submit"><span class="ui-button-icon ui-icon ui-icon-search"></span> 조 회</button>
+                    </td>
+                </tr>
+            </table>
+    </div>
+    <div>&nbsp;</div>
+    <!-- 차트 그려지는 영역 -->
+    <div id="chart_div" style="width: 100%; height: 300px;"></div>
+    <!-- 측정기준 영역 -->
+    <div style="border-top: solid 1px #cccccc; border-bottom: solid 1px #cccccc; background-color: #EAEAEA; margin-top:10px; margin-bottom: 10px;" id="fileter_div1">
+        측정기준 :
+        <select onChange="change(this.options[this.selectedIndex].value); console.log(this.options[this.selectedIndex].value);" name="search_type" id="search_type" style="width:120px; text-align: center; font-weight: bold; font-size: 12px;">
+            <option value="date" <?= "date" == $_GET['search_type'] ? "selected" : "" ?>>기간</option>
+            <option value="division" <?= "division" == $_GET['search_type'] ? "selected" : "" ?>>부문</option>
+            <option value="customer" <?= "customer" == $_GET['search_type'] ? "selected" : "" ?>>광고주</option>
+        </select>
+        </form>
+        <button id="excelBtn1" class="button" onclick="tableToExcel('tablereport_date',filename);" style="font-size: 14px; border: none; vertical-align: middle; display: inline;">
+            <span class="ui-button-icon ui-icon ui-icon-arrowthickstop-1-s"></span> 다운로드
+        </button>
+
+    </div>
+    <!-- 테이블 영역 시작 -->
+    <div style="width: 100%; max-height: 500px; overflow: auto;">
+        <table class="tablereport demo-1" id="tablereport_date" style="display: inline;">
+            <thead>
+<? if($_GET['search_type']){                    // 조회시 THEAD 영역?>      
+        <? if ($_GET["check1"]==1) {    // 광고유형별 조회시 THEAD 영역?>                  
+                            <tr>
+                                <th rowspan="2" align="center" style="left: 0; position: sticky; z-index: 9999;">
+                                        <? if (count($array_adtype) <= 3) { ?>
+                                            <div>
+                                        <? } else { 
+                                            if($_GET['search_type'] == 'date') {?>
+                                                <div align="center" style="width:180px">일자</div>
+                                            <? }if($_GET['search_type'] == 'division'){ ?>
+                                                <div align="center" style="width:200px">부문</div>
+                                            <? }else if($_GET['search_type'] == 'customer'){?>
+                                                <div align="center" style="width:180px">광고주</div>
+                                            <? }
+                                        }?>
+                                </th>
+<? if ($_GET['ad_type']) { ?>
+                            <? foreach ($array_nm_matching as $k => $v) { ?>
+                                <? if ($_GET['search_type'] == 'date') { ?>
+                                    <th colspan="<?= $good_type2_cnt[$k] ?>" align="center">
+                                        <?= $v ?>
+                                    </th>
+                                <? } else if ($_GET['search_type'] == 'division') { ?>
+                                    <th colspan="<?= $good_type2_cnt2[$k] ?>" align="center">
+                                        <?= $v ?>
+                                    </th>
+                                <? } else if ($_GET['search_type'] == 'customer') { ?>
+                                    <th colspan="<?= $good_type2_cnt3[$k] ?>" align="center">
+                                        <?= $v ?>
+                                    </th>
+                                <? } ?>
+                            <? } ?>
+<? }else{ ?>
+                            <? foreach ($array_adtype as $k => $v) { ?>
+                                <? if ($_GET['search_type'] == 'date') { ?>
+                                    <th colspan="<?= $good_type2_cnt_thead[$k] ?>" align="center">
+                                        <?= $v ?>
+                                    </th>
+                                <? } else if ($_GET['search_type'] == 'division') { ?>
+                                    <th colspan="<?= $good_type2_cnt2[$k] ?>" align="center">
+                                        <?= $v ?>
+                                    </th>
+                                <? } else if ($_GET['search_type'] == 'customer') { ?>
+                                    <th colspan="<?= $good_type2_cnt3[$k] ?>" align="center">
+                                        <?= $v ?>
+                                    </th>
+                                <? } ?>
+                            <? } ?>    
+<? } ?>
+                            <? if ($_GET['search_type']){?>
+                                <th rowspan="2" align="center">합계</th>
+                            <? } ?>
+                        </tr>
+                        <tr>
+<? if ($_GET['ad_type']) { ?>                            
+                                <?   foreach ($array_adtype as $k => $v) {
+                                        if ($_GET['search_type'] == 'date') {
+                                            foreach ($S_RETURNVAL['good_type2'][$k] as $k1 => $v1) { ?>
+                                                <th><?= funcGoodsKnm2($k1) ?></th>
+                                        <? }
+                                        } else if ($_GET['search_type'] == 'division') {
+                                            foreach ($S_RETURNVAL2['good_type22'][$k] as $k1 => $v1) { ?>
+                                            <th><?= funcGoodsKnm2($k1) ?></th>
+                                            <? }
+                                        } else if ($_GET['search_type'] == 'customer') {
+                                            foreach ($S_RETURNVAL3['good_type23'][$k] as $k1 => $v1) { ?>
+                                                <th><?= funcGoodsKnm2($k1) ?></th>
+                                            <? }
+                                        }
+                                    }
+                                ?>
+<? }else{ ?>
+                                <?   foreach ($array_adtype as $k => $v) {
+                                        if ($_GET['search_type'] == 'date') {
+                                            foreach ($theadd[$k] as $k1 => $v1) { ?>
+                                                <th><?= funcGoodsKnm2($k1) ?></th>
+                                        <? }
+                                        } else if ($_GET['search_type'] == 'division') {
+                                            foreach ($S_RETURNVAL2['good_type22'][$k] as $k1 => $v1) { ?>
+                                            <th><?= funcGoodsKnm2($k1) ?></th>
+                                            <? }
+                                        } else if ($_GET['search_type'] == 'customer') {
+                                            foreach ($S_RETURNVAL3['good_type23'][$k] as $k1 => $v1) { ?>
+                                                <th><?= funcGoodsKnm2($k1) ?></th>
+                                            <? }
+                                        }
+                                    }
+                                ?>    
+<? } ?>                                
+                            </tr>
+        <?}else{                        // 광고매체별 조회시 THEAD 영역?>
+            <tr>
+                <th rowspan="2" align="center" style="left: 0; position: sticky; z-index: 9999;">
+                    <? foreach ($array_m_nmtype as $k => $v) { ?>
+                        <? if (count($array_m_nmtype) <= 3) { ?>
+                            <div >
+                        <? } else { 
+                            if($cal_kind !== "wk"){?>
+                                <div align="center" style="width:150px;">
+                            <? }else{
+                                if($_GET['search_type'] == 'date') {?>
+                                    <div align="center" style="width:160px">
+                                <? }if($_GET['search_type'] == 'division'){ ?>
+                                    <div align="center" style="width:200px">
+                                <? }else{?>
+                                    <div align="center" style="width:160px">
+                                <? } ?>
+                            <? }
+                            }
+                        } ?>
+                        <? if ($_GET['search_type'] == 'date') { ?>
+                        일자</div>
+                        <? } else if ($_GET['search_type'] == 'division') { ?>
+                        부문</div>
+                        <? } else if ($_GET['search_type'] == 'customer') { ?>
+                        광고주</div>
+                        <? }?>
+                </th>
+<? if ($_GET['m_nm']) { ?>
+                            <? foreach ($array_m_nm_matching as $k => $v) { ?>
+                                <? if ($_GET['search_type'] == 'date') { ?>
+                                    <th colspan="<?= $good_type2_cnt[$k] ?>" align="center">
+                                        <?= $v ?>
+                                    </th>
+                                <? } else if ($_GET['search_type'] == 'division') { ?>
+                                    <th colspan="<?= $good_type2_cnt2[$k] ?>" align="center">
+                                        <?= $v ?>
+                                    </th>
+                                <? } else if ($_GET['search_type'] == 'customer') { ?>
+                                    <th colspan="<?= $good_type2_cnt3[$k] ?>" align="center">
+                                        <?= $v ?>
+                                    </th>
+                                <? } ?>
+                            <? } ?>
+<? }else{ ?>
+                            <? foreach ($good_type2_cnt_thead as $k => $v) { ?>
+                                <? if ($_GET['search_type'] == 'date') { ?>
+                                    <th colspan="<?= $good_type2_cnt_thead[$k] ?>" align="center">
+                                        <?= funcGoodsKnm2($k) ?>
+                                    </th>
+                                <? } else if ($_GET['search_type'] == 'division') { ?>
+                                    <th colspan="<?= $good_type2_cnt2[$k] ?>" align="center">
+                                        <?= $v ?>
+                                    </th>
+                                <? } else if ($_GET['search_type'] == 'customer') { ?>
+                                    <th colspan="<?= $good_type2_cnt3[$k] ?>" align="center">
+                                        <?= $v ?>
+                                    </th>
+                                <? } ?>
+                            <? } ?>    
+<? } ?>
+<? if ($_GET['search_type']){?>
+    <th rowspan="2" align="center">합계</th>
+    <? } ?>
+</tr>
+<tr>
+
+               
+<? if ($_GET['m_nm']) { ?>                            
+                                <?   foreach ($array_m_nm_matching as $k => $v) {
+                                        if ($_GET['search_type'] == 'date') {
+                                            foreach ($S_RETURNVAL['good_type2'][$k] as $k1 => $v1) { ?>
+                                                <th><?= funcGoodsKnm2($k1) ?></th>
+                                        <? }
+                                        } else if ($_GET['search_type'] == 'division') {
+                                            foreach ($S_RETURNVAL2['good_type22'][$k] as $k1 => $v1) { ?>
+                                            <th><?= funcGoodsKnm2($k1) ?></th>
+                                            <? }
+                                        } else if ($_GET['search_type'] == 'customer') {
+                                            foreach ($S_RETURNVAL3['good_type23'][$k] as $k1 => $v1) { ?>
+                                                <th><?= funcGoodsKnm2($k1) ?></th>
+                                            <? }
+                                        }
+                                    }
+                                ?>
+<? }else{ ?>
+                                <?   foreach ($array_m_nmtype as $k => $v) {
+                                        if ($_GET['search_type'] == 'date') {
+                                            foreach ($theadd[$k] as $k1 => $v1) { ?>
+                                                <th><?= funcGoodsKnm2($k1) ?></th>
+                                        <? }
+                                        } else if ($_GET['search_type'] == 'division') {
+                                            foreach ($S_RETURNVAL2['good_type22'][$k] as $k1 => $v1) { ?>
+                                            <th><?= funcGoodsKnm2($k1) ?></th>
+                                            <? }
+                                        } else if ($_GET['search_type'] == 'customer') {
+                                            foreach ($S_RETURNVAL3['good_type23'][$k] as $k1 => $v1) { ?>
+                                                <th><?= funcGoodsKnm2($k1) ?></th>
+                                            <? }
+                                        }
+                                    }
+                                ?>    
+<? } ?>                        
+                </tr>
+        <?} ?>
+    <?}else{                                        //Dafault THEAD영역 ?>
+        <tr>
+            <th rowspan="2" align="center" style="left: 0; position: sticky; z-index: 9999;">
+                <div align="center" style="width:180px">일자</div>
+            </th>
+        <? $defaultCnt = 0; ?>
+            <? foreach ($array_adtype as $k => $v) { ?>
+                <th colspan="<?= $good_type2_cnt_thead[$k] ?>" align="center">
+                    <?= $v ?>   
+                </th>
+            <? } ?>
+
+            <? if ($_GET['search_type']){?>
+                <th rowspan="2" align="center">합계</th>
+            <? } ?>
+        </tr>
+        <tr>
+            <? foreach ($array_adtype as $k => $v) {
+                foreach ($theadd[$k] as $k1 => $v1) { ?>
+                <th><?= funcGoodsKnm2($k1) ?></th>
+                <? $defaultCnt ++; ?>
+            <? }
+            } ?>
+        </tr>
+        </thead>
+        <tfoot>
+            <th>총계</th>
+            <? for($i=0;$i<$defaultCnt;$i++){ ?>
+                <th>0</th>
+            <? } ?>
+        </tfoot>
+        <?} ?>
+            </thead>
+<?if ($cal_kind != "wk" || $cal_kind == "") {   //--------일별 TBODY TFOOT 시작?>
+    <tbody>
+                <?  $rate = array();
+                    $rateIdx = 0;
+                    if ($_GET['dr_dr2_from'] !== "") {
+                        $rows[] = array('year', $start_date, $end_date);
+                    } else {
+                        $rows[] = array('year', $start_date);
+                    }
+                    if (!is_array($S_RETURNVAL['pay_date'])) {
+                        array_push($rows, array(0, 0, 0));
+                    }
+    if ($_GET['search_type'] == 'date') {                                                       // 일별 기간
+
+            $theadd = $_GET['ad_type'] || $_GET['m_nm'] ? $S_RETURNVAL['good_type2'] : $theadd; // 매체유형이 선택되었으면 기존대로 아니면 모든 thead항목이 노출                                     
+        // if($_GET['m_nm']){
+        //     $theadd = $_GET['m_nm'] ? $S_RETURNVAL['good_type2'] : $theadd; // 매체유형이 선택되었으면 기존대로 아니면 모든 thead항목이 노출                                     
+        // }
+                        foreach ($S_RETURNVAL['pay_date'] as $k => $v) {
+                            list($d, $w) = explode(' ', date('Y-m-d w', strtotime($k)));
+                            $timestamp += 86400;
+                            if ($w % 6 == 0 || in_array($k, $GLOBALS['HOLIDAY'], true)) {
+                                $bgcolor = "#f3f3f3";
+                            } else {
+                                $bgcolor = "#FFFFFF";
+                            } ?>
+                <tr bgcolor="<?= $bgcolor ?>">
+                    <td class='center' bgcolor="<?= $bgcolor ?>"><?= $_GET['cal_kind'] == "w" || $_GET['cal_kind'] == "wd" ? $k : $k ?></td>
+                    <? foreach ($array_adtype as $k1 => $v1) {
+                                foreach ($theadd[$k1] as $k2 => $v2) {
+                                    $realValue        = $S_RETURNVAL['good_type2_price'][$k][$k1][$k2];
+                                    $tot[$k2]           += $S_RETURNVAL['good_type2_price'][$k][$k1][$k2];
+                                    $tot_m_nm[$k1]      += $S_RETURNVAL['good_type2_price'][$k][$k1][$k2];
+                                    $tot_date[$k]       += $S_RETURNVAL['good_type2_price'][$k][$k1][$k2];
+                                    $grand_tot          += $S_RETURNVAL['good_type2_price'][$k][$k1][$k2];
+                                    $google_tot[$k]     += $S_RETURNVAL['good_type2_price'][$k][$k1][$k2];
+                    ?>
+                            <td class='right'>
+                                <? if ($_GET['dr_r2_to']) {
+                                        $new_k = str_replace('-', '', $k);
+                                        $new_k = str_replace('~', '', $new_k);
+                                        $new_k = str_replace(' ', '', $new_k);
+                                        $new_k1 = substr($new_k, 0, 8);
+                                        $new_k2 = substr($new_k, 8, 16);
+                                        if ($realValue == $maxValue[$k2]) {
+                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=date&cal_kind=" . $_GET['cal_kind'] . "&sdate=" . $new_k1 . "&edate=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($realValue) . "</b></font></a>";
+                                        } else if ($realValue == $minValue[$k2]) {
+                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=date&cal_kind=" . $_GET['cal_kind'] . "&sdate=" . $new_k1 . "&edate=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($realValue) . "</b></font></a>";
+                                        } else {
+                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=date&cal_kind=" . $_GET['cal_kind'] . "&sdate=" . $new_k1 . "&edate=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($realValue) . "</a>";
+                                        }
+                                        $rate[$rateIdx][] = $realValue != '' ? $realValue : 0;
+                                    } else {
+                                        if ($realValue == $maxValue[$k2]) {
+                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=date&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $k . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($realValue) . "</b></font></a>";
+                                        } else if ($realValue == $minValue[$k2]) {
+                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=date&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $k . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($realValue) . "</b></font></a>";
+                                        } else {
+                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=date&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $k . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($realValue) . "</a>";
+                                        }
+                                    } ?>
+                            </td>
+                    <? }
+                            }
+                            $rateIdx++; ?>
+                    <td class='right'>
+                        <? if ($tot_date[$k] == $maxDateValue) {
+                                echo "<font color='#FF0000'><b>" . number_format($tot_date[$k]) . "</b></font>";
+                            } else if ($tot_date[$k] == $minDateValue) {
+                                echo "<font color='#0080FF'><b>" . number_format($tot_date[$k]) . "</b></font>";
+                            } else {
+                                echo number_format($tot_date[$k]);
+                            }
+                        ?>
+                    </td>
+                </tr>
+            <?
+                            if ($_GET['dr_dr2_from']) {
+                                array_push($rows, array($_GET['cal_kind'] == "w" || $_GET['cal_kind'] == "wd" ? $k : $k, $google_tot[$k], $tot_date[$k]));
+                            } else {
+                                array_push($rows, array($_GET['cal_kind'] == "w" || $_GET['cal_kind'] == "wd" ? $k : $k, $google_tot[$k]));
+                            }
+                        }
+                        $jsonTable1 = json_encode($rows); ?>
+        </tbody>
+        <? for ($i = 0; $i < count($rate[0]); $i++) {
+                                $rateTotal_one += $rate[1][$i];
+                                $rateTotal_two += $rate[0][$i];
+                            } ?>
+        <tfoot>
+    <? if ($_GET['dr_dr2_from']) {                                                          // 일별 기간 비교일자 ?>
+                <tr>
+                    <th class='center'>증감액</th>
+
+                    <? for ($i = 0; $i < count($rate[0]); $i++) { ?>
+                        <th class='right b'>
+                            <? if (count($tot) <= 13) { ?>
+                                <div>
+                                <? } else { ?>
+                                    <div style="width:120px">
+                                    <? } ?>
+                                    <?= number_format($rate[0][$i] - $rate[1][$i]) ?></div>
+                        </th>
+                    <? } ?>
+                    <th class='right' rowspan="1"><?= number_format($rateTotal_two - $rateTotal_one) ?></th>
+                </tr>
+                <tr>
+                    <th class='center'>증감율(%)</th>
+                    <? for ($i = 0; $i < count($rate[0]); $i++) { ?>
+                        <th align="right"><?= round(($rate[1][$i] - $rate[0][$i]) / $rate[0][$i] * 100, 2) . '%' ?></th>
+                    <? } ?>
+                    <th class='right' rowspan="1"><?= round(($rateTotal_two - $rateTotal_one) / $rateTotal_one * 100, 2) . '%' ?></th>
+                </tr>
+            <? } else { ?>
+                <tr>
+                    <th class='center' rowspan="2" style="left: 0; position: sticky; z-index: 9999;">합계</th>
+                    <? foreach ($tot as $k => $v) { ?>
+                        <th class='right b'>
+                            <? if (count($tot) <= 13) { ?>
+                                <div>
+                                <? } else { ?>
+                                    <div style="width:120px">
+                                    <? } ?>
+                                    <?= number_format($v) ?></div>
+                        </th>
+                    <? } ?>
+                    <th class='right' rowspan="2"><?= number_format($grand_tot) ?></th>
+                </tr>
+                <tr>
+                    <!-- array_nm_matching -->
+                    <? if ($_GET['ad_type']) { ?>                    
+                        <? foreach ($array_nm_matching as $k => $v) { ?>
+                            <th colspan="<?= $good_type2_cnt[$k] ?>" align="right"><?= number_format($tot_m_nm[$k]) ?></span></th>
+                        <? } ?>
+                    <? }else if($_GET['m_nm']){?>
+                        <? foreach ($array_m_nm_matching as $k => $v) { ?>
+                            <th colspan="<?= $good_type2_cnt[$k] ?>" align="right"><?= number_format($tot_m_nm[$k]) ?></span></th>
+                        <? } ?>
+                    <? }else{ ?>
+                        <? foreach ($array_adtype as $k => $v) { ?>
+                            <th colspan="<?= $good_type2_cnt_thead[$k] ?>" align="right"><?= number_format($tot_m_nm[$k]) ?></span></th>
+                        <? } ?>
+                    <? } ?>    
+                </tr>
+            <? } ?>
+        </tfoot>
+
+
+
+
+
+
+
+
+
+
+
+
+    <? } else if ($_GET['search_type'] == 'division') {                                     // 일별 부문
+                if(!$_GET['dr_dr2_from']){
+                        foreach ($S_RETURNVAL2['division1'] as $k => $v) {  ?>
+                            <tr bgcolor="#FFFFFF">
+                                <td class='center' bgcolor="#FFFFFF"><?= $_GET['cal_kind'] == "w" || $_GET['cal_kind'] == "wd" ? $k : $k ?></td>
+                                            <? foreach ($array_adtype as $k1 => $v1) {
+                                                    foreach ($S_RETURNVAL2['good_type22'][$k1] as $k2 => $v2) {
+                                                        $realValue2        = $S_RETURNVAL2['good_type2_price2'][$k][$k1][$k2];
+                                                        $tot2[$k2]        += $S_RETURNVAL2['good_type2_price2'][$k][$k1][$k2];
+                                                        $tot_m_nm2[$k1]    += $S_RETURNVAL2['good_type2_price2'][$k][$k1][$k2];
+                                                        $tot_date2[$k]    += $S_RETURNVAL2['good_type2_price2'][$k][$k1][$k2];
+                                                        $grand_tot2        += $S_RETURNVAL2['good_type2_price2'][$k][$k1][$k2];
+                                                        $google_tot2[$k]    += $S_RETURNVAL2['good_type2_price2'][$k][$k1][$k2]; ?>
+                                        <td class='right'>
+                                            <? if ($realValue2 == $maxValue2[$k2]) {
+                                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($realValue2) . "</b></font></a>";
+                                                        } else if ($realValue2 == $minValue2[$k2]) {
+                                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($realValue2) . "</b></font></a>";
+                                                        } else {
+                                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($realValue2) . "</a>";
+                                                        } ?>
+                                        </td>
+                                                <? }
+                                            } ?>
+                                <td class='right'>
+                                    <? if ($tot_date2[$k] == $maxDateValue2) {
+                                                    echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($tot_date2[$k]) . "</b></font></a>";
+                                                } else if ($tot_date2[$k] == $minDateValue2) {
+                                                    echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($tot_date2[$k]) . "</b></font></a>";
+                                                } else {
+                                                    echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($tot_date2[$k]) . "</a>";
+                                                } ?>
+                                </td>
+                            </tr>
+                        <? } ?>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th class='center' rowspan="2" style="left: 0; position: sticky; z-index: 9999;">합계</th>
+                            <? foreach ($tot2 as $k => $v) { ?>
+                                <th class='right b'>
+                                    <? if (count($tot2) <= 13) { ?>
+                                        <div>
+                                        <? } else { ?>
+                                            <div style="width:120px">
+                                            <? } ?>
+                                            <?= number_format($v) ?></div>
+                                </th>
+                            <? } ?>
+                            <th class='right' rowspan="2"><?= number_format($grand_tot2) ?></th>
+                        </tr>
+                        <tr>
+                            <? foreach ($array_nm_matching as $k => $v) { ?>
+                                <th colspan="<?= $good_type2_cnt2[$k] ?>" align="right"><?= number_format($tot_m_nm2[$k]) ?></span></th>
+                            <? } ?>
+                        </tr>
+                        </tfoot>
+                    <? 
+                    $idxCnt = 1;
+
+
+    
+    }else{                                                                                  // 일별 부문별 비교일자
+
+                    foreach ($S_RETURNVAL2['division1_kr_list'] as $ak => $av) {
+                        foreach ($S_RETURNVAL2['price_compare'][$ak] as $k => $v) {  ?>
+                        <?   if($idxCnt % 2 == 0){ ?>
+                            <tr ><td class="center"><?=$ak?></td></tr> <? $compareIdx = 0;     ?>
+                        <? } ?>
+                        <tr bgcolor="#FFFFFF">
+                            <td class='center' bgcolor="#FFFFFF"><?= $_GET['cal_kind'] == "w" || $_GET['cal_kind'] == "wd" ? $k : $k ?></td>
+                                        <?  foreach ($array_adtype as $k1 => $v1) {
+                                                foreach ($S_RETURNVAL2['good_type22'][$k1] as $k2 => $v2) {
+                                                    $realValue2        = $S_RETURNVAL2['price_compare'][$ak][$k][$k1][$k2];
+                                                    $tot2[$k2]        += $S_RETURNVAL2['price_compare'][$ak][$k][$k1][$k2];
+                                                    $tot_m_nm2[$k1]    += $S_RETURNVAL2['price_compare'][$ak][$k][$k1][$k2];
+                                                    $tot_date2[$k]    += $S_RETURNVAL2['price_compare'][$ak][$k][$k1][$k2];
+                                                    $grand_tot2        += $S_RETURNVAL2['price_compare'][$ak][$k][$k1][$k2];
+                                                    $google_tot2[$k]    += $S_RETURNVAL2['price_compare'][$ak][$k][$k1][$k2]; ?>
+                                    <td class='right'>
+                                    <? 
+                                    $new_k = str_replace('-', '', $k);
+                                    $new_k = str_replace('~', '', $new_k);
+                                    $new_k = str_replace(' ', '', $new_k);
+                                    $new_k1 = substr($new_k, 0, 8);
+                                    $new_k2 = substr($new_k, 8, 16);
+                                    if ($realValue2 == $maxValue2[$k2]) {
+                                                        echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($ak) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $new_k1 . "&sdate2=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($realValue2) . "</b></font></a>";
+                                                    } else if ($realValue2 == $minValue2[$k2]) {
+                                                        echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($ak) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $new_k1 . "&sdate2=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($realValue2) . "</b></font></a>";
+                                                    } else {
+                                                        echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($ak) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $new_k1 . "&sdate2=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($realValue2) . "</a>";
+                                                    }
+                                                    $compare[$ak][$compareIdx][] = $realValue2 != '' ? $realValue2 : 0; ?>
+                                    </td>
+                                                <? }
+                                            } $compareIdx++;?>
+                            <td class='right'>
+                                <? if ($tot_date2[$k] == $maxDateValue2) {
+                                                echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($ak) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $new_k1 . "&sdate2=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($tot_date2[$k]) . "</b></font></a>";
+                                            } else if ($tot_date2[$k] == $minDateValue2) {
+                                                echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($ak) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $new_k1 . "&sdate2=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($tot_date2[$k]) . "</b></font></a>";
+                                            } else {
+                                                echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($ak) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $new_k1 . "&sdate2=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($tot_date2[$k]) . "</a>";
+                                            } ?>
+                            </td>
+                    </tr>
+        <?  if($idxCnt % 2 == 1){ 
+                foreach($compare as $key => $value){
+                    for($i=0;$i<count($value[0]);$i++){
+                        $temp1[$key][] = $value[0][$i]-$value[1][$i];
+                        $temp2[$key][] = ($value[0][$i]-$value[1][$i])/$value[1][$i]*100;
+                    }
+                } ?>                                
+                <tr style="background-color: #EFEFEF">
+                    <td class='center'>증감액</td>
+                    <? foreach ($temp1[$key] as $k => $v) { ?>
+                        <td class='right b'>
+                            <? if (count($tot2) <= 13) { ?>
+                                <div>
+                                <? } else { ?>
+                                    <div style="width:120px">
+                                <? } ?>
+                                    <?=number_format($v)?>
+                                    <? $total_temp1 += $v ?>
+                                    </div>
+                        </td>
+                    <? } ?>
+                    <td class='right' rowspan="1"><?=number_format($total_temp1)?></td>
+                </tr>
+                <tr style="background-color: #EFEFEF">
+                    <td class='center' style="border-bottom: 1px solid gray">증감율(%)</td>
+                    <? foreach ($temp2[$key] as $k => $v) { ?>
+                        <td align="right" style="border-bottom: 1px solid gray"><?=round($v,2);?>%</span></td>
+                    <? } ?>
+                    <td class='right' rowspan="1" ><?= '--' ?></td>
+                </tr>
+                        <? }$idxCnt++; 
+                        } 
+                    } ?>
+                        </tbody>
+                        <? if (!$_GET['dr_dr2_from']) { ?>
+                        <tfoot>
+                                <tr>
+                                    <th class='center' rowspan="2">합계</th>
+                                    <? foreach ($tot2 as $k => $v) { ?>
+                                        <th class='right b'>
+                                            <? if (count($tot2) <= 13) { ?>
+                                                <div>
+                                                <? } else { ?>
+                                                    <div style="width:120px">
+                                                    <? } ?>
+                                                    <?= number_format($v) ?></div>
+                                        </th>
+                                    <? } ?>
+                                    <th class='right' rowspan="2"><?= number_format($grand_tot2) ?></th>
+                                </tr>
+                                
+                        </tfoot>
+                    <? }
+                    }
+
+
+
+
+
+
+
+
+
+
+
+
+    }else if ($_GET['search_type'] == 'customer') {                                         // 일별 광고주 
+            if(!$_GET['dr_dr2_from']){
+                foreach ($S_RETURNVAL3['cs_seq'] as $k => $v) {   ?>
+                    <tr bgcolor="#FFFFFF">
+                        <td class='center' bgcolor="#FFFFFF"><?= $_GET['cal_kind'] == "w" || $_GET['cal_kind'] == "wd" ? $k : $k ?></td>
+                        <?  foreach ($array_adtype as $k1 => $v1) {
+                                foreach ($S_RETURNVAL3['good_type23'][$k1] as $k2 => $v2) {
+                                    $realValue3         = $S_RETURNVAL3['good_type2_price3'][$k][$k1][$k2];
+                                    $tot3[$k2]          += $S_RETURNVAL3['good_type2_price3'][$k][$k1][$k2];
+                                    $tot_m_nm3[$k1]     += $S_RETURNVAL3['good_type2_price3'][$k][$k1][$k2];
+                                    $tot_date3[$k]      += $S_RETURNVAL3['good_type2_price3'][$k][$k1][$k2];
+                                    $grand_tot3         += $S_RETURNVAL3['good_type2_price3'][$k][$k1][$k2];
+                                    $google_tot3[$k]    += $S_RETURNVAL3['good_type2_price3'][$k][$k1][$k2]; ?>
+                                <td class='right'>
+                                    <? if ($realValue3 == $maxValue3[$k2]) {
+                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=customer&cs_nm=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($realValue3) . "</b></font></a>";
+                                        } else if ($realValue3 == $minValue3[$k2]) {
+                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=customer&cs_nm=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($realValue3) . "</b></font></a>";
+                                        } else {
+                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=customer&cs_nm=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($realValue3) . "</a>";
+                                        } ?>
+                                </td>
+                                <? }
+                        } ?>
+                        <td class='right'>
+                            <? if ($tot_date3[$k] == $maxDateValue3) {
+                                    echo "<font color='#FF0000'><b>" . number_format($tot_date3[$k]) . "</b></font>";
+                                } else if ($tot_date3[$k] == $minDateValue3) {
+                                    echo "<font color='#0080FF'><b>" . number_format($tot_date3[$k]) . "</b></font>";
+                                } else {
+                                    echo number_format($tot_date3[$k]);
+                                } ?>
+                        </td>
+                    </tr>
+                <?  } ?>
+                    </tbody>
+
+                    <tfoot>
+                        <? if ($_GET['dr_dr2_from']) { ?>
+                            <tr>
+                                <th class='center'>증감액</th>
+                            <? foreach ($tot3 as $k => $v) { ?>
+                                    <th class='right b'>
+                                        <? if (count($tot3) <= 13) { ?>
+                                            <div>
+                                        <? } else { ?>
+                                            <div style="width:120px">
+                                        <? } ?>
+                                            증감액합계1-<?= number_format($v) ?></div>
+                                    </th>
+                                <? } ?>
+                                    <th class='right' rowspan="1">증감액합계2-<?= number_format($grand_tot3) ?></th>
+                            </tr>
+                            <tr>
+                                <th>증감율(%)</th>
+                                <? foreach ($tot3 as $k => $v) { ?>
+                                    <th align="right">증감율합계1-<?= number_format($tot3[$k]) ?></span></th>
+                                <? } ?>
+                                <th class='right' rowspan="1">증감율합계2-<?= number_format($grand_tot3) ?></th>
+                            </tr>
+                        <? } else { ?>
+                            <tr>
+                                <th class='center' rowspan="2">합계</th>
+                                <? foreach ($tot3 as $k => $v) { ?>
+                                    <th class='right b'>
+                                        <? if (count($tot3) <= 13) { ?>
+                                            <div>
+                                            <? } else { ?>
+                                                <div style="width:120px">
+                                                <? } ?>
+                                                <?= number_format($v) ?></div>
+                                    </th>
+                                <? } ?>
+                                <th class='right' rowspan="2"><?= number_format($grand_tot3) ?></th>
+                            </tr>
+                            <tr>
+                                <? foreach ($array_nm_matching as $k => $v) { ?>
+                                    <th colspan="<?= $good_type2_cnt3[$k] ?>" align="right"><?= number_format($tot_m_nm3[$k]) ?></span></th>
+                                <? } ?>
+                            </tr>
+                    </tfoot>
+                    <? }
+    
+}else{                                                                                      // 일별 광고주 비교일자 
+                $total_temptemp = array();
+                foreach ($S_RETURNVAL3['cs_seq'] as $ak => $av) {
+                    for($i=0;$i<count($S_RETURNVAL3['code5']);$i++){
+                        $compare3[$ak][0][] = '0';
+                        $compare3[$ak][1][] = '0';
+                    }
+                    foreach ($S_RETURNVAL3['price_compare3'][$ak] as $k => $v) {  ?>
+
+                    <? if($idxCnt3 % 2 == 0){ ?>
+                        <tr bgcolor="#FFFFFF">
+                            <td class="center" bgcolor="#FFFFFF"><?=$ak?></td>
+                            <? for($i=0;$i<count($S_RETURNVAL3['code5'])+1;$i++){ ?> 
+                                <td></td>
+                            <? } ?>
+                        </tr> 
+                        <? $compareIdx3 = 0;     ?>
+                    <? } ?>
+
+                    <tr bgcolor="#FFFFFF">
+                        <td class='center' bgcolor="#FFFFFF"><?= $_GET['cal_kind'] == "w" || $_GET['cal_kind'] == "wd" ? $k : $k ?></td>
+                        <?   $keyPlus = 0;
+                        foreach ($array_adtype as $k1 => $v1) {
+                            foreach ($S_RETURNVAL3['good_type23'][$k1] as $k2 => $v2) {
+                                        $realValue3         = $S_RETURNVAL3['price_compare3'][$ak][$k][$k1][$k2];
+                                        $tot3[$k2]          += $S_RETURNVAL3['price_compare3'][$ak][$k][$k1][$k2];
+                                        $tot_m_nm3[$k1]     += $S_RETURNVAL3['price_compare3'][$ak][$k][$k1][$k2];
+                                        $tot_date3[$k]      += $S_RETURNVAL3['price_compare3'][$ak][$k][$k1][$k2];
+                                        $grand_tot3         += $S_RETURNVAL3['price_compare3'][$ak][$k][$k1][$k2];
+                                        $google_tot3[$k]    += $S_RETURNVAL3['price_compare3'][$ak][$k][$k1][$k2];  ?>
+                                        <td class='right'>
+                                            <?  $new_k = str_replace('-', '', $k);
+                                                $new_k = str_replace('~', '', $new_k);
+                                                $new_k = str_replace(' ', '', $new_k);
+                                                $new_k1 = substr($new_k, 0, 8);
+                                                $new_k2 = substr($new_k, 8, 16);
+                                                if ($realValue3 == $maxValue3[$k2]) {
+                                                    echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($ak) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $new_k1 . "&sdate2=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $k2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($realValue3) . "</b></font></a>";
+                                                } else if ($realValue3 == $minValue3[$k2]) {
+                                                    echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($ak) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $new_k1 . "&sdate2=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $k2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($realValue3) . "</b></font></a>";
+                                                } else {
+                                                    echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($ak) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $new_k1 . "&sdate2=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $k2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($realValue3) . "</a>";
+                                                }
+
+                                                // for($i=0; $i<count($S_RETURNVAL3['code5']); $i++){
+                                                //    echo $i;
+                                                // }
+                                                $compare3[$ak][$compareIdx3][$keyPlus] = $realValue3 != '' ? $realValue3 : 0;
+
+
+
+
+                                                
+                                                $total_temptemp[$ak][$compareIdx3] += $realValue3 != '' ? $realValue3 : 0;
+                                                // echo $keyPlus;
+                                                $keyPlus++;
+                                                ?>
+                                            </td>
+                                    <? }
+                                        } $compareIdx3++; ?>
+                                  
+                        <td class='right'>
+
+                            <? if ($tot_date3[$k] == $maxDateValue3) {
+                                    echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($ak) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $new_k1 . "&sdate2=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $k2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($tot_date3[$k]) . "</b></font></a>";
+                                } else if ($tot_date3[$k] == $minDateValue3) {
+                                    echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($ak) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $new_k1 . "&sdate2=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $k2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($tot_date3[$k]) . "</b></font></a>";
+                                } else {
+                                    echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($ak) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $new_k1 . "&sdate2=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $k2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($tot_date3[$k]) . "</a>";
+                                } 
+
+
+                                     
+                                $tot_date3[$k]      = 0;  ?>
+                        </td>
+                </tr>
+                <?  
+          
+          if($idxCnt3 % 2 == 1){ 
+              foreach($compare3 as $key => $value){
+                  for($i=0;$i<count($value[0]);$i++){
+                      // 증감액 배열 - key 광고주별로 
+                      $temp3_1[$key][] = $value[0][$i]-$value[1][$i] != '' ? $value[0][$i]-$value[1][$i] : 0;
+                      // 증감율 배열 - key 광고주별로 
+                      $temp3_2[$key][] = ($value[0][$i]-$value[1][$i])/$value[1][$i]*100 != '' ? ($value[0][$i]-$value[1][$i])/$value[1][$i]*100 : 0;
+                  }
+              } 
+              ?>              
+          <tr style="background-color: #EFEFEF">
+              <td class='center'>증감액</td>
+                <? 
+            // echo '<pre>';
+            // print_r($compare3);
+            // echo '</pre>'; 
+
+                ?>
+                  <? foreach ($temp3_1[$key] as $k => $v) { ?>
+                          <td class='right'>
+                                  <? echo number_format($v) != '' ? number_format($v) : 0; ?>
+                                  <? $total_temp3 += $v ?>
+                                  <? $total_ak[$ak] += $v ?>
+                          </td>
+                  <? } ?>                
+              <td class='right' rowspan="1"><? echo number_format($total_ak[$ak]) != '' ? number_format($total_ak[$ak]) : 0; ?></td>
+          </tr>
+          <tr style="background-color: #EFEFEF">
+              <td class='center'>증감율(%)</td>
+        <?   foreach($temp3_2[$key] as $k => $v){?>
+                  <td class="right" style="border-bottom: 1px solid gray">
+                      <? echo round($v,2) != '' ? round($v,2) : 0; ?>%
+                  </td>
+              <?  
+              }?>
+              <td class='right' rowspan="1" ><?= round(($total_temptemp[$ak][0]-$total_temptemp[$ak][1])/$total_temptemp[$ak][1]*100,2) ?>%</td>
+          </tr>
+          <? }
+                $idxCnt3++; 
+                } 
+                 } ?>
+                </tbody>
+                <? if (!$_GET['dr_dr2_from']) { ?>
+                <tfoot>
+                        <tr>
+                            <th class='center' rowspan="2">합계</th>
+                            <? foreach ($tot3 as $k => $v) { ?>
+                                <th class='right b'>
+                                    <? if (count($tot3) <= 13) { ?>
+                                        <div>
+                                        <? } else { ?>
+                                            <div style="width:120px">
+                                            <? } ?>
+                                            <?= number_format($k) ?></div>
+                                </th>
+                            <? } ?>
+                            <th class='right' rowspan="2"><?= number_format($grand_tot3) ?></th>
+                        </tr>
+                        <tr>
+                        <? foreach ($array_nm_matching as $k => $v) { ?>
+                            <th colspan="<?= $good_type2_cnt3[$k] ?>" align="right"><?= number_format($tot_m_nm3[$k]) ?></span></th>
+                        <? } ?>
+                    </tr>
+                </tfoot>
+            <? }
+            
+            }
+             
+                } // 광고주 일 때 끝
+
+}                                               //--------일별 TBODY TFOOT 끝
+                                                //--------주별 TBODY TFOOT 시작
+    if ($cal_kind == "wk") {  ?>                          
+    <? if($_GET['search_type'] == 'date'){                                                  //기간별 주별 ?>                
+                <tbody>
+                <? 
+                $rate = array();
+                $rateIdx = 0;
+                $rows_wk[] = array('year', '합계');
+                if (!is_array($S_RETURNVAL['pay_date'])) {
+                    array_push($rows_wk, array(0, 0));
+                }
+                foreach ($S_RETURNVAL['pay_date'] as $k => $v) { ?>
+                    <tr bgcolor="#FFFFFF">
+                        <td class='center' bgcolor="#FFFFFF"><?= $v ?></td>
+                        <? foreach ($array_adtype as $k1 => $v1) {
+                                        foreach ($S_RETURNVAL['good_type2'][$k1] as $k2 => $v2) {
+                                            $realValue           = $S_RETURNVAL['good_type2_price'][$v][$k1][$k2];
+                                            $tot[$k2]           += $S_RETURNVAL['good_type2_price'][$v][$k1][$k2];
+                                            $tot_m_nm[$k1]      += $S_RETURNVAL['good_type2_price'][$v][$k1][$k2];
+                                            $tot_date[$k]       += $S_RETURNVAL['good_type2_price'][$v][$k1][$k2];
+                                            $grand_tot          += $S_RETURNVAL['good_type2_price'][$v][$k1][$k2];
+                                            $google_tot[$k]     += $S_RETURNVAL['good_type2_price'][$v][$k1][$k2]; ?>
+                                <td class='right'>
+                                <? 
+                                            $new_k = str_replace('-', '', $k);
+                                            $new_k = str_replace('~', '', $new_k);
+                                            $new_k = str_replace(' ', '', $new_k);
+                                            $new_k1 = substr($new_k, 0, 8);
+                                            $new_k2 = substr($new_k, 8, 16);
+                                            if ($realValue == $maxValue_wk[$k2]) {
+                                                echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=date&cal_kind=" . $_GET['cal_kind'] . "&sdate=" . $new_k1 . "&edate=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($realValue) . "</b></font></a>";
+                                            } else if ($realValue == $minValue_wk[$k2]) {
+                                                echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=date&cal_kind=" . $_GET['cal_kind'] . "&sdate=" . $new_k1 . "&edate=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($realValue) . "</b></font></a>";
+                                            } else {
+                                                echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=date&cal_kind=" . $_GET['cal_kind'] . "&sdate=" . $new_k1 . "&edate=" . $new_k2 . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($realValue) . "</a>";
+                                            }
+                                            $rate[$rateIdx][] = $realValue != '' ? $realValue : 0;
+                                        ?>
+                                </td>
+                        <?        }
+                                    }  
+                                    $rateIdx++;?>
+                        <td class='right'>
+                            <? if ($tot_date[$k] == $maxDateValue_wk) {
+                                        echo "<font color='#FF0000'><b>" . number_format($tot_date[$k]) . "</b></font>";
+                                    } else if ($tot_date[$k] == $minDateValue_wk) {
+                                        echo "<font color='#0080FF'><b>" . number_format($tot_date[$k]) . "</b></font>";
+                                    } else {
+                                        echo number_format($tot_date[$k]);
+                                    } ?>
+                        </td>
+                    </tr>
+                <? array_push($rows_wk, array($v, $google_tot[$k]));
+                                }
+                                $jsonTable1 = json_encode($rows_wk); ?>
+                </tbody>
+                <? for ($i = 0; $i < count($rate[0]); $i++) {
+                                    $rateTotal_one += $rate[1][$i];
+                                    $rateTotal_two += $rate[0][$i];
+                                } ?>
+                <tfoot>
+                <? if ($_GET['dr_dr2_from']) { ?>
+                    <tr>
+                        <th class='center'>증감액</th>
+
+                        <? for ($i = 0; $i < count($rate[0]); $i++) { ?>
+                            <th class='right b'>
+                                <? if (count($tot) <= 13) { ?>
+                                    <div>
+                                    <? } else { ?>
+                                        <div style="width:120px">
+                                        <? } ?>
+                                        <?= number_format($rate[0][$i] - $rate[1][$i]) ?></div>
+                            </th>
+                        <? } ?>
+                        <th class='right' rowspan="1"><?= number_format($rateTotal_two - $rateTotal_one) ?></th>
+                    </tr>
+                    <tr>
+                        <th class='center'>증감율(%)</th>
+                        <? for ($i = 0; $i < count($rate[0]); $i++) { ?>
+                            <th align="right"><?= round(($rate[1][$i] - $rate[0][$i]) / $rate[0][$i] * 100, 2) . '%' ?></th>
+                        <? } ?>
+                        <th class='right' rowspan="1"><?= round(($rateTotal_two - $rateTotal_one) / $rateTotal_one * 100, 2) . '%' ?></th>
+                    </tr>
+                <? } else { ?>
+                    <tr>
+                        <th class='center' rowspan="2" style="left: 0; position: sticky; z-index: 9999;">합계</th>
+                        <? foreach ($tot as $k => $v) { ?>
+                            <th class='right b'>
+                                <? if (count($tot) <= 13) { ?>
+                                    <div>
+                                    <? } else { ?>
+                                        <div style="width:120px">
+                                        <? } ?>
+                                        <?= number_format($v) ?></div>
+                            </th>
+                        <? } ?>
+                        <th class='right' rowspan="2"><?= number_format($grand_tot) ?></th>
+                    </tr>
+                    <tr>
+                        <? foreach ($array_nm_matching as $k => $v) { ?>
+                            <th colspan="<?= $good_type2_cnt[$k] ?>" align="right"><?= number_format($tot_m_nm[$k]) ?></span></th>
+                        <? } ?>
+                    </tr>
+                <? } ?>
+                </tfoot>
+
+
+
+
+
+        
+                
+    <? }else if($_GET['search_type'] == 'division'){                                        //부문별 주별 ?>
+                    
+                        <tbody>
+                        <?
+                        foreach ($S_RETURNVAL2['division1'] as $k => $v) {  ?>
+                            <tr bgcolor="#FFFFFF">
+                                <td class='center' bgcolor="#FFFFFF"><?= $_GET['cal_kind'] == "w" || $_GET['cal_kind'] == "wd" ? $k : $k ?></td>
+                                            <? foreach ($array_adtype as $k1 => $v1) {
+                                                    foreach ($S_RETURNVAL2['good_type22'][$k1] as $k2 => $v2) {
+                                                        $realValue2        = $S_RETURNVAL2['good_type2_price2'][$k][$k1][$k2];
+                                                        $tot2[$k2]        += $S_RETURNVAL2['good_type2_price2'][$k][$k1][$k2];
+                                                        $tot_m_nm2[$k1]    += $S_RETURNVAL2['good_type2_price2'][$k][$k1][$k2];
+                                                        $tot_date2[$k]    += $S_RETURNVAL2['good_type2_price2'][$k][$k1][$k2];
+                                                        $grand_tot2        += $S_RETURNVAL2['good_type2_price2'][$k][$k1][$k2];
+                                                        $google_tot2[$k]    += $S_RETURNVAL2['good_type2_price2'][$k][$k1][$k2]; ?>
+                                        <td class='right'>
+                                            <? if ($realValue2 == $maxValue_wk2[$k2]) {
+                                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($realValue2) . "</b></font></a>";
+                                                        } else if ($realValue2 == $minValue_wk2[$k2]) {
+                                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($realValue2) . "</b></font></a>";
+                                                        } else {
+                                                            echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($realValue2) . "</a>";
+                                                        } ?>
+                                        </td>
+                                                <? }
+                                            } ?>
+                                <td class='right'>
+                                    <? if ($tot_date2[$k] == $maxDateValue2) {
+                                                    echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($tot_date2[$k]) . "</b></font></a>";
+                                                } else if ($tot_date2[$k] == $minDateValue2) {
+                                                    echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($tot_date2[$k]) . "</b></font></a>";
+                                                } else {
+                                                    echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=division&division_type=" . trim($k) . "&cal_kind=" . $_GET['cal_kind'] . "&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&code4=" . $k1 . "&good_type2=" . $v2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($tot_date2[$k]) . "</a>";
+                                                } ?>
+                                </td>
+                            </tr>
+                        <? } ?>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th class='center' rowspan="2" style="left: 0; position: sticky; z-index: 9999;">합계</th>
+                            <? foreach ($tot2 as $k => $v) { ?>
+                                <th class='right b'>
+                                    <? if (count($tot2) <= 13) { ?>
+                                        <div>
+                                        <? } else { ?>
+                                            <div style="width:120px">
+                                            <? } ?>
+                                            <?= number_format($v) ?></div>
+                                </th>
+                            <? } ?>
+                            <th class='right' rowspan="2"><?= number_format($grand_tot2) ?></th>
+                        </tr>
+                        <tr>
+                            <? foreach ($array_nm_matching as $k => $v) { ?>
+                                <th colspan="<?= $good_type2_cnt2[$k] ?>" align="right"><?= number_format($tot_m_nm2[$k]) ?></span></th>
+                            <? } ?>
+                        </tr>
+                        </tfoot>
+                    <? 
+                     $idxCnt = 1;
+    
+    
+
+
+
+
+
+                    
+    }else if($_GET['search_type'] == 'customer'){                                           // 광고주별 주별 ?>
+                    <tbody>
+         <?
+             foreach ($S_RETURNVAL3['cs_seq'] as $k => $v) {  ?>
+             <tr bgcolor="#FFFFFF">
+                 <td class='center' bgcolor="#FFFFFF"><?= $_GET['cal_kind'] == "w" || $_GET['cal_kind'] == "wd" ? $k : $k ?></td>
+                 <?
+                 foreach ($array_adtype as $k1 => $v1) {
+
+                     foreach ($S_RETURNVAL3['good_type23'][$k1] as $k2 => $v2) {
+                         $realValue3        = $S_RETURNVAL3['good_type2_price3'][$k][$k1][$k2];
+                         $tot3[$k2]        += $S_RETURNVAL3['good_type2_price3'][$k][$k1][$k2];
+                         $tot_m_nm3[$k1]    += $S_RETURNVAL3['good_type2_price3'][$k][$k1][$k2];
+                         $tot_date3[$k]    += $S_RETURNVAL3['good_type2_price3'][$k][$k1][$k2];
+                         $grand_tot3        += $S_RETURNVAL3['good_type2_price3'][$k][$k1][$k2];
+
+                         $google_tot3[$k]    += $S_RETURNVAL3['good_type2_price3'][$k][$k1][$k2];
+                 ?>
+                         <td class='right'>
+                             <? if ($realValue3 == $maxValue3[$k2]) {
+                                 echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=customer&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&cs_nm=" . $k . "&cal_kind=".$_GET['cal_kind']."&code4=" . $k1 . "&good_type2=" . $k2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($realValue3) . "</b></font></a>";
+                             } else if ($realValue3 == $minValue3[$k2]) {
+                                 echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=customer&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&cs_nm=" . $k . "&cal_kind=".$_GET['cal_kind']."&code4=" . $k1 . "&good_type2=" . $k2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($realValue3) . "</b></font></a>";
+                             } else {
+                                 echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=customer&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&cs_nm=" . $k . "&cal_kind=".$_GET['cal_kind']."&code4=" . $k1 . "&good_type2=" . $k2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($realValue3) . "</a>";
+                             }
+                             ?>
+                         </td>
+                 <? }
+                 } ?>
+                 <td class='right'>
+                     <? if ($tot_date3[$k] == $maxDateValue3) {
+                         echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=customer&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&cs_nm=" . $k . "&cal_kind=".$_GET['cal_kind']."&code4=" . $k1 . "&good_type2=" . $k2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#FF0000'><b>" . number_format($tot_date3[$k]) . "</b></font></a>";
+                     } else if ($tot_date3[$k] == $minDateValue3) {
+                         echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=customer&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&cs_nm=" . $k . "&cal_kind=".$_GET['cal_kind']."&code4=" . $k1 . "&good_type2=" . $k2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');><font color='#0080FF'><b>" . number_format($tot_date3[$k]) . "</b></font></a>";
+                     } else {
+                         echo "<a href=javascript:openWindowPop('/report/sales/pop_sales_cslist.php?type=customer&sdate1=" . $_GET['dr_dr1_from'] . "&sdate2=" . $_GET['dr_dr1_to'] . "&cs_nm=" . $k . "&cal_kind=".$_GET['cal_kind']."&code4=" . $k1 . "&good_type2=" . $k2 . "&division1=" . $_GET['division1'] . "&division2=" . $_GET['division2'] . "&em_seq=" . $_GET['em_seq'] . "','popup');>" . number_format($tot_date3[$k]) . "</a>";
+                     }
+                     ?>
+                 </td>
+             </tr>
+         <?
+             }
+             ?>
+                  </tbody>
+     <tfoot>
+         <tr>
+             <th class='center' rowspan="2">합계</th>
+             <? foreach ($tot3 as $k => $v) { ?>
+                 <th class='right b'>
+                     <? if (count($tot3) <= 13) { ?>
+                         <div>
+                         <? } else { ?>
+                             <div style="width:120px">
+                             <? } ?>
+                             <?= number_format($v) ?></div>
+                 </th>
+             <? } ?>
+             <th class='right' rowspan="2"><?= number_format($grand_tot3) ?></th>
+         </tr>
+         <tr>
+             <? foreach ($array_nm_matching as $k => $v) { ?>
+                 <th colspan="<?= $good_type2_cnt3[$k] ?>" align="right"><?= number_format($tot_m_nm3[$k]) ?></span></th>
+             <? } ?>
+         </tr>
+     </tfoot>
+             <?
+            }
+         
+
+    }                                           //--------주별 TBODY TFOOT 끝 ?>
+        </table>
+    </div>
+<div>&nbsp;</div><div>&nbsp;</div>
+
+<!-- 차트 합계 데이터 가공 -->
+<? 
+    if ($_GET['dr_dr2_from'] !== "") {
+
+        $row_chart[] = array('year', $start_date, $end_date);
+    } else {
+        $row_chart[] = array('year', $start_date);
+    }
+    if (!is_array($S_RETURNVAL['pay_date'])) {
+        array_push($row_chart, array(0, 0, 0));
+    }
+    foreach ($S_RETURNVAL['pay_date'] as $k => $v) {
+        foreach ($array_adtype as $k1 => $v1) {
+            foreach ($S_RETURNVAL['good_type2'][$k1] as $k2 => $v2) {
+                $google_tot_chart[$k]     += $S_RETURNVAL['good_type2_price'][$k][$k1][$k2];
+                $tot_date_chart[$k]       += $S_RETURNVAL['good_type2_price'][$k][$k1][$k2];
+            }
+        }
+        if ($_GET['dr_dr2_from']) {
+            array_push($row_chart, array($_GET['cal_kind'] == "w" || $_GET['cal_kind'] == "wd" ? $k : $k, $google_tot_chart[$k], $tot_date_chart[$k]));
+        } else {
+            array_push($row_chart, array($_GET['cal_kind'] == "w" || $_GET['cal_kind'] == "wd" ? $k : $k, $google_tot_chart[$k]));
+        }
+    }
+    $jsonTable2 = json_encode($row_chart); 
+?>
+
+<!-- DataTable 실행 -->
+    <? if($_GET['search_type'] == 'customer'){?>
+        <script src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>
+        <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.12.0/css/jquery.dataTables.min.css"> -->
+        <script>
+            $('.tablereport').DataTable({
+                "language": {
+                    "emptyTable": "데이터가 없어요.",
+                    "lengthMenu": "페이지당 _MENU_ 개씩 보기",
+                    "info": " ",
+                    "infoEmpty": "데이터 없음",
+                    "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
+                    "search": "에서 검색: ",
+                    "zeroRecords": "일치하는 데이터가 없어요.",
+                    "loadingRecords": "로딩중...",
+                    "processing": "잠시만 기다려 주세요...",
+                    "paginate": {
+                        "next": "다음",
+                        "previous": "이전"
+                    }
+                },
+                "searching": false,
+                "lengthChange": false,
+                "fixedHeader": true,
+                "ordering": false,
+                "pageLength": 10
+            });
+            </script>
+        <script>
+        setTimeout(function() {
+            var clickBtn = document.querySelector('#tablereport_date > thead > tr:nth-child(2) > th:nth-child(1)');
+            clickBtn.click();
+            
+        }, 3000);
+        </script>
+    <? } ?>
+
+<!-- Default 데이터 0인 달력 -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+            ['Year', '합계'],
+            ['0',  0]
+            ]);
+
+            var options = {
+                    curveType: 'function',
+                    legend: {
+                        position: 'bottom'
+                    },
+                    fontSize: 11,
+                    backgroundColor: '#f8f8f8',
+                    chartArea: {
+                        left: 100,
+                        top: 20,
+                        width: "90%",
+                        height: "70%"
+                    },
+                    vAxis: {
+                        minValue: 0
+                    },
+                };
+                var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+                chart.draw(data, options);
+        }
+    </script>
+
+<!-- 날짜가 1개일 때 2개일 때 차트 그리기 -->
+    <script type="text/javascript">
+        google.charts.load('current', {
+            'packages': ['corechart']
+        });
+        
+        google.charts.setOnLoadCallback(drawChart);
+        
+
+
+        function drawChart() {
+            
+            <? if ($_GET['dr_r2_to']) { ?>
+                var resultData = <?= json_encode($chart_RETURNVAL) ?>;
+                if (resultData != -1) {
+                    console.log(resultData);
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('string', 'date');
+                    data.addColumn('number', '<?= $start_date ?>');
+                    data.addColumn({
+                        type: 'number',
+                        role: 'annotation'
+                    });
+                    if (resultData['pay_price'][3] != null) {
+                        data.addColumn('number', '<?= $end_date ?>');
+                        data.addColumn({
+                            type: 'number',
+                            role: 'annotation'
+                        });
+                    }
+                    var idx = 0;
+                    for (var key in resultData['pay_date']) {
+                        if (resultData['pay_price'][1] != null && resultData['pay_price'][3] != null) {
+                            console.log([resultData['pay_date2'][key]]);
+                            data.addRow([resultData['pay_date2'][key],
+                                resultData['pay_price'][1][resultData['pay_date'][key]] > 0 ? resultData['pay_price'][1][resultData['pay_date'][key]] : 0,
+                                resultData['pay_price'][1][resultData['pay_date'][key]] > 0 ? resultData['pay_price'][1][resultData['pay_date'][key]] : 0,
+                                resultData['pay_price'][3][resultData['pay_date'][key]] > 0 ? resultData['pay_price'][3][resultData['pay_date'][key]] : 0,
+                                resultData['pay_price'][3][resultData['pay_date'][key]] > 0 ? resultData['pay_price'][3][resultData['pay_date'][key]] : 0
+                            ]);
+                        } else if (resultData['pay_price'][1] != null && resultData['pay_price'][3] == null) {
+                            data.addRow([resultData['pay_date'][key],
+                                resultData['pay_price'][1][resultData['pay_date'][key]] > 0 ? resultData['pay_price'][1][resultData['pay_date'][key]] : 0,
+                                resultData['pay_price'][1][resultData['pay_date'][key]] > 0 ? resultData['pay_price'][1][resultData['pay_date'][key]] : 0
+                            ]);
+                        } else if (resultData['pay_price'][1] != null && resultData['pay_price'][3] == null) {
+                            data.addRow([resultData['pay_date'][key],
+                                resultData['pay_price'][3][resultData['pay_date'][key]] > 0 ? resultData['pay_price'][3][resultData['pay_date'][key]] : 0,
+                                resultData['pay_price'][3][resultData['pay_date'][key]] > 0 ? resultData['pay_price'][3][resultData['pay_date'][key]] : 0
+                            ]);
+                        }
+                        idx++;
+                    }
+                    var options = {
+                        animation: {
+                            duration: 1000,
+                            easing: 'out',
+                            startup: true
+                        },
+                        curveType: 'function',
+                        legend: {
+                            position: 'bottom'
+                        },
+                        fontSize: 11,
+                        backgroundColor: '#f8f8f8',
+                        chartArea: {
+                            left: 100,
+                            top: 20,
+                            width: "90%",
+                            height: "70%"
+                        },hAxis: {
+                            ticks: [0,1,2],
+                            // viewWindow: {
+                            //     min: <?=$_GET["dr_dr1_from"]?>,
+                            //     max: <?=$_GET["dr_r2_to"]?>
+                            // },
+                        }           
+
+                    };
+                } else {
+                    var data = new google.visualization.DataTable({
+                        cols: [{
+                                label: 'date',
+                                type: 'string'
+                            },
+                            {
+                                label: '<?= $start_date ?>',
+                                type: 'number'
+                            },
+                            {
+                                label: '<?= $end_date ?>',
+                                type: 'number'
+                            },
+                            {
+                                role: 'annotation',
+                                type: 'string'
+                            }
+                        ]
+                    });
+                    data.addRows([
+                        ['', 0, 0, 'No Data Copy']
+                    ]);
+
+                }
+                var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+                chart.draw(data, options);
+
+
+        // 날짜가 1개만 선택 되었을 때   
+            <? } else { ?>
+                // 날짜가 1개만 선택 되었을 때   
+                <? if($_GET['search_type'] == 'date'){?>
+                    var data = google.visualization.arrayToDataTable(<?= $jsonTable1 ?>);
+                <? }else{?>
+                    var data = google.visualization.arrayToDataTable(<?= $jsonTable2 ?>);
+                <? } ?>
+                var options = {
+                    curveType: 'function',
+                    legend: {
+                        position: 'bottom'
+                    },
+                    fontSize: 11,
+                    backgroundColor: '#f8f8f8',
+                    chartArea: {
+                        left: 100,
+                        top: 20,
+                        width: "90%",
+                        height: "70%"
+                    },
+                    vAxis: {
+                        minValue: 0
+                    },
+                };
+                var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+                chart.draw(data, options);
+            <? } ?>
+        }
+    </script>
+
+<!-- dateRangesWidget실행 -->
+    <script type="text/javascript">
+        $('.pickerContainer').DateRangesWidget();
+    </script>
+
+<!-- 광고유형 광고매체 라디오버튼 클릭시 목록 초기화 -->
+    <script>
+        
+        var radio_ad = document.querySelectorAll('#ad_type')[0];
+        var radio_mnm = document.querySelectorAll('#m_nm')[0];
+        radio_mnm.addEventListener('click', event => {
+            var ad_type = document.querySelectorAll('#ad_type');
+            for (var i = 0; i < ad_type.length; i++) {
+                ad_type[i].checked = false;
+            }
+            radio_ad.checked = false;
+        })
+        radio_ad.addEventListener('click', event => {
+            var m_nm = document.querySelectorAll('#m_nm');
+            for (var i = 0; i < m_nm.length; i++) {
+                m_nm[i].checked = false;
+            }
+            radio_mnm.checked = false;
+        })
+    </script>
+
+<!-- 달력 영역 -->
+    <script>
+        // 선택한 날짜 계속 유지
+        <? if ($_GET['dr_dr1_from']) { // 날짜가 1개만 선택된경우 선택 날짜 sapn태그와 input태그에 설정?>
+            var spans = document.getElementsByClassName('date-range-field')[0]['childNodes'][1];
+            var inputs1 = document.querySelectorAll('#datepicker-dropdown > div.date-ranges-form > div.main-daterange > input.dr.dr1.from');
+            var inputs2 = document.querySelectorAll('#datepicker-dropdown > div.date-ranges-form > div.main-daterange > input.dr.dr1.to');
+            var widgetDiv = document.querySelector('#container > div.item > div > div');
+            $(spans).text("<?= strval($_GET['dr_dr1_from']) ?>" + " ~ " + "<?= strval($_GET['dr_dr1_to']) ?>");
+            $(inputs1[0]).val("<?= strval($_GET['dr_dr1_from']) ?>");
+            $(inputs2[0]).val("<?= strval($_GET['dr_dr1_to']) ?>");
+            
+            $(widgetDiv).on("click", function(){
+                setTimeout(function() {
+                    $(inputs1[0]).val("<?= strval($_GET['dr_dr1_from']) ?>");
+                    $(inputs2[0]).val("<?= strval($_GET['dr_dr1_to']) ?>");
+                }, 100);
+            })
+        <? } ?>
+        <? if ($_GET['dr_dr2_from']) { // 비교 대상 날짜까지 선택된경우 선택 날짜 sapn태그와 input태그에 설정 ?>
+            var spans2 = document.getElementsByClassName('date-range-field')[0]['childNodes'][2];
+            var inputs2_1 = document.querySelectorAll('#datepicker-dropdown > div.date-ranges-form > div.comparison-daterange > input.dr.dr2.from');
+            var inputs2_2 = document.querySelectorAll('#datepicker-dropdown > div.date-ranges-form > div.comparison-daterange > input.dr.dr2.to');
+            var widgetDiv = document.querySelector('#container > div.item > div > div');
+
+            spans2.style.display = 'block';
+
+            $(spans2).text("<?= strval($_GET['dr_dr2_from']) ?>" + " ~ " + "<?= strval($_GET['dr_r2_to']) ?>");
+            $(inputs2_1[0]).val("<?= strval($_GET['dr_dr2_from']) ?>");
+            $(inputs2_2[0]).val("<?= strval($_GET['dr_r2_to']) ?>");
+
+            $(widgetDiv).on("click", function(){
+                setTimeout(function() {
+                    $(inputs1[0]).val("<?= strval($_GET['dr_dr1_from']) ?>");
+                    $(inputs2[0]).val("<?= strval($_GET['dr_dr1_to']) ?>");
+                    $(inputs2_1[0]).val("<?= strval($_GET['dr_dr2_from']) ?>");
+                    $(inputs2_2[0]).val("<?= strval($_GET['dr_r2_to']) ?>");
+                }, 100);
+            })        
+            var checkBtn2 = document.querySelector('#datepicker-dropdown > div.date-ranges-form > div:nth-child(2) > input');
+            $(checkBtn2).prop("checked", true);   
+        <? } ?>
+        <? if (!$_GET['dr_dr1_from']) { // 선택날짜가 없는경우 Default로 1일부터 어제 날자까지 span과 input태그에 설정 ?>
+            var OneOfDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toLocaleDateString().slice(0,-1).replace(/(\s*)/g, "").replaceAll('.','-');
+            var yesterdays = new Date(new Date().setDate(day - 1)).toLocaleDateString().slice(0,-1).replace(/(\s*)/g, "").replaceAll('.','-');
+            var inputs1 = document.querySelectorAll('#datepicker-dropdown > div.date-ranges-form > div.main-daterange > input.dr.dr1.from');
+            var inputs2 = document.querySelectorAll('#datepicker-dropdown > div.date-ranges-form > div.main-daterange > input.dr.dr1.to');
+            var widgetDiv = document.querySelector('#container > div.item > div > div');
+            console.log(OneOfDay);
+            console.log(yesterdays);
+            $(widgetDiv).on("click", function(){
+                setTimeout(function() {
+                    $(inputs1[0]).val(OneOfDay);
+                    $(inputs2[0]).val(yesterdays);
+                    console.log(inputs1[0]);
+                    console.log(inputs2[0]);
+                }, 100);
+            })
+        <? } ?>
+        
+        $(".enable-comparison").change(function(){ // 비교대상 체크시 input영역 초기화
+            var compareDiv = document.querySelector('#datepicker-dropdown > div.date-ranges-form > div.comparison-daterange');
+            var compareDiv2 = document.querySelector('#datepicker-dropdown > div.date-ranges-form > div:nth-child(2) > select');
+            var compareBtnDiv = document.querySelector('#datepicker-dropdown > div.date-ranges-form > div.btn-group');
+            var inputs1 = document.querySelectorAll('#datepicker-dropdown > div.date-ranges-form > div.main-daterange > input.dr.dr1.from');
+            var inputs2 = document.querySelectorAll('#datepicker-dropdown > div.date-ranges-form > div.main-daterange > input.dr.dr1.to');
+            var inputs2_1 = document.querySelectorAll('#datepicker-dropdown > div.date-ranges-form > div.comparison-daterange > input.dr.dr2.from');
+            var inputs2_2 = document.querySelectorAll('#datepicker-dropdown > div.date-ranges-form > div.comparison-daterange > input.dr.dr2.to');
+            if($(".enable-comparison").is(":checked")){
+                $(compareDiv).show();
+                $(compareDiv2).show();
+                $(compareBtnDiv).css("margin-top","0"); 
+                $(inputs1[0]).val("");
+                $(inputs2[0]).val("");            
+                $(inputs2_1[0]).val("");
+                $(inputs2_2[0]).val("");
+            }else{
+                $(compareDiv2).hide();
+                $(compareDiv).hide();
+                $(compareBtnDiv).css("margin-top","32px"); 
+                $(inputs1[0]).val("");
+                $(inputs2[0]).val("");     
+                $(inputs2_1[0]).val("");
+                $(inputs2_2[0]).val("");
+            }
+        });    
+    </script>
+
+<iframe name='iFrmSubmit' width="0" height="0" frameborder="0" src="/frame_division/select_division2.php?division1=<?= $division1 ?>&division2=<?= $division2 ?>&em_nm=<?= $em_nm ?>&em_nm_1=<?= $em_nm_1 ?>&type=3&view_type=2"></iframe>

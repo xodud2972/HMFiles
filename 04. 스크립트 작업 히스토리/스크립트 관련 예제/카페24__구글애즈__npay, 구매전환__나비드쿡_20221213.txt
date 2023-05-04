@@ -1,0 +1,90 @@
+
+-------------------------------------------PC 주문완료 페이지 전환이벤트-------------------------------------------
+<!-- 구글애즈 구매전환 20221213 TripleHM -->
+<script>
+    function gtag_report_conversion(url) {
+      var callback = function () {
+        if (typeof(url) != 'undefined') {
+          window.location = url;
+        }
+      };
+      gtag('event', 'conversion', {
+          'send_to': 'AW-11037872285/u9udCOHD74QYEJ2hoo8p',
+          'transaction_id': '{$order_id}',
+          'event_callback': callback
+      });
+      return false;
+    }
+    gtag_report_conversion();
+</script>    
+----------------------------------------PC 상품상세페이지 npay이벤트-------------------------------------------
+<!-- 구글애즈 npay버튼 전환이벤트 20221213 TripleHM-->
+<script>
+window.onload = function(){    
+  var n_btn = document.querySelector('.npay_btn_item > a');
+  console.log(n_btn);
+  function gtag_report_conversion(url) {
+      var callback = function () {
+          if (typeof(url) != 'undefined') {
+              window.location = url;
+          }
+      };
+      gtag('event', 'conversion', {
+          'send_to': 'AW-11037872285/u9udCOHD74QYEJ2hoo8p',
+          'transaction_id': '',
+          'event_callback': callback
+      });
+      return false;
+  }
+  if(n_btn){
+      n_btn.addEventListener('click', event => {
+        gtag_report_conversion();
+      })
+  }
+}
+</script>   
+
+----------------------------------------M 상품상세페이지 npay이벤트-------------------------------------------
+
+<!-- 구글애즈 npay버튼 전환이벤트 20221213 TripleHM-->
+<script>
+window.onload = function(){    
+  var n_btn = document.querySelector('.npay_btn_item > a');
+  function gtag_report_conversion(url) {
+      var callback = function () {
+          if (typeof(url) != 'undefined') {
+              window.location = url;
+          }
+      };
+      gtag('event', 'conversion', {
+          'send_to': 'AW-11037872285/u9udCOHD74QYEJ2hoo8p',
+          'transaction_id': '',
+          'event_callback': callback
+      });
+      return false;
+  }
+    if(n_btn){
+      n_btn.addEventListener('click', event => {
+        gtag_report_conversion();
+      })
+    }
+}
+</script>   
+----------------------------------------M 주문완료 구매전환이벤트-------------------------------------------
+<!-- 구글애즈 구매전환 20221213 TripleHM -->
+<script>
+    function gtag_report_conversion(url) {
+      var callback = function () {
+        if (typeof(url) != 'undefined') {
+          window.location = url;
+        }
+      };
+      gtag('event', 'conversion', {
+          'send_to': 'AW-11037872285/u9udCOHD74QYEJ2hoo8p',
+          'transaction_id': '{$order_id}',
+          'event_callback': callback
+      });
+      return false;
+    }
+    gtag_report_conversion();
+</script>        

@@ -1,0 +1,60 @@
+
+
+
+------------------------해결----------
+1. dialog 위치
+
+2. dialog 중복
+
+3. dailog 내 첨부파일 다운시 파일이름 
+	공백이전까지만 나옴
+
+4. img 반복 클릭시 dialog 첨부파일 목록이 다름
+
+5. 게시글 미리보기 시에 첨부파일목록 표시
+
+6. show 시 project_memo 오류 ...
+(파일이 없는 테이블은 조회가 안됨)
+   ㄴ 쿼리문 오류
+
+
+
+
+
+
+
+if(submitType=="show2"){
+		$.ajax({
+				type: "POST",
+				url: "/input/work/ipt_work_41.php?submitType="+submitType, 
+				data:{"seq":  seq},
+				success:function(result2){ 
+
+				console.log(typeof(result2));
+				console.log(result2);		
+				//console.log(JSON.parse(result2));
+datahtml = "";
+//for(var c=0; c<(data.etc_names).length; c++){
+//	datahtml += "<a href='/data/work_project_etcFile/"+data.etc_tmp_names[c]+"'download='"+data.etc_names[c]+"'>"+data.etc_names[c]+"</a>        ";
+//}
+//console.log(datahtml);
+				if(datahtml !== ''){
+					$("div[id=hidden_etc_file_nm]").html(datahtml);
+				}else{
+					$("div[id=hidden_etc_file_nm]").text('없음');
+				}
+				}
+		});
+
+	}
+
+
+function funcShow2() {
+	$_POST   = funcResponse($_POST);
+	$clsWork = new clsWork();
+	$F_RETURNVAL =  $clsWork->funcSelectEtcFile();
+
+	print_R($F_RETURNVAL);
+}
+	case 'show2'			: funcShow2();break;
+

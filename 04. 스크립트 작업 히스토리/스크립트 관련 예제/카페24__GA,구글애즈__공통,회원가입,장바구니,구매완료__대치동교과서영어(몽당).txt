@@ -1,0 +1,59 @@
+http://mongdangpencil.net/ 대치동교과서영어 (몽당) 20220824 카페24
+
+------------------------------------------------------------------------------------------------------------------------------------
+공통코드 PC MO 동일 - ( SEO > 코드직접입력 )
+
+<!-- GoogleAds 공통스크립트 20220824 TripleHM -->
+<!-- Global site tag (gtag.js) - Google Ads: 395305311 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-395305311"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-395305311');
+</script>
+
+<!-- Google Tag Manager TripleHM 20220824 -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TW87ZD9');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Event snippet for 몽당펜슬_페이지 조회 conversion page TripleHM 20220824-->
+<script>
+  gtag('event', 'conversion', {'send_to': 'AW-395305311/G94uCIPx0NgDEN_Cv7wB'});
+</script>
+
+( 공통 BODY영역 가장위쪽 )
+<!-- Google Tag Manager (noscript) TripleHM 20220824 -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TW87ZD9"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+------------------------------------------------------------------------------------------------------------------------------------
+회원가입 PC MO 동일 ( 디자인관리 > 회원 > 회원가입완료 페이지 )
+<!-- Event snippet for 몽당펜슬_회원가입 conversion page 20220824 TripleHM -->
+<script>
+  gtag('event', 'conversion', {'send_to': 'AW-395305311/nPf_CIDx0NgDEN_Cv7wB'});
+</script>
+------------------------------------------------------------------------------------------------------------------------------------
+장바구니 PC MO 변수내용만 다름 ( 디자인관리 > 상품 > 상세보기페이지 )
+
+	<!-- Event snippet for 몽당펜슬_장바구니 conversion page tripleHM 20220824 -->        
+	<script>
+		const add_btn = document.querySelector('#detail_inner > div.xans-element-.xans-product.xans-product-detail.top_inner > div.detailArea > div.infoArea.soldout_displaynone > div.xans-element-.xans-product.xans-product-action > div.ec-base-button > a:nth-child(3)');
+		add_btn.addEventListener('click', event => {
+			gtag('event', 'conversion', {'send_to': 'AW-395305311/rRqTCP3w0NgDEN_Cv7wB'});
+		})
+	</script>
+------------------------------------------------------------------------------------------------------------------------------------
+구매완료 PC MO 동일 ( 디자인관리 > 주문 > 주문완료 페이지 )
+<!-- Event snippet for 몽당펜슬_구매 conversion page 20220824 TripleHM -->
+<script>
+    gtag('event', 'conversion', {
+      'send_to': 'AW-395305311/qAsrCPrw0NgDEN_Cv7wB',
+      'transaction_id': '{$order_id}'
+  });
+</script>    

@@ -1,0 +1,35 @@
+비활성화 문구 시 재설치 진행하여 제거 가능
+
+카페 24 GA AW- 한프 회원가입, 장바구니, 구매
+
+<!-- Gtag 회원가입 완료 TripleHM 20220609 -->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-10895752948/fOUJCL6n_MEDEPT9v8so',
+      'label' : '회원가입완료'
+  });
+</script>
+
+
+<!-- Gtag 장바구니추가 TripleHM 20220609 -->            
+<!-- Event snippet for Google Channel Add To Cart conversion page -->
+<script>
+    var add_Btn = document.querySelector('#df-product-detail > div > div.infoArea-wrap > div > div > div.xans-element-.xans-product.xans-product-action > div.ec-base-button.df-action-button > div.ac-basket.wrap > a');
+    add_Btn.addEventListener('click', event => {
+          gtag('event', 'conversion', {
+          'send_to': 'AW-10895752948/KGZjCLun_MEDEPT9v8so',
+          'value': '{$product_price}',
+           'id' : '{$product_no}'
+          });
+    }) 
+</script>
+
+<!-- Gtag 구매전환 TripleHM 20220609--> 
+<script> 
+    gtag('event', 'conversion', { 
+        'send_to': 'AW-10895752948/C4l6CNG8qLoDEPT9v8so',
+        'transaction_id': '{$order_id}',
+        'value': "{$payed_order_price_front}".replace(/[원,\D ]/g, ''),
+        'currency': 'KRW'
+    }); 
+</script>

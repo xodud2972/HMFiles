@@ -1,0 +1,81 @@
+샐러디 FTP
+
+업체유알엘: salady.com
+ https://webper.co.kr 
+ ID salady2 / PW d4338890c1
+
+
+방문스크립트 - 공통페이지
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel("4953097790915494053").pageView();
+</script>
+
+구매스크립트 - 가맹상담페이지 신청완료버튼
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel("4953097790915494053").pageView();
+      kakaoPixel("4953097790915494053").purchase();
+</script>
+
+서비스신청스크립트 - 가맹설명회페이지 신청완료버튼
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script> 
+<script type="text/javascript">
+      kakaoPixel("4953097790915494053").pageView();
+      kakaoPixel("4953097790915494053").signUp();
+</script>
+
+
+
+실제 삽입 코드 www/superboard/process/online/online_uprdate.php
+
+// NAVER SCRIPT 20190405
+		// 카카오픽셀 2022-02-15 TripleHM
+		if ($selfpage == "/_subpage/franchise/application.php") {
+			echo "
+				<script type='text/javascript' src='//wcs.naver.net/wcslog.js'></script>
+				<script type='text/javascript'>
+				if (!wcs_add) var wcs_add={};
+				wcs_add['wa'] = 's_35cf321f24a7';
+				if (!_nasa) var _nasa={};
+				_nasa['cnv'] = wcs.cnv('4','1');
+				wcs_do(_nasa);
+				</script>
+
+				<script type='text/javascript' charset='UTF-8' src='//t1.daumcdn.net/adfit/static/kp.js'></script>
+				<script type='text/javascript'>
+					  kakaoPixel('4953097790915494053').pageView();
+					  kakaoPixel('4953097790915494053').purchase();
+					  kakaoPixel('4953097790915494053').participation('Consulting');
+				</script>
+			";
+		} else if ($selfpage == "/_subpage/contact_us/inquiry.php") {
+			echo "
+				<script type='text/javascript' src='//wcs.naver.net/wcslog.js'></script>
+				<script type='text/javascript'>
+				if (!wcs_add) var wcs_add={};
+				wcs_add['wa'] = 's_35cf321f24a7';
+				if (!_nasa) var _nasa={};
+				_nasa['cnv'] = wcs.cnv('5','1');
+				wcs_do(_nasa);
+				</script>
+			";
+		} else if ($selfpage == "/_subpage/franchise/reservation.php") {
+			echo "
+				<script type='text/javascript' src='//wcs.naver.net/wcslog.js'></script>
+				<script type='text/javascript'>
+				if (!wcs_add) var wcs_add={};
+				wcs_add['wa'] = 's_35cf321f24a7';
+				if (!_nasa) var _nasa={};
+				_nasa['cnv'] = wcs.cnv('4','1');
+				wcs_do(_nasa);
+				</script>
+
+				<script type='text/javascript' charset='UTF-8' src='//t1.daumcdn.net/adfit/static/kp.js'></script>
+				<script type='text/javascript'>
+					  kakaoPixel('4953097790915494053').pageView();
+					  kakaoPixel('4953097790915494053').signUp();
+					  kakaoPixel('4953097790915494053').participation('Consulting');
+				</script>
+			";
+		}

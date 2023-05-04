@@ -1,0 +1,33 @@
+
+<!-- 레이어 팝업 추가 20230313_엄준호 -->
+<? if($_GET['id']==10){ ?>
+<div class="dim-layer">
+  <div class="dimBg"></div>
+    <div id="layer2" class="pop-layer">
+        <div class="pop-container">
+            <div class="pop-conts">
+                <!--content //-->
+                <p class="title"><b>스크립트 신청 위치 변경 안내</b></p>
+                <p class="ctxt mb20">
+                    <b>2023.04.03</b> 이후로 해당 게시판은 사용할 수 없습니다.<br>
+                    <b>네이버웍스 게시판</b> 을 이용해주세요<br>
+                    관련 문의는 데이터분석팀에 문의 부탁드립니다.
+                </p>
+
+                <div class="btn-r">
+                    <a href="#" class="btn-layerClose">확인</a>
+                </div>
+                <!--// content-->
+            </div>
+        </div>
+    </div>
+</div>
+<?}?>
+	
+<?//컨텐츠팀 요청으로 광고소재영상요청 게시판일경우 글쓰기 버튼 주석처리 - 2021.04.23
+	if($_GET['id']!=30 && $_GET['id']!=41 && $_GET['id']!=10){
+?> 
+		<div style="float:right; margin-top:7px;">
+			<input type="button" value="글쓰기" style="height:20px;" class="adminButton" onclick="clickWrite('1')"/>
+		</div>
+<?}?>		

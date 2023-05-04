@@ -1,0 +1,83 @@
+
+    $querySelectLastId = "SELECT LAST_INSERT_ID() as lastId";
+    $exceSelectLastId = que($db, $querySelectLastId);
+    $lastId = mysqli_fetch_array($exceSelectLastId);
+
+
+if($_FILES['files']['name']){
+    $fileName = $_FILES['files']['name'];
+    $fileCount = count($fileName);
+    $filePath = "../uploads";
+}
+if($fileName[0] != ""){
+    for($fileIndex=0; $fileIndex <$fileCount; $fileIndex++){
+        $tmp_Name = $_FILES["files"]["tmp_name"][$fileIndex];
+        $name = basename($fileName[$fileIndex]);
+        move_uploaded_file($tmp_Name, "$filePath/$name");
+   
+        $queryInsertFiles = sprintf(
+            "INSERT INTO t_file
+                (f_board_id, f_name, f_tmp_name, f_path, f_uploads_date)
+            VALUES
+                ('%s', '%s', '%s', '%s', SYSDATE())"
+            ,$lastId['lastId'] ,$fileName[$fileIndex], $_FILES["files"]["tmp_name"][$fileIndex], $filePath/$name);
+        
+        que($db, $queryInsertFiles);
+        
+    }
+}
+
+
+파일인설트 쿼리
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+아래는 update 페이지에서 사용할 내용 불러오기 코드
+
+<div>
+                                    <textarea name="content" id="content" rows="10" cols="100"><?= $content ?></textarea>
+                                    <script type="text/javascript" src="../lib/dist/js/service/HuskyEZCreator.js" charset="utf-8"></script>
+                                    <script>
+
+                                            var oEditors = [];
+
+                                            nhn.husky.EZCreator.createInIFrame({
+                                                oAppRef: oEditors,
+                                                elPlaceHolder: "content",
+                                                sSkinURI: "../lib/dist/SmartEditor2Skin.html",
+                                                fCreator: "createSEditor2"
+                                            });
+                                            
+                                        function submitContents(elClickedObj) {
+                                            oEditors.getById["content"].exec("UPDATE_CONTENTS_FIELD", []);
+
+                                            // var content = document.getElementById("content").value;
+                                            // content = content.replace(/<(\/)?([a-zA-Z]*)(\s[a-zA-Z]*=[^>]*)?(\s)*(\/)?>/ig, "");
+                                            // console.log(content);
+                                            // if (content.length == 0) {
+                                            //         alert("내용을 입력하세요.");
+                                            //         document.getElementById("content").focus();
+                                            //         return ;
+                                            //     }
+                                        }
+                                        function pasteHTML() {
+  var sHTML = " <?=str_replace("'","\'",$content);?>"; 
+  alert(sHTML);
+  oEditors.getById["bbsContent"].exec("PASTE_HTML", [sHTML]);
+}
+
+                                    </script>
+                                </div>

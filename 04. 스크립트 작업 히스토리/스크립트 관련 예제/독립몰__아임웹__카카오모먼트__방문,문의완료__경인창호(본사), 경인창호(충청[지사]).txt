@@ -1,0 +1,42 @@
+아임웹 독립몰 카카오모먼트 경인창호(본사), 경인창호(충청[지사]), 방문&문의완료
+아입웹 로그인 후 페이지 관리 들어가서 admin페이지에 접속
+페이지가 2개인경우 상단 회사명 클릭시 페이지 선택 가능
+각각 페이지별로 작업
+환경설정 > SEO, 헤더설정 에서 공통코드 작업, 
+마케팅관리 > 전환추적/리타게팅관리 에서 매체별 스크립트도 삽입가능
+경인창호에서는 SEO 에서 공통코드만 작업함
+
+충청 코드 
+<!-- 카카오픽셀 공통 충청 2022-06-24 TrileHM -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('7054662102512582765').pageView('CDA1');
+</script>
+
+<script>
+ setTimeout(function() {
+	const btn2 = document.querySelector('#doz_body > div.floBanMob1.hidden-lg > div');
+   btn2.addEventListener('click', event => {
+	kakaoPixel('7054662102512582765').purchase('CDA2');
+	 console.log('문의클릭 충청');
+   })
+    }, 200);
+</script>
+
+본사 코드
+<!-- 카카오픽셀 공통 2022-06-24 TrileHM -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('8544824995132032043').pageView();
+</script>
+
+
+<script>
+ setTimeout(function() {
+	const btn1 = document.querySelector('#doz_body > div.floBanMob1.hidden-lg');
+   btn1.addEventListener('click', event => {
+	kakaoPixel('7054662102512582765').purchase('CDA2');
+	 console.log('문의클릭 본사');
+   })
+    }, 200);
+</script>

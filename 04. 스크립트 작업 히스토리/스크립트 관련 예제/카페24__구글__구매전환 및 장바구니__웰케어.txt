@@ -1,0 +1,36 @@
+웰케어 카페24 gtag 이벤트 스니펫 구매전환 및 장바구니
+
+<!-- gtag 구매완료 2022-02-14 TripleHM -->
+<!-- Event snippet for 구매 conversion page -->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-10850800447/K-nuCNj27aADEL-miLYo',
+      'transaction_id': '{$order_id}',
+      'value': "{$payed_order_price_front}".replace(/[원,\D ]/g, ''),
+      'currency': 'KRW'
+  });
+</script>
+
+
+<!-- gtag 장바구니추가 2022-02-14 TripleHM -->
+<script>
+    const cartBtn = document.querySelector('#sscart_btn');
+    
+    function gtag_report_conversion(url) {
+        var callback = function () {
+            if (typeof(url) != 'undefined') {
+                window.location = url;
+            }
+        };
+        gtag('event', 'conversion', {
+            'send_to': 'AW-10850800447/K5YzCM_tnKEDEL-miLYo',
+            'event_callback': callback,
+            'value': "6000".replace(/[원,\D ]/g, ''),
+      		'currency': 'KRW'
+        });
+        return false;
+    }
+    cartBtn.addEventListener('click', event => {
+        gtag_report_conversion();
+    });
+</script>

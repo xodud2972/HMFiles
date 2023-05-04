@@ -1,0 +1,6 @@
+자동문 렌탈 coadmaster 로거스크립트 삽입파일 정보
+var/www/html/coadmaster_v2_/resources/views/include/member_header.php
+
+<a onMouseDown="eval('try{ _trk_clickTrace( \'RFO\', \'http://xn--2q1br3fu5cdtsihl.com\' ); }catch(_e){ }');" href="#" onclick="WebLoadUrl('http://xn--2q1br3fu5cdtsihl.com/'); console.log(11111);">자동문렌탈</a>
+위와같이 진행함.
+로거가 갑자기 잡히지 않은것은 \표시가 빠져있었기 떄문

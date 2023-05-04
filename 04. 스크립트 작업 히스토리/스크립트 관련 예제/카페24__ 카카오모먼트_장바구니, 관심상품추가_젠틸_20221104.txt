@@ -1,0 +1,94 @@
+카페24__ 카카오모먼트_장바구니, 관심상품추가_젠틸_20221104
+
+
+
+방문
+
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('7697661581887949449').pageView('태그값입력');
+</script>
+----------------------------------------------------------------------------------------------------------------
+
+회원가입
+
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('7697661581887949449').pageView();
+      kakaoPixel('7697661581887949449').completeRegistration('태그값입력');
+</script>
+----------------------------------------------------------------------------------------------------------------
+
+장바구니추가
+
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('7697661581887949449').addToCart({
+        id: '상품고유값입력',
+        tag: '태그값입력'
+      });
+</script>
+
+----------------------------------------------------------------------------------------------------------------
+
+관심상품추가
+
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('7697661581887949449').addToWishList({
+        id: '상품고유값입력',
+        tag: '태그값입력'
+      });
+</script>
+
+----------------------------------------------------------------------------------------------------------------
+
+구매
+
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('7697661581887949449').pageView();
+      kakaoPixel('7697661581887949449').purchase('태그값입력');
+</script>
+
+----------------------------------------------------------------------------------------------------------------
+
+네이버페이구매
+
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('7697661581887949449').pageView();
+      kakaoPixel('7697661581887949449').purchase('네이버페이구매');
+</script>
+
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+
+카페24 카카오채널에 아이디 등록되어있어서 아래 두가지 이벤트만 추가하였음
+
+<!-- TripleHM 2022-11-04 카카오모먼트 장바구니&관심상품 추가 이벤트 -->
+<script>
+    window.onload = function() {
+        var cartBtn = document.querySelector('#detail_wrap > div > div.detail_center > div > div > div:nth-child(7) > a.center');
+        if( cartBtn == null){
+            cartBtn = document.querySelector('#detail_wrap > div > div.detail_center > div > div > div:nth-child(6) > a.center');
+        }
+        var wishBtn = document.querySelector('#detail_wrap > div > div.detail_center > div > div > div:nth-child(7) > a.right');
+        if( wishBtn == null){
+            wishBtn = document.querySelector('#detail_wrap > div > div.detail_center > div > div > div:nth-child(6) > a.right');
+        }
+        cartBtn.addEventListener('click', event => {
+          kakaoPixel('7697661581887949449').addToCart({
+            id: prd_no,
+            tag: '장바구니 추가'
+          });
+        })     
+        wishBtn.addEventListener('click', event => {
+          kakaoPixel('7697661581887949449').addToCart({
+            id: prd_no,
+            tag: '관심상품 추가'
+          });
+        })   
+    };
+</script>

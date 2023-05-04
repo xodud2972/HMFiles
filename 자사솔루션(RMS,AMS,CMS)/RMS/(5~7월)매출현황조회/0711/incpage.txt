@@ -1,0 +1,99 @@
+<style type="text/css">
+	.page-flex-container {
+	  display: flex;
+	  flex-wrap: nowrap;
+	  /*background-color: #b5f900;*/
+	  justify-content: center;
+	  align-items: center;
+	}
+	.page-flex-container > div {
+	  width:25px;
+	  border-top: 1px solid #DDDDDD;
+	  border-bottom: 1px solid #DDDDDD;
+	  border-right: 1px solid #DDDDDD;
+	  background-color: #f9f9f9;
+	  /*width: 100%;*/
+	  margin: 0px;
+	  padding: 5px;
+	  text-align: center;
+	  line-height: 15px;
+	  font-size: 12px;
+	}
+	.page-flex-container .choice {
+	  background-color:#337AB7;
+	  color:#FFFFFF;
+	}
+	.page-flex-container .info-L {
+	  width:38px;
+	  border: 1px solid #DDDDDD;
+	  border-bottom-left-radius: 3px;
+	  border-top-left-radius: 3px;
+	}
+	.page-flex-container .info-R {
+	  width:38px;
+	  border-bottom-right-radius: 3px;
+	  border-top-right-radius: 3px;
+	}
+</style>
+<div style="text-decoration: none; text-align: left; margin-left:10px; width:auto">
+	<? 
+		$total = $S_RETURNVAL3['size'];
+		$currentCnt = $_GET['nPage']*15 > $S_RETURNVAL3['size'] ? $S_RETURNVAL3['size'] : $_GET['nPage']*15;
+		$npageNo = $_GET['nPage'] !== '1' ? (($_GET['nPage']-1)*15)+1 : 1;
+		echo $npageNo.'-';
+		echo $_GET['nPage']*15;
+		echo '.(총'.$total.'건)';
+
+	?>
+</div>
+<div class="page-flex-container">
+<?
+$nTotPageNum = @ceil( $S_RETURNVAL3['size'] / $nOrdPagingNum);
+
+if ( $nTotPageNum > 0 ) {
+	if (!$_GET['nPage'] or $_GET['nPage'] < 1) {
+		$_GET['nPage'] = 1;
+	}
+
+	$nStartBlock = ( ( $_GET['nPage'] - 1 ) - ( ( $_GET['nPage'] - 1 ) % $nOrdPagingBlock ) ) + 1;
+	if ($nStartBlock < 1) { 
+		$nStartBlock = 1;
+	}
+
+	$nEndBlock = $nStartBlock + $nOrdPagingBlock - 1;
+
+	if ( $nEndBlock > $nTotPageNum ) {
+		$nEndBlock = $nTotPageNum;
+	}
+
+	$nPreBlock = ( ($_GET['nPage'] - 1 ) - ( ( $_GET['nPage'] - 1 ) % $nOrdPagingBlock ) ) - ( $nOrdPagingBlock - 1 );
+	if ( $nPreBlock < 1 ) $nPreBlock = 1;
+
+	$nNxtBlock = ( ( $_GET['nPage'] - 1) - ( ( $_GET['nPage'] - 1 ) % $nOrdPagingBlock ) ) + ( $nOrdPagingBlock + 1 );
+	$nNxtBlock = $nTotPageNum < $nNxtBlock ? $nTotPageNum : $nNxtBlock;
+
+
+		// 처음
+			echo("<div class='info-L'><a href='?nc=".$_GET['nc']."&em_seq1=".$_GET['em_seq1']."&nPage=1&check1=".$_GET['check1']."&division1=".$_GET['division1']."&division2=".$_GET['division2']."&em_nm=".$_GET['em_nm']."&s_item=".$_GET['s_item']."&s_string=".$_GET['s_string']."&cal_kind=".$_GET['cal_kind']."&dr_dr1_from=".$_GET['dr_dr1_from']."&dr_dr1_to=".$_GET['dr_dr1_to']."&dr_dr2_from=".$_GET['dr_dr2_from']."&dr_r2_to=".$_GET['dr_r2_to']."&search_type=".$_GET['search_type']."'>처음</a> </div> ");
+
+		// 이전
+		if($nStartBlock > 1){
+			echo("<div class='normal'><a href='?nc=".$_GET['nc']."&em_seq1=".$_GET['em_seq1']."&nPage=".$nPreBlock."&check1=".$_GET['check1']."&division1=".$_GET['division1']."&division2=".$_GET['division2']."&em_nm=".$_GET['em_nm']."&s_item=".$_GET['s_item']."&s_string=".$_GET['s_string']."&cal_kind=".$_GET['cal_kind']."&dr_dr1_from=".$_GET['dr_dr1_from']."&dr_dr1_to=".$_GET['dr_dr1_to']."&dr_dr2_from=".$_GET['dr_dr2_from']."&dr_r2_to=".$_GET['dr_r2_to']."&search_type=".$_GET['search_type']."'>이전</a> </div>");
+		}
+		// 중간숫자
+		for($i = $nStartBlock; $i <= $nEndBlock; $i++){
+			if($i!= $_GET['nPage']){
+				echo(" <div class='normal'><a href='?nc=".$_GET['nc']."&em_seq1=".$_GET['em_seq1']."&nPage=".$i."&check1=".$_GET['check1']."&division1=".$_GET['division1']."&division2=".$_GET['division2']."&em_nm=".$_GET['em_nm']."&s_item=".$_GET['s_item']."&s_string=".$_GET['s_string']."&cal_kind=".$_GET['cal_kind']."&dr_dr1_from=".$_GET['dr_dr1_from']."&dr_dr1_to=".$_GET['dr_dr1_to']."&dr_dr2_from=".$_GET['dr_dr2_from']."&dr_r2_to=".$_GET['dr_r2_to']."&search_type=".$_GET['search_type']."'> $i</a> </div>");
+			} else {
+				echo(" <div class='choice'>$i </div>");
+			}
+		}
+		// 다음
+		if($nTotPageNum > $nNxtBlock){
+			echo(" <div class='normal'><a href='?nc=".$_GET['nc']."&em_seq1=".$_GET['em_seq1']."&nPage=".$nNxtBlock."&check1=".$_GET['check1']."&division1=".$_GET['division1']."&division2=".$_GET['division2']."&em_nm=".$_GET['em_nm']."&s_item=".$_GET['s_item']."&s_string=".$_GET['s_string']."&cal_kind=".$_GET['cal_kind']."&dr_dr1_from=".$_GET['dr_dr1_from']."&dr_dr1_to=".$_GET['dr_dr1_to']."&dr_dr2_from=".$_GET['dr_dr2_from']."&dr_r2_to=".$_GET['dr_r2_to']."&search_type=".$_GET['search_type']."'>다음</a></div>");
+		}
+		// 마지막
+			echo("  <div class='info-R'><a href='?nc=".$_GET['nc']."&em_seq1=".$_GET['em_seq1']."&nPage=".$nTotPageNum."&check1=".$_GET['check1']."&division1=".$_GET['division1']."&division2=".$_GET['division2']."&em_nm=".$_GET['em_nm']."&s_item=".$_GET['s_item']."&s_string=".$_GET['s_string']."&cal_kind=".$_GET['cal_kind']."&dr_dr1_from=".$_GET['dr_dr1_from']."&dr_dr1_to=".$_GET['dr_dr1_to']."&dr_dr2_from=".$_GET['dr_dr2_from']."&dr_r2_to=".$_GET['dr_r2_to']."&search_type=".$_GET['search_type']."'>마지막</a> </div>");
+}
+?>
+</div>

@@ -1,0 +1,39 @@
+카페24 주문완료페이지 상품목록 담긴 배열 생성법
+
+(tbody module="order_normalresultlist")
+아래 스크립트를 table>tbody>tr 바로 밑에 넣어준다. 
+바로 아래쪽에도 한 번더 반복한다.
+
+<script>
+if(!echo_products) var echo_products=[];
+if('{$product_name}'!='' && !'{$product_name}'.includes("샘플")){  // 디자인편집창에 예시로 있는 상품은 제외하기 위한 if문
+echo_products.push({
+'id' : '{$param}'.split('product_no=')[1].split('&cate_no=')[0],
+'name' : '{$product_name}',
+'quantity' : '{$product_quantity}',
+'price' : '{$product_price}'.replace(',','').replace('원',''),
+'brand' : 'Healo',
+'category' : '{$param}'.substr('{$param}'.indexOf('cate_no='), '{$param}'.length).replace('cate_no=','')                           
+});
+}
+</script>                        
+            
+
+그리고나서
+<div module="Order_result" style="display:none">    
+    <script>    
+console.log( echo_products );
+    </script>
+</div>
+요로케 확인한다.
+
+
+
+<!-- 구글UA 구매전환 TripleHM 202205017 -->
+<script>
+gtag('event', 'purchase', {
+  "transaction_id": '{$product_no}',
+  "currency": "KRW",
+  "items" : echo_products
+});
+</script>     

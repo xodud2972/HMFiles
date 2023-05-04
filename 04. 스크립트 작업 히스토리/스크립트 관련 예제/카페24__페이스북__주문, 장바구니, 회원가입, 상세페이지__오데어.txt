@@ -1,0 +1,48 @@
+<!-- Facebook Pixel Code 상품상세페이지 tripleHM -->
+<script>
+	fbq('track', "ViewContent", {
+		content_type: 'product',
+		content_ids: ['{$product_no}'],
+		content_name: '{$name}',
+		currency: 'KRW',
+		value: '{$product_price}'
+	});
+</script>
+<!-- End Facebook Pixel Code -->          
+ 
+------------------------------------------------------------------------------------------------------------------------
+<!-- Facebook Pixel Code 장바구니 추가 tripleHM -->
+<script>
+	function cartEvent(){	 
+        fbq('track', "AddToCart", {
+            content_type: 'product',
+            content_ids: ['{$product_no}'],
+            content_name: '{$name}',
+            currency: 'KRW',
+            value: '{$product_price}'
+        });
+    }
+</script>
+<!-- End Facebook Pixel Code -->         
+<a href="#none" class="btnSubmit {$basket_display|display}" onclick="{$action_basket}; cartEvent();">Add to Cart</a>
+
+------------------------------------------------------------------------------------------------------------------------
+
+<!-- Facebook Pixel Code 주문완료페이지 TripleHM 2022.03.14-->
+<script>
+    fbq('track', "Purchase", {
+        content_type: 'product',
+        content_ids: '{$order_id}'.replace(/[-원,\D ]/g, ''),
+        currency: 'KRW',
+        value: '{$normal_total_price_front_head}{$normal_total_price_front}{$normal_total_price_front_tail}'.replace(/[원,\D ]/g, '')            
+    });
+</script>
+
+------------------------------------------------------------------------------------------------------------------------
+
+<!-- 2022.03.11 tripleHM 회원가입완료 facebook-pixcel -->
+<!-- Facebook Pixel Code 회원가입완료 페이지 -->
+<script>
+    fbq('track', 'CompleteRegistration');
+</script>
+<!-- End Facebook Pixel Code -->

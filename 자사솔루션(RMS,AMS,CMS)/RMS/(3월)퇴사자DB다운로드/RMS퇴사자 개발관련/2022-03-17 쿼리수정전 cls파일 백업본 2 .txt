@@ -1,0 +1,565 @@
+<?php
+/**
+	작성자 : 엄태영
+	작성일 : 2022.02.23
+**/
+session_start();
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/db.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.common.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/PHPExcel_2022/PHPExcel.php';
+
+db_open();
+
+if (isset($_POST['divide'])) {
+    $divide = $_POST['divide'];
+}
+if (isset($_POST['startDate'])) {
+    $sDate = $_POST['startDate'];
+}
+if (isset($_POST['endDate'])) {
+    $eDate = $_POST['endDate'];
+}
+// 파일 업로드
+if (isset($_FILES['file']['name'])) {
+    $file = $_FILES['file']['name'];
+    $tmpName = $_FILES['file']['tmp_name'];
+    $filePath = '../file/retiree/';
+    $fileName = iconv('UTF-8', 'EUC-KR', $_FILES['file']['name']);
+    move_uploaded_file($tmpName, $filePath.$file);
+}
+
+
+// ------------- PHPExcel ----------------
+ob_start(); 
+
+$objPHPExcel = new PHPExcel(); 
+
+if (isset($fileName)) {
+    $objPHPExcel = PHPExcel_IOFactory::load('../file/retiree/'.$fileName);
+}
+
+$objPHPExcel->setActiveSheetIndex(0);			// 첫번째 시트 선택
+$sheet = $objPHPExcel->getActiveSheet();		// 시트 지정
+$highestRow = $sheet->getHighestRow();          // 마지막 행
+$highestColumn = $sheet->getHighestColumn();    // 마지막 컬럼
+
+$allData = array(); // 엑셀파일의 모든 데이터 저장
+$colData = array(); // 엑셀 파일의 읽어들인 cs_m_id 와 m_nm를 저장.
+
+for ($row = 2; $row <= $highestRow; $row++) {
+    $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row, NULL, TRUE, FALSE); // 시트의 모든 데이터 읽기
+    $allData[$row] = $rowData[0];
+
+    if($row >= 2){
+		// 인코딩 후 배열의 담기
+		$mediaKrName = iconv('utf-8', 'euc-kr', $allData[$row][0]);
+
+		if( $mediaKrName == '구글'){
+			$allData[$row][2] = 265;
+			$allData[$row][1] = preg_replace("-", "", $allData[$row][1]);
+		}elseif($mediaKrName == 'GOOGLE'){
+			$allData[$row][2] = 265;
+		}elseif($mediaKrName == '네이버'){
+			$allData[$row][2] = 264;
+		}else if($mediaKrName == 'NAVER'){
+            $allData[$row][2] = 264;
+		}else if($mediaKrName == '카카오'){
+            $allData[$row][2] = 41;
+		}else if($mediaKrName == 'KAKAO'){
+            $allData[$row][2] = 41;
+        }else if($mediaKrName == '페이스북'){
+            $allData[$row][2] = 845;
+        }else if($mediaKrName == '티몬'){
+            $allData[$row][2] = 820;
+        }else if($mediaKrName == '인터파크'){
+            $allData[$row][2] = 844;
+        }else if($mediaKrName == '위메프'){
+            $allData[$row][2] = 847;
+        }else if($mediaKrName == '카카오모먼트'){
+            $allData[$row][2] = 881;
+        }else if($mediaKrName == '모먼트'){
+            $allData[$row][2] = 881;
+        }else if($mediaKrName == '와이더플래닛'){
+            $allData[$row][2] = 520;
+        }else if($mediaKrName == '인라이플(모비온)'){
+            $allData[$row][2] = 504;
+        }else if($mediaKrName == '네이트'){
+            $allData[$row][2] = 853;
+        }else if($mediaKrName == '크리테오'){
+            $allData[$row][2] = 454;
+        }else if($mediaKrName == '바이럴'){
+            $allData[$row][2] = 1213;
+        }else if($mediaKrName == '다음브랜드검색'){
+            $allData[$row][2] = 839;
+        }else if($mediaKrName == '네이버GFA'){
+            $allData[$row][2] = 969;
+        }else if($mediaKrName == '다음키워드광고'){
+            $allData[$row][2] = 839;
+        }else if($mediaKrName == '11번가'){
+            $allData[$row][2] = 808;
+        }else if($mediaKrName == '이베이'){
+            $allData[$row][2] = 496;
+		}else if ($mediaKrName == '기타-CPT') {
+			$allData[$row][2] = 28;
+		} else if ($mediaKrName == '리얼클릭-CPC') {
+			$allData[$row][2] = 38;
+		} else if ($mediaKrName == '에딕스') {
+			$allData[$row][2] = 39;
+		} else if ($mediaKrName == '브랜드박스') {
+			$allData[$row][2] = 40;
+		} else if ($mediaKrName == '와이즈넛-CPC') {
+			$allData[$row][2] = 320;
+		} else if ($mediaKrName == '어바웃CPC') {
+			$allData[$row][2] = 321;
+		} else if ($mediaKrName == '애드티브') {
+			$allData[$row][2] = 323;
+		} else if ($mediaKrName == '아이엠애드') {
+			$allData[$row][2] = 324;
+		} else if ($mediaKrName == '나온미디어') {
+			$allData[$row][2] = 325;
+		} else if ($mediaKrName == '어바웃CPP') {
+			$allData[$row][2] = 326;
+		} else if ($mediaKrName == '리얼클릭-CPT') {
+			$allData[$row][2] = 327;
+		} else if ($mediaKrName == '스타클라우드9') {
+			$allData[$row][2] = 364;
+		} else if ($mediaKrName == 'NSON') {
+			$allData[$row][2] = 35;
+		} else if ($mediaKrName == '바이럴') {
+			$allData[$row][2] = 366;
+		} else if ($mediaKrName == '보도자료') {
+			$allData[$row][2] = 367;
+		} else if ($mediaKrName == 'HTS') {
+			$allData[$row][2] = 368;
+		} else if ($mediaKrName == '오프라인') {
+			$allData[$row][2] = 369;
+		} else if ($mediaKrName == '이네스트-CPC') {
+			$allData[$row][2] = 399;
+		} else if ($mediaKrName == '제이큐브') {
+			$allData[$row][2] = 405;
+		} else if ($mediaKrName == '기타-CPC') {
+			$allData[$row][2] = 419;
+		} else if ($mediaKrName == '캐시슬라이드') {
+			$allData[$row][2] = 421;
+		} else if ($mediaKrName == '카카오톡-CPC') {
+			$allData[$row][2] = 435;
+		} else if ($mediaKrName == '네오클릭-CPC') {
+			$allData[$row][2] = 436;
+		} else if ($mediaKrName == '큐브랩-CPC') {
+			$allData[$row][2] = 437;
+		} else if ($mediaKrName == '타게팅게이츠') {
+			$allData[$row][2] = 438;
+		} else if ($mediaKrName == '타겟뷰링크-CPC') {
+			$allData[$row][2] = 439;
+		} else if ($mediaKrName == '애드팝-CPC') {
+			$allData[$row][2] = 440;
+		} else if ($mediaKrName == '카카오톡-CPT') {
+			$allData[$row][2] = 441;
+		} else if ($mediaKrName == '포스터') {
+			$allData[$row][2] = 442;
+		} else if ($mediaKrName == '타겟뷰-CPT') {
+			$allData[$row][2] = 443;
+		} else if ($mediaKrName == '애드팝-CPT') {
+			$allData[$row][2] = 444;
+		} else if ($mediaKrName == '광고의신-오픈팟') {
+			$allData[$row][2] = 445;
+		} else if ($mediaKrName == '광고의신-오픈매치') {
+			$allData[$row][2] = 446;
+		} else if ($mediaKrName == '서치앤큐') {
+			$allData[$row][2] = 447;
+		} else if ($mediaKrName == '윙고애드') {
+			$allData[$row][2] = 448;
+		} else if ($mediaKrName == '애드매칭') {
+			$allData[$row][2] = 449;
+		} else if ($mediaKrName == '브링백') {
+			$allData[$row][2] = 450;
+		} else if ($mediaKrName == '터치앤클릭') {
+			$allData[$row][2] = 451;
+		} else if ($mediaKrName == '키매치') {
+			$allData[$row][2] = 452;
+		} else if ($mediaKrName == '클릭업') {
+			$allData[$row][2] = 453;
+		} else if ($mediaKrName == '크리테오-CPC') {
+			$allData[$row][2] = 454;
+		} else if ($mediaKrName == 'N2S-CPC') {
+			$allData[$row][2] = 455;
+		} else if ($mediaKrName == '애드앤클릭') {
+			$allData[$row][2] = 456;
+		} else if ($mediaKrName == '애드앤팝') {
+			$allData[$row][2] = 457;
+		} else if ($mediaKrName == 'K-쇼핑하우AD-CPC') {
+			$allData[$row][2] = 458;
+		} else if ($mediaKrName == '네이버지식쇼핑') {
+			$allData[$row][2] = 459;
+		} else if ($mediaKrName == '위드팝-CPC') {
+			$allData[$row][2] = 460;
+		} else if ($mediaKrName == '구글(운영대행)-CPC') {
+			$allData[$row][2] = 469;
+		} else if ($mediaKrName == 'K-쇼핑하우-CPT') {
+			$allData[$row][2] = 470;
+		} else if ($mediaKrName == 'N-지식쇼핑-CPT') {
+			$allData[$row][2] = 471;
+		} else if ($mediaKrName == '미디어큐브') {
+			$allData[$row][2] = 474;
+		} else if ($mediaKrName == '포인트락커') {
+			$allData[$row][2] = 476;
+		} else if ($mediaKrName == '애드앤모어') {
+			$allData[$row][2] = 477;
+		} else if ($mediaKrName == '사이트최적화') {
+			$allData[$row][2] = 478;
+		} else if ($mediaKrName == '카페배너') {
+			$allData[$row][2] = 479;
+		} else if ($mediaKrName == '네이트-쇼핑') {
+			$allData[$row][2] = 486;
+		} else if ($mediaKrName == 'N-파워컨텐츠') {
+			$allData[$row][2] = 494;
+		} else if ($mediaKrName == '애드베이-CPC') {
+			$allData[$row][2] = 564;
+		} else if ($mediaKrName == '애드티브-CPC') {
+			$allData[$row][2] = 565;
+		} else if ($mediaKrName == '토스트익스체인지-CPC') {
+			$allData[$row][2] = 566;
+		} else if ($mediaKrName == '줌쇼핑박스-CPT') {
+			$allData[$row][2] = 585;
+		} else if ($mediaKrName == '모비온') {
+			$allData[$row][2] = 586;
+		} else if ($mediaKrName == '모플라이') {
+			$allData[$row][2] = 587;
+		} else if ($mediaKrName == '미디어랩-브랜드검색') {
+			$allData[$row][2] = 588;
+		} else if ($mediaKrName == '애드브링') {
+			$allData[$row][2] = 589;
+		} else if ($mediaKrName == '옥션CPA') {
+			$allData[$row][2] = 590;
+		} else if ($mediaKrName == '지마켓-CPA') {
+			$allData[$row][2] = 591;
+		} else if ($mediaKrName == '블로그체험단') {
+			$allData[$row][2] = 592;
+		} else if ($mediaKrName == '블로그상위노출') {
+			$allData[$row][2] = 593;
+		} else if ($mediaKrName == '언론홍보') {
+			$allData[$row][2] = 594;
+		} else if ($mediaKrName == '연관검색어') {
+			$allData[$row][2] = 595;
+		} else if ($mediaKrName == '애드나비') {
+			$allData[$row][2] = 596;
+		} else if ($mediaKrName == 'SNS') {
+			$allData[$row][2] = 597;
+		} else if ($mediaKrName == '팝언더-CPT') {
+			$allData[$row][2] = 599;
+		} else if ($mediaKrName == '스타일샵-CPT') {
+			$allData[$row][2] = 600;
+		} else if ($mediaKrName == '지식인-CPT') {
+			$allData[$row][2] = 601;
+		} else if ($mediaKrName == '쇼핑검색어-CPT') {
+			$allData[$row][2] = 602;
+		} else if ($mediaKrName == '11번가CPA') {
+			$allData[$row][2] = 603;
+		} else if ($mediaKrName == '레몬-CPC') {
+			$allData[$row][2] = 673;
+		} else if ($mediaKrName == '해보고-CPC') {
+			$allData[$row][2] = 674;
+		} else if ($mediaKrName == '지도-CPT') {
+			$allData[$row][2] = 675;
+		} else if ($mediaKrName == 'K-카카오스타일') {
+			$allData[$row][2] = 682;
+		} else if ($mediaKrName == 'N-주제판') {
+			$allData[$row][2] = 683;
+		} else if ($mediaKrName == '애드샘') {
+			$allData[$row][2] = 685;
+		} else if ($mediaKrName == '애드샘') {
+			$allData[$row][2] = 686;
+		} else if ($mediaKrName == '다올') {
+			$allData[$row][2] = 687;
+		} else if ($mediaKrName == '엠클라우드') {
+			$allData[$row][2] = 688;
+		} else if ($mediaKrName == '티케이101') {
+			$allData[$row][2] = 689;
+		} else if ($mediaKrName == '커뮤니케이션 산') {
+			$allData[$row][2] = 690;
+		} else if ($mediaKrName == '큐큐티엔터테인먼트') {
+			$allData[$row][2] = 691;
+		} else if ($mediaKrName == '노바마케팅') {
+			$allData[$row][2] = 692;
+		} else if ($mediaKrName == '개인-CPT') {
+			$allData[$row][2] = 693;
+		} else if ($mediaKrName == '디엠씨미디어') {
+			$allData[$row][2] = 698;
+		} else if ($mediaKrName == '퓨처스트림네트웍스') {
+			$allData[$row][2] = 699;
+		} else if ($mediaKrName == '바이브알씨') {
+			$allData[$row][2] = 701;
+		} else if ($mediaKrName == '애드인컴퍼니') {
+			$allData[$row][2] = 702;
+		} else if ($mediaKrName == '미디어랩-나스미디어') {
+			$allData[$row][2] = 703;
+		} else if ($mediaKrName == '시스매틱코리아') {
+			$allData[$row][2] = 704;
+		} else if ($mediaKrName == '타불라') {
+			$allData[$row][2] = 705;
+		} else if ($mediaKrName == '비주얼다이브') {
+			$allData[$row][2] = 706;
+		} else if ($mediaKrName == '이엠스타') {
+			$allData[$row][2] = 707;
+		} else if ($mediaKrName == '허니엠인터랙티브') {
+			$allData[$row][2] = 708;
+		} else if ($mediaKrName == '마케팅이즈') {
+			$allData[$row][2] = 709;
+		} else if ($mediaKrName == '이음소사이어티') {
+			$allData[$row][2] = 711;
+		} else if ($mediaKrName == '리마인딩-CPT') {
+			$allData[$row][2] = 724;
+		} else if ($mediaKrName == '쿠차-CPT') {
+			$allData[$row][2] = 725;
+		} else if ($mediaKrName == '디지털플래닝') {
+			$allData[$row][2] = 737;
+		} else if ($mediaKrName == 'TP컴퍼니') {
+			$allData[$row][2] = 743;
+		} else if ($mediaKrName == '미디어랩-크로스미디어') {
+			$allData[$row][2] = 744;
+		} else if ($mediaKrName == '네오클릭-CPT') {
+			$allData[$row][2] = 745;
+		} else if ($mediaKrName == '큐브랩-CPT') {
+			$allData[$row][2] = 746;
+		} else if ($mediaKrName == '핫클릭') {
+			$allData[$row][2] = 747;
+		} else if ($mediaKrName == '로그내부마케팅') {
+			$allData[$row][2] = 748;
+		} else if ($mediaKrName == '애드투페이퍼') {
+			$allData[$row][2] = 749;
+		} else if ($mediaKrName == '에이스카운터-CPT') {
+			$allData[$row][2] = 750;
+		} else if ($mediaKrName == '페이스북-CPT') {
+			$allData[$row][2] = 755;
+		} else if ($mediaKrName == '티피컨퍼니') {
+			$allData[$row][2] = 756;
+		} else if ($mediaKrName == '크리마') {
+			$allData[$row][2] = 757;
+		} else if ($mediaKrName == '아이알컴즈') {
+			$allData[$row][2] = 761;
+		} else if ($mediaKrName == '엔비스타-CPT') {
+			$allData[$row][2] = 767;
+		} else if ($mediaKrName == 'K-웹툰') {
+			$allData[$row][2] = 772;
+		} else if ($mediaKrName == 'CPA') {
+			$allData[$row][2] = 773;
+		} else if ($mediaKrName == '딥클릭') {
+			$allData[$row][2] = 775;
+		} else if ($mediaKrName == '바나나아이엔씨') {
+			$allData[$row][2] = 777;
+		} else if ($mediaKrName == '에피어') {
+			$allData[$row][2] = 789;
+		} else if ($mediaKrName == '뉴스타(플레이엠)') {
+			$allData[$row][2] = 790;
+		} else if ($mediaKrName == '미디어팜패키지') {
+			$allData[$row][2] = 793;
+		} else if ($mediaKrName == '다중디엔핑') {
+			$allData[$row][2] = 800;
+		} else if ($mediaKrName == '메이크샵-파워앱') {
+			$allData[$row][2] = 802;
+		} else if ($mediaKrName == '샵로그') {
+			$allData[$row][2] = 811;
+		} else if ($mediaKrName == '카울리-CPT') {
+			$allData[$row][2] = 816;
+		} else if ($mediaKrName == '데이블네이티브') {
+			$allData[$row][2] = 817;
+		} else if ($mediaKrName == '플러스상품') {
+			$allData[$row][2] = 819;
+		} else if ($mediaKrName == '티몬') {
+			$allData[$row][2] = 820;
+		} else if ($mediaKrName == 'K-쇼핑EP') {
+			$allData[$row][2] = 823;
+		} else if ($mediaKrName == '플레이엔유') {
+			$allData[$row][2] = 834;
+		} else if ($mediaKrName == 'K-모먼트써클(기타)') {
+			$allData[$row][2] = 836;
+		} else if ($mediaKrName == 'K-플러스친구') {
+			$allData[$row][2] = 841;
+		} else if ($mediaKrName == '인터파크') {
+			$allData[$row][2] = 844;
+		} else if ($mediaKrName == '위메프') {
+			$allData[$row][2] = 847;
+		} else if ($mediaKrName == '쿠차-CPC') {
+			$allData[$row][2] = 862;
+		} else if ($mediaKrName == '애드피넛') {
+			$allData[$row][2] = 879;
+		} else if ($mediaKrName == '신세계몰/이마트몰-쓱클릭 (CPC)') {
+			$allData[$row][2] = 885;
+		} else if ($mediaKrName == 'N-네이티브 DA') {
+			$allData[$row][2] = 887;
+		} else if ($mediaKrName == 'K-쇼핑박스') {
+			$allData[$row][2] = 888;
+		} else if ($mediaKrName == '지그재그') {
+			$allData[$row][2] = 889;
+		} else if ($mediaKrName == '네오인터랙티브') {
+			$allData[$row][2] = 890;
+		} else if ($mediaKrName == '롯데닷컴') {
+			$allData[$row][2] = 891;
+		} else if ($mediaKrName == '신세계몰/이마트몰-전시 (CPT)') {
+			$allData[$row][2] = 893;
+		} else if ($mediaKrName == 'K-카카오페이지') {
+			$allData[$row][2] = 910;
+		} else if ($mediaKrName == 'DV360') {
+			$allData[$row][2] = 914;
+		} else if ($mediaKrName == '인더뉴스') {
+			$allData[$row][2] = 915;
+		} else if ($mediaKrName == 'OK캐시백') {
+			$allData[$row][2] = 922;
+		} else if ($mediaKrName == '와이즈트래커') {
+			$allData[$row][2] = 923;
+		} else if ($mediaKrName == '디지털퍼스트') {
+			$allData[$row][2] = 924;
+		} else if ($mediaKrName == '싱크미디어') {
+			$allData[$row][2] = 925;
+		} else if ($mediaKrName == 'ADN') {
+			$allData[$row][2] = 963;
+		} else if ($mediaKrName == 'ADN-CPC') {
+			$allData[$row][2] = 971;
+		} else if ($mediaKrName == '에피어-CPT') {
+			$allData[$row][2] = 972;
+		} else if ($mediaKrName == '모바일DA-CPT') {
+			$allData[$row][2] = 973;
+		} else if ($mediaKrName == '롯데온') {
+			$allData[$row][2] = 974;
+		} else if ($mediaKrName == '인플루언서') {
+			$allData[$row][2] = 981;
+		} else if ($mediaKrName == '위메프-타겟브랜드-CPC') {
+			$allData[$row][2] = 984;
+		} else if ($mediaKrName == '위메프-타겟브랜드-CPT') {
+			$allData[$row][2] = 985;
+		} else if ($mediaKrName == '다산DA') {
+			$allData[$row][2] = 986;
+		} else if ($mediaKrName == '다나와-애드스마트') {
+			$allData[$row][2] = 1198;
+		} else if ($mediaKrName == '위메프-위픽') {
+			$allData[$row][2] = 1210;
+		} else if ($mediaKrName == '쇼핑라이브') {
+			$allData[$row][2] = 1211;
+		} else if ($mediaKrName == '버즈빌') {
+			$allData[$row][2] = 1214;
+		}else if ($mediaKrName == '네이버-성과형DA') {
+			$allData[$row][2] = 969;
+		}
+			
+/**
+	print_r(iconv('UTF-8', 'EUC-KR', $allData[$row][2]));
+	echo '//';
+	print_r(iconv('UTF-8', 'EUC-KR', $allData[$row][1]));
+	echo '//';
+	print_r(iconv('UTF-8', 'EUC-KR', $allData[$row][3]));
+	echo '-------------------';
+**/
+
+        $tempList['col2'] = $allData[$row][2]; // 매체코드
+        $tempList['col3'] = iconv('utf-8', 'euc-kr', $allData[$row][1]); // 광고주ID
+
+        $colData[] = $tempList;
+    }
+}
+//print_r($colData);
+
+$resultData = array(); // 쿼리 결과 데이터 저장
+
+$cellNo = 2;
+
+for($colIndex = 0; $colIndex < sizeof($colData); $colIndex++){
+// sales_type =  1:cpc 소진액, 2:cpt입금액, 3:cpc 입금액
+// agree_state =  3: 승인금액
+    if(isset($colData[$colIndex]['col3']) !== '' && isset($colData[$colIndex]['col2']) !== ''){
+		$querySelectDataList = sprintf(
+		'SELECT DISTINCT
+			t2.cs_num, 
+			getcomkrname(cs_type_new1)AS cs_type_new1, 
+			getcomkrname(cs_type_new2)AS cs_type_new2, 
+			cs_nm, 
+			url AS url, 
+			mg_nm, 
+			mg_cell1, mg_cell2, mg_cell3,
+			mg_tel1, mg_tel2, mg_tel3, 
+			mg_email, 
+			IFNULL(round(sum(pay_price)/%d,0),0) AS pay_price, 
+			getcomkrname(t3.m_nm) as m_nm
+		FROM t_customer_md t1
+		INNER JOIN t_customer t2 ON t1.cs_seq = t2.cs_seq
+		LEFT JOIN (
+						SELECT cs_seq, SUM(pay_price)AS "pay_price", pay_date, if(m_nm="302",good_type2,m_nm) AS m_nm
+						FROM t_contract 
+						WHERE pay_date BETWEEN "%s" AND "%s"
+						AND cs_m_id = "%s"
+						AND if(m_nm="302",good_type2,m_nm) = "%s"
+						AND del_date IS NULL
+					)t3 ON t2.cs_seq = t3.cs_seq
+		WHERE cs_m_id = "%s"
+		AND t1.md_seq = (SELECT MAX(md_seq) FROM t_customer_md WHERE cs_m_id="%s")
+		GROUP BY cs_m_id
+		LIMIT 1',
+		$divide, $sDate, $eDate, $colData[$colIndex]['col3'], $colData[$colIndex]['col2'], $colData[$colIndex]['col3'], $colData[$colIndex]['col3']);
+		
+		
+        $result = que($querySelectDataList) or die(mysql_error());
+
+//echo $querySelectDataList;
+//var_dump($result);
+
+		// 모든 row데이터를 인코딩
+        while ($row = @mysql_fetch_assoc($result)) {
+            $tempData['cs_num'] = iconv('utf-8', 'euc-kr', $row['cs_num']);
+            $tempData['cs_type_new1'] = iconv('utf-8', 'euc-kr', $row['cs_type_new1']);
+            $tempData['cs_type_new2'] = iconv('utf-8', 'euc-kr', $row['cs_type_new2']);
+            $tempData['cs_nm'] = iconv('utf-8', 'euc-kr', $row['cs_nm']);
+            $tempData['url'] = iconv('utf-8', 'euc-kr', $row['url']);
+            $tempData['mg_nm'] = iconv('utf-8', 'euc-kr', $row['mg_nm']);
+            $tempData['mg_cell'] = $row['mg_cell1'] .'-'. $row['mg_cell2'] .'-'. $row['mg_cell3'];
+            $tempData['mg_tel'] = $row['mg_tel1'] .'-'. $row['mg_tel2'] .'-'. $row['mg_tel3'];
+            $tempData['mg_email'] = iconv('utf-8', 'euc-kr', $row['mg_email']);
+            $tempData['pay_price'] = iconv('utf-8', 'euc-kr', $row['pay_price']);
+//			echo $tempData['cs_num'];
+            $resultData[$colIndex] = $tempData;		
+
+        }
+
+        $sheetIndex = $objPHPExcel->setActiveSheetIndex(0); // 값을 넣을 시트 활성화.
+    
+        if(isset($resultData[$colIndex])){
+            $sheetIndex ->setCellValue('C'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['cs_num']))
+                        ->setCellValue('D'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['cs_type_new1']))
+                        ->setCellValue('E'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['cs_type_new2']))
+                        ->setCellValue('F'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['cs_nm']))
+                        ->setCellValue('G'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['url']))
+                        ->setCellValue('H'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['mg_nm']))
+                        ->setCellValue('I'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['mg_tel']))
+                        ->setCellValue('J'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['mg_cell']))
+                        ->setCellValue('K'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['mg_email']))
+                        ->setCellValue('L'.$cellNo, iconv('euc-kr', 'utf-8', $resultData[$colIndex]['pay_price']))
+						->setCellValue('C1', iconv('euc-kr', 'utf-8', '사업자번호'))
+						->setCellValue('D1', iconv('euc-kr', 'utf-8', '대카테고리'))
+						->setCellValue('E1', iconv('euc-kr', 'utf-8', '소카테고리'))
+						->setCellValue('F1', iconv('euc-kr', 'utf-8', '업체명'))
+						->setCellValue('G1', iconv('euc-kr', 'utf-8', 'URL'))
+						->setCellValue('H1', iconv('euc-kr', 'utf-8', '업체담당자명'))
+						->setCellValue('I1', iconv('euc-kr', 'utf-8', '업체담당자 유선번호'))
+						->setCellValue('J1', iconv('euc-kr', 'utf-8', '업체담당자 무선번호'))
+						->setCellValue('K1', iconv('euc-kr', 'utf-8', '업체담당자 이메일'))
+						->setCellValue('L1', iconv('euc-kr', 'utf-8', '매출평균'));
+
+
+        }
+        $cellNo++;
+    }        
+}
+
+header('Content-Disposition: attachment;fileName='.date('Ymd').'_default_data.xlsx');
+header('Content-type: application/vnd.ms-excel;charset=EUC-KR');
+header('Expires: 0');
+header('Cache-Control: must-revalidate, post-check=0,pre-check=0');
+header('Pragma: public');
+
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007'); // Excel 2016 버전의 xlsx 확장자인 경우 2007로 설정
+
+ob_end_clean();
+
+$objWriter->save('php://output');
+
+que_close($db);
+
+exit;

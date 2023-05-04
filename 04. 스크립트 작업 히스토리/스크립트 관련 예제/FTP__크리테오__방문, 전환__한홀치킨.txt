@@ -1,0 +1,129 @@
+한홀치킨 FTP 크리테오 방문, 전환 태그
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+PC include 파일 > www/new/include/header.php 공통태그 설치
+MO include 파일 > www/new/m/include/header.php 공통태그 설치
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+<!-- Criteo 홈페이지 태그 TripleHM 20220504-->
+<script type="text/javascript" src="//dynamic.criteo.com/js/ld/ld.js?a=95994" async="true"></script>
+<script type="text/javascript">
+window.criteo_q = window.criteo_q || [];
+var deviceType = /iPad/.test(navigator.userAgent) ? "t" : /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test(navigator.userAgent) ? "m" : "d";
+window.criteo_q.push(
+ { event: "setAccount", account: 95994},
+ { event: "setEmail", email: "79054025255fb1a26e4bc422aef54eb4" },
+ { event: "setZipcode", zipcode: "1" },
+ { event: "setSiteType", type: deviceType},
+ { event: "viewHome"});
+</script>
+<!-- END Criteo 홈페이지 태그 -->
+
+
+
+
+
+
+<!-- Criteo 세일즈 태그 -->
+<script type="text/javascript">
+window.criteo_q = window.criteo_q || [];
+var deviceType = /iPad/.test(navigator.userAgent) ? "t" : /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test(navigator.userAgent) ? "m" : "d";
+window.criteo_q.push(
+ { event: "setAccount", account: 95994},
+ { event: "setEmail", email: "79054025255fb1a26e4bc422aef54eb4" },
+ { event: "setZipcode", zipcode: "12345" },
+ { event: "setSiteType", type: deviceType},
+ { event: "trackTransaction", id: Math.floor(Math.random()*99999999999), item: [
+    {id: "1", price: 1, quantity: 1 }
+ ]}
+);
+</script> 
+<!-- END Criteo 세일즈 태그 -->
+
+
+전환 
+PC
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+SMS상담 : https://www.donchicken.co.kr/new/html/sms_success.php
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+<!-- Criteo 세일즈 태그 TripleHM 20220504 -->
+<script type="text/javascript">
+window.criteo_q = window.criteo_q || [];
+var deviceType = /iPad/.test(navigator.userAgent) ? "t" : /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test(navigator.userAgent) ? "m" : "d";
+window.criteo_q.push(
+ { event: "setAccount", account: 95994},
+ { event: "setEmail", email: "79054025255fb1a26e4bc422aef54eb4" },
+ { event: "setZipcode", zipcode: "12345" },
+ { event: "setSiteType", type: deviceType},
+ { event: "trackTransaction", id: Math.floor(Math.random()*99999999999), item: [
+    {id: "SMS상담", price: 1, quantity: 1 }
+ ]}
+);
+</script> 
+<!-- END Criteo 세일즈 태그 -->
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+온라인상담 : https://www.donchicken.co.kr/new/html/foundation_counsel_success.php
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+<!-- Criteo 세일즈 태그 TripleHM 20220504 -->
+<script type="text/javascript">
+window.criteo_q = window.criteo_q || [];
+var deviceType = /iPad/.test(navigator.userAgent) ? "t" : /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test(navigator.userAgent) ? "m" : "d";
+window.criteo_q.push(
+ { event: "setAccount", account: 95994},
+ { event: "setEmail", email: "79054025255fb1a26e4bc422aef54eb4" },
+ { event: "setZipcode", zipcode: "12345" },
+ { event: "setSiteType", type: deviceType},
+ { event: "trackTransaction", id: Math.floor(Math.random()*99999999999), item: [
+    {id: "온라인상담", price: 1, quantity: 1 }
+ ]}
+);
+</script> 
+<!-- END Criteo 세일즈 태그 -->
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+간편창업문의 : simple_ok.php
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+<!-- Criteo 세일즈 태그 TripleHM 20220504 -->
+<script type="text/javascript">
+window.criteo_q = window.criteo_q || [];
+var deviceType = /iPad/.test(navigator.userAgent) ? "t" : /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test(navigator.userAgent) ? "m" : "d";
+window.criteo_q.push(
+ { event: "setAccount", account: 95994},
+ { event: "setEmail", email: "79054025255fb1a26e4bc422aef54eb4" },
+ { event: "setZipcode", zipcode: "12345" },
+ { event: "setSiteType", type: deviceType},
+ { event: "trackTransaction", id: Math.floor(Math.random()*99999999999), item: [
+    {id: "간편창업문의", price: 1, quantity: 1 }
+ ]}
+);
+</script> 
+
+
+
+
+
+MO
+
+전화상담 : div class="tel-select" 안에 a태그 클릭시 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+SMS상담 : https://donchicken.co.kr/new/m/html/foundation_counsel_ok.php
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+
+
+
+itemid1 : SMS상담, 
+itemid2 : 온라인상담, 
+itemid3 : 전화문의 
+itemid4 : 간편창업문의
+
+WEB
+SMS 상담  - index.php -> sms_ok.php - > sms_success
+온라인 상담 - index.php -> foundation_counsel_ok ->foundation_counsel_success
+간편창업문의 - index.php -> simple_ok.php -> index.php
+
+MO
+창업상담 index.php -> foundation_counsel_ok ->foundation_counsel_success
+간편창업문의 index.php -> sms_counsel-> sms_ok.php -> sms_success
+전화문의 

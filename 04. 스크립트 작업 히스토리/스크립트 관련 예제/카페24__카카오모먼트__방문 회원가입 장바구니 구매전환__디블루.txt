@@ -1,0 +1,34 @@
+디블루 카페24 카카오모먼트 방문 회원가입 장바구니 구매전환
+
+방문이벤트  -  상품관리 -> seo최적화 -> 가장하단 고급설정 
+<script type="text/javascript">
+      kakaoPixel('3392178109132091885').pageView();
+</script>
+
+
+회원가입완료이벤트 - 화원가입완료페이지
+<!-- 카카오모먼트 회원가입완료 2022.04.21 TripleHM -->
+<script type="text/javascript">
+      kakaoPixel('3392178109132091885').completeRegistration();
+</script>
+
+
+장바구니추가이벤트 - 주문상세페이지
+만약, 변수가 안나오면 div태그 안에 넣어보자.
+<!-- 카카오모먼트 장바구니추가 2022.04.21 TripleHM -->
+<script type="text/javascript">
+    var btnCart = document.querySelector('#cartBtn');
+
+    btnCart.addEventListener('click', event => {    
+        kakaoPixel('3392178109132091885').addToCart({
+            id: '{$product_no}'
+          });
+    })
+</script>
+
+
+구매완료 - 주문완료페이지
+<!-- 카카오모먼트 구매완료 2022.04.21 TripleHM -->
+<script type="text/javascript">
+      kakaoPixel('3392178109132091885').purchase();
+</script>

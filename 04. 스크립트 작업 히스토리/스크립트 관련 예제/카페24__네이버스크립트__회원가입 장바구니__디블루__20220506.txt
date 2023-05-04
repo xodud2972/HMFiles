@@ -1,0 +1,24 @@
+디블루 카페24 네이버스크립트 회원가입 장바구니 20220506
+
+회원가입 
+<!-- 네이버스크립트 TripleHM 20220506 -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"> </script> 
+<script type="text/javascript"> 
+if (!wcs_add) var wcs_add={};
+wcs_add["wa"] = "s_47173516abd5";
+if (!_nasa) var _nasa={};
+_nasa["cnv"] = wcs.cnv("2","1"); 
+wcs_do(_nasa);
+</script>
+
+
+장바구니 - >             </thead> <tbody class="center"> <tr> 밑에 넣기
+<!-- 네이버스크립트 장바구니 2022.04.28 TripleHM -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script>
+<script type="text/javascript">
+if (!wcs_add) var wcs_add={};
+wcs_add["wa"] = "s_47173516abd5";
+if (!_nasa) var _nasa={};
+_nasa["cnv"] = wcs.cnv("3","10"); 
+wcs_do(_nasa);
+</script>

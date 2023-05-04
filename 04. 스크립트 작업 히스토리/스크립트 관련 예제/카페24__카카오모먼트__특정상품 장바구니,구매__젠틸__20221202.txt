@@ -1,0 +1,213 @@
+https://gentil.kr/product/%EC%A0%A0%ED%8B%B8-%EC%BA%90%EB%82%98%EB%8B%A4-%EB%B9%84%EA%B1%B4-%EB%A9%80%ED%8B%B0%ED%94%84%EB%A1%9C%ED%8B%B4-%EB%A6%AC%EC%96%BC-%EB%B0%94%EB%8B%90%EB%9D%BC%EB%B9%88%EC%B4%88%EC%BD%94-stick/25/category/1/display/2/
+
+https://gentil.kr/product/%EC%A0%A0%ED%8B%B8-%EC%BA%90%EB%82%98%EB%8B%A4-%EB%B9%84%EA%B1%B4-%EB%A9%80%ED%8B%B0%ED%94%84%EB%A1%9C%ED%8B%B4-%EB%A6%AC%EC%96%BC-%EB%B0%94%EB%8B%90%EB%9D%BC%EB%B9%88%EC%B4%88%EC%BD%94-bottle/24/category/1/display/2/
+
+위 두 상품에 대한 구매, 장바구니 픽셀 삽입 요청
+
+
+[구매]
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('7697661581887949449').pageView();
+      kakaoPixel('7697661581887949449').purchase('프로틴 구매');
+</script>
+
+
+[장바구니]
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('7697661581887949449').addToCart({
+        id: '상품고유값입력',
+        tag: '프로틴 장바구니'
+      });
+</script>
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+https://gentil.kr/product/%EC%A0%A0%ED%8B%B8-%EB%B2%A0%EC%9D%B4%EB%B9%84-%EC%8A%A4%ED%82%A8%EC%BC%80%EC%96%B4-%EC%84%B8%ED%8A%B8/23/category/24/display/1/
+https://gentil.kr/product/%EC%A0%A0%ED%8B%B8-%EB%B2%A0%EC%9D%B4%EB%B9%84-%EC%8B%9C%EA%B7%B8%EB%8B%88%EC%B2%98-%EC%87%BC%ED%95%91%EB%B0%B1/22/category/24/display/1/
+https://gentil.kr/product/%EC%A0%A0%ED%8B%B8-%EB%B2%A0%EC%9D%B4%EB%B9%84-%EB%B0%94%EC%8A%A4%EC%95%A4%EC%83%B4%ED%91%B8/21/category/24/display/1/
+https://gentil.kr/product/%EC%A0%A0%ED%8B%B8-%EB%B2%A0%EC%9D%B4%EB%B9%84-%EB%A1%9C%EC%85%98/20/category/24/display/1/
+
+위 4가지 상품에 대한 구매, 장바구니 픽셀 설치 요청
+
+[구매]
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('7697661581887949449').pageView();
+      kakaoPixel('7697661581887949449').purchase('베이비 구매');
+</script>
+
+
+
+
+[장바구니] 
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('7697661581887949449').addToCart({
+        id: '상품고유값입력',
+        tag: '베이비 장바구니'
+      });
+</script>
+
+
+
+-----------------------작업 내용 20221202 장바구니 추가 ----------------------------------------------------------------------------------------------------------------------------------------------
+<!-- TripleHM 2022-11-04 카카오모먼트 장바구니&관심상품 추가 이벤트 시작 -->
+<script>
+    window.onload = function() {
+        var cartBtn = document.querySelector('#detail_wrap > div > div.detail_center > div > div > div:nth-child(7) > a.center');
+        if( cartBtn == null){
+            cartBtn = document.querySelector('#detail_wrap > div > div.detail_center > div > div > div:nth-child(6) > a.center');
+        }
+        var wishBtn = document.querySelector('#detail_wrap > div > div.detail_center > div > div > div:nth-child(7) > a.right');
+        if( wishBtn == null){
+            wishBtn = document.querySelector('#detail_wrap > div > div.detail_center > div > div > div:nth-child(6) > a.right');
+        }
+        cartBtn.addEventListener('click', event => {            
+          kakaoPixel('7697661581887949449').addToCart({
+            id: prd_no,
+            tag: '장바구니 추가'
+          });          
+            //20221202 추가 TripleHM 특정상품 장바구니추가 이벤트 시작
+            if(prd_no == '24' || prd_no == '25'){
+                console.log('프로틴 상품 클릭');
+                kakaoPixel('7697661581887949449').addToCart({
+                    id: prd_no,
+                    tag: '프로틴 장바구니'
+                });
+            }      
+            if(prd_no == '20' || prd_no == '21'|| prd_no == '22'|| prd_no == '23'){
+                console.log('베이비 상품 클릭');
+                kakaoPixel('7697661581887949449').addToCart({
+                    id: prd_no,
+                    tag: '베이비 장바구니'
+                });                
+            }              
+            //20221202 추가 TripleHM 특정상품 장바구니추가 이벤트 끝
+        })     
+        wishBtn.addEventListener('click', event => {
+          kakaoPixel('7697661581887949449').addToCart({
+            id: prd_no,
+            tag: '관심상품 추가'
+          });
+        })      
+    };
+    console.log('이 상품의 번호는'+ prd_no +'번 입니다');
+</script>
+<!-- TripleHM 2022-11-04 카카오모먼트 장바구니&관심상품 추가 이벤트 끝 -->
+
+
+-----------------------작업 내용 20221202 구매이벤트 ----------------------------------------------------------------------------------------------------------------------------------------------
+
+아래 배열 코드를 주문목록 나오는 자리에 무려 4번이나 넣어서 데이터 모두 배열에 푸쉬함.
+
+<script>
+    if(!echo_products) var echo_products=[];
+    echo_products.push({
+    'item_id': '{$product_no}',
+    'name' : '{$product_name}',
+    'price' : '{$product_price}'.replace(',','').replace('원','')
+    });
+</script>    
+
+위 코드로 모든 항목 배열에 넣어서 아래코드로 코드 실행
+
+<!-- 카카오모먼트 특정상품 구매이벤트 20221202 TripleHM 시작-->
+<script>
+    window.onload = function() {    
+        for(var i = 0; i<echo_products.length; i++){
+            if(echo_products[i]['item_id'] == '24' || echo_products[i]['item_id'] == '25'){
+                console.log('프로틴 구매');
+                kakaoPixel('7697661581887949449').purchase('프로틴 구매');
+            }
+            if(echo_products[i]['item_id'] == '20' || echo_products[i]['item_id'] == '21'|| echo_products[i]['item_id'] == '22'|| echo_products[i]['item_id'] == '23'){
+                console.log('베이비 구매');
+                kakaoPixel('7697661581887949449').purchase('베이비 구매');
+            }
+        }
+    }
+</script>
+<!-- 카카오모먼트 특정상품 구매이벤트 20221202 TripleHM 끝-->
+
+
+
+---------------------------------------------------------------------------------mo작업내용----------------------------------------------------------------------------------------------
+이전에 M작업을 진행하지 않았던 탓에 설치가 되어있지 않아서 오늘 아래코드를 최하단에 삽입함
+
+<!-- TripleHM 2022-12-02 카카오모먼트 장바구니&관심상품추가 & npay 이벤트 시작 -->
+<script>
+    window.onload = function() {
+    	const cart_btn = document.querySelector('#actionCart');
+        const wish_btn = document.querySelector('#actionWish');
+        const npay_btn = document.querySelector('.npay_btn_item > a');
+        
+        cart_btn.addEventListener('click', event => {    
+            console.log('장바구니 추가버튼 클릭완료');
+            kakaoPixel('7697661581887949449').addToCart({
+                id: prd_no,
+                tag: '장바구니 추가'
+          	});          
+            if(prd_no == '24' || prd_no == '25'){
+                console.log('프로틴 상품 클릭');
+                kakaoPixel('7697661581887949449').addToCart({
+                    id: prd_no,
+                    tag: '프로틴 장바구니'
+                });
+            }      
+            if(prd_no == '20' || prd_no == '21'|| prd_no == '22'|| prd_no == '23'){
+                console.log('베이비 상품 클릭');
+                kakaoPixel('7697661581887949449').addToCart({
+                    id: prd_no,
+                    tag: '베이비 장바구니'
+                });                
+            }              
+        });
+        
+        wish_btn.addEventListener('click', event => {    
+		console.log('관심상품 추가버튼 클릭완료');            
+            kakaoPixel('7697661581887949449').addToCart({
+                id: prd_no,
+                tag: '관심상품 추가'
+          });
+        });
+        
+        npay_btn.addEventListener('click', event => {    
+            kakaoPixel('7697661581887949449').purchase('네이버페이 구매');
+            console.log('네이버폐이 구매버튼 클릭완료');
+        })
+    }
+</script>
+<!-- TripleHM 2022-12-02 카카오모먼트 장바구니&관심상품추가 & npay 이벤트 끝 -->
+
+
+------------------------------------------------------------------------------------------모바일 주문완료 작업---------------------------------------------------
+<script>
+    if(!echo_products) var echo_products=[];
+    echo_products.push({
+    'item_id': '{$product_no}',
+    'name' : '{$product_name}',
+    'price' : '{$product_price}'.replace(',','').replace('원','')
+    });
+</script>         
+위코드를 상품반복되는 코드  <ul class="info"> 아래쪽에 넣어주고 이 코드는 4번 반복되어 4번 다 넣어준다.
+
+가장 하단에 아래 코드를 넣어준다.
+
+<!-- 카카오모먼트 특정상품 구매이벤트 20221202 TripleHM 시작-->
+<script>
+    window.onload = function() {    
+        for(var i = 0; i<echo_products.length; i++){
+            if(echo_products[i]['item_id'] == '24' || echo_products[i]['item_id'] == '25'){
+                console.log('프로틴 구매');
+                kakaoPixel('7697661581887949449').purchase('프로틴 구매');
+            }
+            if(echo_products[i]['item_id'] == '20' || echo_products[i]['item_id'] == '21'|| echo_products[i]['item_id'] == '22'|| echo_products[i]['item_id'] == '23'){
+                console.log('베이비 구매');
+                kakaoPixel('7697661581887949449').purchase('베이비 구매');
+            }
+        }
+    }
+</script>
+<!-- 카카오모먼트 특정상품 구매이벤트 20221202 TripleHM 끝-->

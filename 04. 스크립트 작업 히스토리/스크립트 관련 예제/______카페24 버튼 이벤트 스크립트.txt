@@ -1,0 +1,64 @@
+상품상세
+    <!-- GA script START 2021.04.28 -->
+    <script>
+    gtag('event','view_item', {
+      'value': 1, 
+      'items': [
+        {
+          'id': '{$product_no}', 
+          'google_business_vertical': 'retail'
+        }]
+    });
+    </script>
+    <!-- GA script END 2021.04.28 -->
+
+
+    <!-- Event snippet for 구매완료 (결제 + 네이버페이) conversion page START 2021.04.28 -->
+    <script>
+      function convertPurchase(){
+          gtag('event', 'conversion', {
+              'send_to': 'AW-377980715/pwDRCL_j4osCEKuOnrQB',
+              'value': '{$product_sale_price}'.replace(/[원,\D ]/g, ''),
+              'currency': 'KRW',
+              'transaction_id': "{$product_no}"
+          });
+       }
+    </script>
+
+
+
+<!-- Event snippet for 구매전환 Npay conversion page START 2021.04.28-->
+    <script>
+    window.onload = function() {
+        const btnNpay = document.querySelector(".npay_btn_pay");
+        btnNpay.addEventListener('click', event => {
+			gtag('event', 'conversion', {
+                'send_to': 'AW-377980715/pwDRCL_j4osCEKuOnrQB',
+              	'value': '{$product_sale_price}'.replace(/[원,\D ]/g, ''),
+              	'currency': 'KRW',
+              	'transaction_id': "{$product_no}"
+          	});
+        });
+    };
+</script> 
+
+
+
+<!-- Event snippet for 장바구니 ( ADD CART + 찜 ) conversion page START 2021.04.28 -->
+<script>
+    function convertAddToCart(){
+  gtag('event', 'conversion', {'send_to': 'AW-377980715/et_2CJ6eiIwCEKuOnrQB'});
+        }
+</script>
+
+
+
+<!-- Event snippet for 장바구니 ( ADD CART + 찜 ) conversion page START 2021.04.28 -->
+<script>
+    window.onload = function() {
+        const btnNpay = document.querySelector(".npay_btn_zzim");
+        btnNpay.addEventListener('click', event => {
+          	gtag('event', 'conversion', {'send_to': 'AW-377980715/et_2CJ6eiIwCEKuOnrQB'});
+		});
+    };
+</script>

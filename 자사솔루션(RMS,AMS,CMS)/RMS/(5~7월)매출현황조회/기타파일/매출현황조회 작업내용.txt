@@ -1,0 +1,78 @@
+http://rms.hmcorp.co.kr/report/sales/?
+nc=62&
+old_divi=&
+eeday=&
+em_seq1=201036&
+type_member=1&
+division1%5B%5D=809&
+division1%5B%5D=926&
+m_nm%5B%5D=849&
+m_nm%5B%5D=850&
+em_seq=&
+em_nm=&
+cal_kind=d&
+syear=2022&smonth=04&sday=01&
+eyear=2022&emonth=05&eday=10&
+weekdayyn=N
+
+ [nc] => 62
+    [old_divi] => 				
+    [eeday] => 				
+    [em_seq1] => 			팀 선택 후 "엄태영" 검색하였을 때 나오는 팀 코드
+    [type_member] => 1		인원기준(1)  ,   본부/팀기준(2)			
+    [division1] => Array		부문선택 (common2 부문코드)
+        (
+            [0] => 809
+        )
+
+    [m_nm]  => Array		매체구분 (m_nm goodtype_2 코드가 아닌 common2에 일자별카테고리 코드임)
+        (
+            [0] => 849
+            [1] => 850
+            [2] => 852
+            [3] => 871
+            [4] => 855
+        )
+
+    [em_seq] => 			검색어 "엄태영" 의 직원코드
+    [em_nm] => 			검색어 "엄태영"
+    [cal_kind] => d			일별 주별 월별 연별 구분
+    [syear] => 2022	  [smonth] => 04 [sday] => 01
+    [eyear] => 2022 [emonth] => 05  [eday] => 10
+    [weekdayyn] => N		비영업일 포함 비포함
+    [sc] => sales		
+
+
+funcGoods3($cal_kind, $syear, $smonth, $sday, $eyear, $emonth, $eday)
+
+[old_divi] [eeday] [em_seq1] [type_member] [division1] [m_nm] [em_seq] [em_nm] [weekdayyn] 는 get방식으로
+URL로 바로 넘어가고 나머지 날짜관련은 함수로도 인자로도 사용.
+
+
+현재 쿼리 돌릴 때 매개변수 필요한것들 
+조회기간(시작날짜, 끝날짜) , 광고유형, 광고매체, 광고주or광고계정or사업자번호, 
+s_date1,s_date2.....		ad_type	m_nm	cs_nm	cs_m_id    cs_num
+
+
+표는 매체별로 묶음이 아니라, 검색유형별로 묶인 후에 상품별로 묶인다.
+
+V 	1. 달력기능 오픈소스 
+V 	2. GET파라미터 체킹 후 셋팅
+3. 측정기준 별 테이블 데이터 변경 + 차트 변경 + 데이터 다운로드
+4. 구글차트 2개 Date 별로 쿼리 조회 후 두개의 결과데이터 꺽은선 그래프로 배치
+V 	5. 측정기준 광고주 일 경우 테이블에 페이징처리
+V 	6. 다운로드 기능 생성
+V 	7. 가로 스크롤 적용
+8. 테이블 데이터의 숫자 클릭시 계정리스트 팝업 설정
+
+--------------------------------우선순위 (기능측면) --------------------------------
+
+구글 차트 2개 비교 - 기존에 $row를 json형태로 바꿔서 보여주는 방식이였는데 $row에서 배열항목을 추가하고 그 뒤로 다른 데이터값들을 
+		추가해주면 알아서 그래프가 2개로 전환된다. 그래서 쿼리 돌려서 비교값을 뽑은 후 비교값도 같이 $S_RETRUNVAL에 넣어서
+		$row에 넣어주면 될거같다. 결론 -> 쿼리로 비교데이터도 나오게 한다음 배열로 
+
+
+측정기준 별 구글 차트 변경
+
+넘겨받은 DATE가 두 개 일경우 두개의 쿼리를 돌려서 결과값을 따로 그래프에 뿌려준다.
+

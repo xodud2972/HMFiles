@@ -1,0 +1,279 @@
+<?
+ini_set('memory_limit','-1');
+set_time_limit(0);
+
+@session_start();
+ob_start();
+
+
+
+@include_once $_SERVER['DOCUMENT_ROOT'].'/PHPExcel_2022/PHPExcel.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.arrayvalues.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.common.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/cls/cls.work.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/cls/cls.employee.php';
+
+$clsWork			= new clsWork();
+
+$S_RETURNVAL_TITLE	= $clsWork->funcJoinProjectGetTitle();
+$S_RETURNVAL		= $clsWork->funcSelectProjectContent(down);
+$S_RETURNVAL_HISTORY= $clsWork->funcGetProjectHistory();
+
+$var=$S_RETURNVAL_HISTORY;
+$var1=json_decode($var,true);
+
+
+/*--연결항목 찾아내기--*/
+foreach($S_RETURNVAL_TITLE['connection_title'] as $k1=>$v1){
+	if($v1){
+		$arr_connection_title[$v1]		= $k1;
+		$arr_connection_value[$v1][]	= $v1.",".$k1.",".$S_RETURNVAL_TITLE['connection_option'][$k1];
+	}
+}
+
+//연결항목에, 옵션번호 합치기 위해 연결항목, 옵션값 배열로 만들기
+if($arr_connection_value){
+	foreach($arr_connection_value as $k2=>$v2){
+		foreach($v2 as $k3=>$v3){
+			$exx = explode(",",$v3);		
+			$arr_option									= $clsWork->funcArrayProjectOption($exx[2],null);	//연결항목의 옵션값 뽑아오기
+			$arr_option_value_new[$exx[0]]				= $arr_option['optoin_value'][$exx[2]];
+			$arr_get_connection_option_code[$exx[0]]	= $exx[2];										//연결항목의 옵션코드를 배열로 만들기
+			$arr_get_title[$exx[0]][$exx[3]]			= $exx[1];										//연결항목의 연결항목타이틀을 배열로 만들기
+		}
+	}
+}
+//연결항목에, 옵션번호 합치기 위해 연결항목, 옵션값 배열로 만들기
+
+//연결항목이 있을 때 옵션번호와 합치기
+if($arr_option_value_new){
+	foreach($arr_option_value_new as $k4=>$v4){
+		if(!empty($v4)) {
+		foreach($v4 as $k5=>$v5){
+			$arr_get_connection_titile[$k4]	= $arr_get_title[$k4];
+		}
+		}
+	}
+}
+//연결항목이 있을 때 옵션번호와 합치기
+/*--연결항목 찾아내기 --*/
+
+
+foreach($S_RETURNVAL['title'] as $k=>$v){ 
+
+	//공개일때만 뿌리기
+	if($S_RETURNVAL_TITLE['open_yn'][$v]=="Y"){
+
+		$mystring = $v;
+		$findme   = 'title';
+		$pos = strpos($mystring, $findme);
+
+		if ($pos !== false) {	//title(n) 항목 가져오기
+
+			$title[]=$v;
+
+			$title_kr_name[$v]				= $S_RETURNVAL_TITLE['title_kr_name'][$v];
+			$title_bgcolor[$v]				= $S_RETURNVAL_TITLE['bg_color'][$v];	
+			$title_memo[$v]					= $S_RETURNVAL_TITLE['title_memo'][$v];	
+			
+			//컨텐츠가 있고
+			foreach($S_RETURNVAL['content'] as $kk=>$vv){	
+				//옵션타입이고
+				if($S_RETURNVAL_TITLE['option_type'][$v]){
+					//내가 연결항목일 때
+					if($S_RETURNVAL_TITLE['connection_title'][$v]){ 
+
+						$ex1 = explode(",",$S_RETURNVAL['content'][$kk][$v]);
+						$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v],null);
+						$content[$kk][$v] = $arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]][$ex1[1]];
+					
+					//내가 연결항목이 아닐때
+					}else{
+						//연결항목이 있을때
+						if($arr_connection_title[$v]){ 
+							
+							$ex2 = explode(",",$S_RETURNVAL['content'][$kk][$v]);
+							$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v],null);
+							$content[$kk][$v] = $arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]][$ex2[5]];
+
+						//연결항목이 없을뎨
+						}else{
+							
+							$ex3 = explode(",",$S_RETURNVAL['content'][$kk][$v]);
+							$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v],null);
+							$content[$kk][$v] = $arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]][$ex3[2]];
+					
+						}
+					}
+				//옵션타입이 아니고
+				}else{
+					$content[$kk][$v] = $S_RETURNVAL['content'][$kk][$v];
+				}
+			}
+		}
+	}
+}
+
+
+
+
+// ----------------------------데이터 가공 시작-----------------------------------
+
+
+
+/**
+echo "<pre>";
+print_r($title_kr_name);
+echo "</pre>";
+**/
+echo "<pre>";
+print_r($S_RETURNVAL['content'][0]);
+print_r($S_RETURNVAL['content'][1]);
+echo "</pre>";
+
+
+// title제외한 content 데이터 행 개수 
+$rowCnt = count($S_RETURNVAL['content']);
+
+$aCnt = count($S_RETURNVAL['content'][0])-6;
+$bCnt = count($S_RETURNVAL['content'][0])-20;
+$cCnt = count($S_RETURNVAL['content'][0])-10;
+
+for($i=0; $i<$rowCnt;$i++){
+
+	/**
+	// 배열에서 불필요한 데이터 제거 작업
+	unset($S_RETURNVAL['content'][$i]['pts_seq']);
+	unset($S_RETURNVAL['content'][$i]['seq']);
+	unset($S_RETURNVAL['content'][$i]['ph_seq']);
+	unset($S_RETURNVAL['content'][$i]['reg_date']);
+	unset($S_RETURNVAL['content'][$i]['reg_time']);
+	unset($S_RETURNVAL['content'][$i]['reg_emp']);
+	unset($S_RETURNVAL['content'][$i]['upd_date']);
+	unset($S_RETURNVAL['content'][$i]['upd_time']);
+	unset($S_RETURNVAL['content'][$i]['upd_emp']);
+	**/
+array_splice($S_RETURNVAL['content'][$i], $aCnt); // 뒤쪽 reg,upd 제거
+array_splice($S_RETURNVAL['content'][$i], 0, 3); // 앞쪽 seq 제거
+array_splice($S_RETURNVAL['content'][$i], $bCnt, 10); // 뒤쪽 reg,upd 제거
+
+
+	// 부문 팀 한글 번역
+	$S_RETURNVAL['content'][$i]['title1'] = funcDiviKnm1($S_RETURNVAL['content'][$i]['title1']);
+	$S_RETURNVAL['content'][$i]['title2'] = funcDiviKnm1($S_RETURNVAL['content'][$i]['title2']);
+	$S_RETURNVAL['content'][$i]['title3'] = funSelectEmpNm($S_RETURNVAL['content'][$i]['title3']);
+/**
+	// 비어있거나 공백인 title 항목의 경우 배열에서 제거
+	foreach($S_RETURNVAL['content'][$i] as $key => $value){
+		if (is_array($value)) {
+			self::array_remove_empty($S_RETURNVAL['content'][$i][$key]);
+		}else {
+			$value = ($trim == true) ? trim($value) : $value;
+			if ($value == "") {
+				unset($S_RETURNVAL['content'][$i][$key]);
+			} else {
+				$S_RETURNVAL['content'][$i][$key] = $value;
+			}
+		}
+	}
+**/
+}
+/**
+echo "<pre>";
+print_r($S_RETURNVAL['content']);
+echo "</pre>";
+**/
+
+// title컬럼에 확인여부 추가
+$title_kr_name['isCheck'] = '확인여부';
+
+// contents 배열에 title넣기
+$contents[] = $title_kr_name;
+
+// contents 배열에 content 내용넣기
+for($i=1;$i<count($S_RETURNVAL['content']);$i++){
+	$contents[] = $S_RETURNVAL['content'][$i];
+}
+
+// --------------------------------------------데이터 가공 끝-----------------------------------
+
+
+//-----------------------------------------------phpexcel start----------------------------------
+$objPHPExcel = new PHPExcel(); 
+
+// 배경색 흰색 지정 변수
+$styleAll = array(
+		"fill" => array(
+			"type" => PHPExcel_Style_Fill::FILL_SOLID,
+			"color" => array("rgb" => "FFFFFF")
+		)
+	);
+// 1열 스타일 변수
+$titleRgb = array(
+		"fill" => array(
+			"type" => PHPExcel_Style_Fill::FILL_SOLID,
+			"color" => array("rgb" => "F5F5F5")
+		)
+	);
+
+// 테두리 스타일 변수
+$borderStyle = array(
+		'borders' => array(
+			'allborders' => array(
+				'style' => PHPExcel_Style_Border::BORDER_THIN
+		)
+	)
+);
+
+// 모든 행,열 배경색 흰색 지정
+$objPHPExcel->getActiveSheet()->getStyle("A1:ZZ1048576")->applyFromArray($styleAll);
+
+
+// 내용불러오기 
+$sheetIndex = $objPHPExcel->setActiveSheetIndex(0); 
+$objPHPExcel->getActiveSheet()->fromArray($contents);
+
+
+
+
+
+$vCnt = count($contents); // 행 개수 (세로 줄 개수)
+$hCnt = count($contents[0]); // 열 개수 (가로 컬럼 개수)
+
+
+for( $i=0, $A='A'; $i <= $hCnt; $i++,$A++ ) {
+	$alpa[] = $A; // AA AB 와 같은 행 배열 생성
+	$objPHPExcel->getActiveSheet()->getColumnDimension($A)->setWidth(20); // 각 행마다 넒이 지정
+	$lastAlpha = $A; // 마지막 행 이름 ex)BD
+}
+
+
+// 셀 스타일 지정
+for($i=2; $i<=$rowCnt; $i++){
+	$objPHPExcel->getActiveSheet()->getStyle('A1:'.$alpa[$hCnt-1].$i)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER); //가운데 정렬
+	$objPHPExcel->getActiveSheet()->getStyle('A1:'.$alpa[$hCnt-1].$i)->applyFromArray($borderStyle); // 각 셀 모든 테두리
+	$objPHPExcel->getActiveSheet()->getStyle('A1:'.$alpa[$hCnt-1].'1')->applyFromArray($titleRgb); // title영역 배경색 지정
+}
+
+echo "<pre>";
+print_r($contents[0]);
+print_r($contents[1]);
+echo "</pre>";
+
+die('끝!');
+
+header('Content-type: application/vnd.ms-excel;charset=EUC-KR');
+header("Content-Disposition: attachment; filename=".iconv('utf8', 'euckr', $var1['project_nm'])."_".date("Ymd").".xlsx"); //★파일이름.xls가 생성됨
+header('Expires: 0');
+header('Cache-Control: must-revalidate, post-check=0,pre-check=0');
+header('Pragma: public');
+
+$objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+
+ob_end_clean();
+
+$objWriter->save('php://output');
+
+exit;
+
+//-----------------------------------------------phpexcel end----------------------------------

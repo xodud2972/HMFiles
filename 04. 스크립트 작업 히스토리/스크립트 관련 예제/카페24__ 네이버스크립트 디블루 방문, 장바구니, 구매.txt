@@ -1,0 +1,35 @@
+네이버스크립트 카페24 디블루 방문, 장바구니, 구매
+
+
+1. 공통 스크립트 (아래 스크립트를 복사하신 후 모든페이지에 설치해주세요.)
+<!-- 네이버 공통 2022.04.28 TripleHM --> 
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"> </script> 
+<script type="text/javascript"> 
+if (!wcs_add) var wcs_add={};
+wcs_add["wa"] = "s_47173516abd5";
+if (!_nasa) var _nasa={};
+if(window.wcs){
+wcs.inflow();
+wcs_do(_nasa);
+}
+</script>
+
+
+2. 장바구니
+<!-- 네이버스크립트 장바구니 2022.04.28 TripleHM -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script> 
+<script type="text/javascript"> 
+var _nasa={};
+if(window.wcs) _nasa["cnv"] = wcs.cnv("3","{$total_product_price}.replace(/[원,\D ]/g,'')");
+console.log("{$total_product_price}".replace(/[원,\D ]/g,''));
+</script>    
+
+
+3. 구매전환
+<!-- 네이버 구매전환 TripleHM 2022.04.28 -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script> 
+<script type="text/javascript"> 
+var _nasa={};
+if(window.wcs) _nasa["cnv"] = wcs.cnv("1","${total_product_price}".replace(/[원,\D ]/g,'')); 
+console.log("{$total_product_price}".replace(/[원,\D ]/g,''));
+</script> 

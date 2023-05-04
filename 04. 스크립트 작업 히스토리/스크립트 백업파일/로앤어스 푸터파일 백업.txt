@@ -1,0 +1,87 @@
+	<div id="footer">		
+		<div class="contents_con">
+			<div class="logo_con">
+				<img src="/img/copy_logo.png" alt="" class="fx" />
+			</div>
+
+			<div class="text_con">
+				<div class="url_con">
+					<a href="http://www.lawnus2.co.kr/" target="_blank" class="a_btn">
+						<span>
+							로앤어스 공식사이트&nbsp;&nbsp;&nbsp;<font class="url_text">www.lawnus2.co.kr</font>
+						</span>
+					</a>
+				</div>
+
+				<div class="copyright">
+					<span>
+						법률사무소 로앤어스 <font class="bar">│</font> 사업자등록번호 : 784-10-01130 <font class="bar w_bar">│</font><br class="m_br" /> 대표변호사 : 최나리 <font class="bar m_bar">│</font><br class="w_br" />
+						주소 : 서초구 서초대로 274 3000타워 12층 <br />
+						대표번호 : 02-595-1962 <font class="bar">│</font> FAX : 02-595-1964 <font class="bar w_bar">│</font><br class="m_br" /> E-MAIL : cnr@lawnus.co.kr
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+</div>
+
+<script type="text/javascript" language="javascript">
+	// 화면 리사이징
+	$( window ).resize(function() {
+		if( $(window).width() <= 1024 ){
+			$(".info_popup").colorbox({iframe:true, width:"90%", height:"60%"});
+		}else{
+			$(".info_popup").colorbox({iframe:true, width:"700px", height:"500px"});
+		}
+	});
+
+	// TOP버튼 이동
+	function move_scroll(item_id){
+		var item = $("."+item_id);
+		var offset_item = item.offset();
+		var position_top = offset_item.top;
+
+		$('html,body').animate({scrollTop:position_top}, 500);
+	}
+</script>
+
+<!-- LOGGER SCRIPT FOR SETTING ENVIRONMENT V.27 : / FILL THE VALUE TO SET. --> 
+<script type="text/javascript"> 
+if( document.location.href.indexOf("write_ok")>=0 ){
+_TRK_PI = "ODR"; 
+_TRK_OA = "1"; 
+} 
+</script> 
+<!-- END OF ENVIRONMENT SCRIPT -->
+<!-- LOGGER(TM) TRACKING SCRIPT V.40 FOR logger.co.kr / 103386 : COMBINE TYPE / DO NOT ALTER THIS SCRIPT. 20191023-->
+<script type="text/javascript">var _TRK_LID = "103386";var _L_TD = "ssl.logger.co.kr";var _TRK_CDMN = ".lawnus.kr";</script>
+<script type="text/javascript">var _CDN_DOMAIN = location.protocol == "https:" ? "https://fs.bizspring.net" : "http://fs.bizspring.net"; 
+(function (b, s) { var f = b.getElementsByTagName(s)[0], j = b.createElement(s); j.async = true; j.src = '//fs.bizspring.net/fs4/bstrk.1.js'; f.parentNode.insertBefore(j, f); })(document, 'script');
+</script>
+<noscript><img alt="Logger Script" width="1" height="1" src="http://ssl.logger.co.kr/tracker.1.tsp?u=103386&amp;js=N"/></noscript>
+<!-- END OF LOGGER TRACKING SCRIPT -->
+
+<!-- Smartlog -->
+<script language="javascript" type="text/javascript">
+    var hpt_info={'_account':'UHPT-10223'};
+    var smtg_sc = document.createElement('script');
+    smtg_sc.type = 'text/javascript'; smtg_sc.async = true; smtg_sc.charset='utf-8';
+    smtg_sc.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'a17.smlog.co.kr/smart.js';
+    var smtg_script = document.getElementsByTagName('script')[0]; smtg_script.parentNode.insertBefore(smtg_sc, smtg_script);
+</script>
+<noscript><img src="//a17.smlog.co.kr/smart_bda.php?_account=10223" style="display:none;width:0;height:0;" border="0"/></noscript>
+
+<!-- NAVER SCRIPT START -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script>
+<script type="text/javascript">
+if (!wcs_add) var wcs_add={};
+wcs_add["wa"] = "s_2436c85808";
+if (!_nasa) var _nasa={};
+wcs.inflow("lawnus.kr");
+wcs_do(_nasa);
+</script>
+<!-- NAVER SCRIPT END -->
+
+</body>
+</html>

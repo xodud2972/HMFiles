@@ -1,0 +1,212 @@
+FTP__카카오모먼트, GA, GTM__방문,문의완료__기영이숯불두마리치킨 
+
+
+
+head.sub.php - 카카오, GA, GTM 공통태그
+
+		<!-- Global site tag (gtag.js) - Google Analytics 20220727 TripleHM (GA4) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-M9YGJHFKF3"></script>
+		<script>
+		  window.dataLayer = window.dataLayer || [];
+		  function gtag(){dataLayer.push(arguments);}
+		  gtag('js', new Date());
+
+		  gtag('config', 'G-M9YGJHFKF3');
+		</script>
+		<!-- Global site tag (gtag.js) - Google Analytics 20220727 TripleHM GA (UA) -->
+		<!--
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-235710735-1"></script>
+		<script>
+		  window.dataLayer = window.dataLayer || [];
+		  function gtag(){dataLayer.push(arguments);}
+		  gtag('js', new Date());
+
+		  gtag('config', 'UA-235710735-1');
+		</script>
+		-->
+		<!-- Google Tag Manager 20220727 TripleHM GTM-->
+		<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+		new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+		j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+		'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+		})(window,document,'script','dataLayer','GTM-PBCT68B');</script>
+		<!-- End Google Tag Manager 20220727 TripleHM GTM-->
+
+
+	<!-- 카카오먼트 공통코드 시작 2022-08-01 TripleHM -->
+	<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/kas/static/kp.js"></script>
+	<script type="text/javascript">
+		  kakaoPixel('6658379125383413274').pageView();
+	</script>
+	<!-- 카카오먼트 공통코드 끝 2022-08-01 TripleHM -->
+
+</head>
+<body<?php echo isset($g5['body_script']) ? $g5['body_script'] : ''; ?>>
+		<!-- Google Tag Manager (noscript) -->
+		<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PBCT68B"
+		height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+		<!-- End Google Tag Manager (noscript) -->
+
+
+
+proc.php - 문의완료 페이지에서 카카오모먼트 상담신청완료 스크립트 넣기 
+<?php
+include_once('./_common.php');
+include_once(G5_LIB_PATH.'/icode.sms.lib.php');
+include_once(G5_LIB_PATH.'/mailer.lib.php');
+
+if($_POST) {
+
+$bo_table = "counsel";
+$write_table = "g5_write_counsel";
+
+$wr_num = get_next_num($write_table);
+$wr_reply = '';
+
+$wr_subject = $wr_name."님의 문의입니다.";
+
+$sql = " insert into $write_table
+                set wr_num = '$wr_num',
+                     wr_reply = '$wr_reply',
+                     wr_comment = 0,
+                     ca_name = '$ca_name',
+                     wr_option = '$html,secret,$mail',
+                     wr_subject = '$wr_subject',
+                     wr_content = '$wr_content',
+                     wr_link1 = '$wr_link1',
+                     wr_link2 = '$wr_link2',
+                     wr_link1_hit = 0,
+                     wr_link2_hit = 0,
+                     wr_hit = 0,
+                     wr_good = 0,
+                     wr_nogood = 0,
+                     mb_id = '{$member['mb_id']}',
+                     wr_password = '$wr_password',
+                     wr_name = '$wr_name',
+                     wr_email = '$wr_email',
+                     wr_homepage = '$wr_homepage',
+                     wr_datetime = '".G5_TIME_YMDHIS."',
+                     wr_last = '".G5_TIME_YMDHIS."',
+                     wr_ip = '{$_SERVER['REMOTE_ADDR']}',
+                     wr_1 = '$wr_1',
+                     wr_2 = '$wr_2',
+                     wr_3 = '$wr_3',
+                     wr_4 = '$wr_4',
+                     wr_5 = '$wr_5',
+                     wr_6 = '$wr_6',
+                     wr_7 = '$wr_7',
+                     wr_8 = '$wr_8',
+                     wr_9 = '$wr_9',
+                     wr_10 = '$wr_10' ";
+sql_query($sql);
+
+$wr_id = sql_insert_id();
+
+// 부모 아이디에 UPDATE
+sql_query(" update $write_table set wr_parent = '$wr_id' where wr_id = '$wr_id' ");
+
+// 새글 INSERT
+sql_query(" insert into {$g5['board_new_table']} ( bo_table, wr_id, wr_parent, bn_datetime, mb_id ) values ( '{$bo_table}', '{$wr_id}', '{$wr_id}', '".G5_TIME_YMDHIS."', '{$member['mb_id']}' ) ");
+
+// 게시글 1 증가
+sql_query("update {$g5['board_table']} set bo_count_write = bo_count_write + 1 where bo_table = '{$bo_table}'");
+
+echo "
+	<!-- NAVER SCRIPT -->
+	<script type='text/javascript' src='//wcs.naver.net/wcslog.js'></script> 
+	<script type='text/javascript'> 
+	if (!wcs_add) var wcs_add={};
+	wcs_add['wa'] = 's_1b6f6abcc9ff';
+	if (!_nasa) var _nasa={};
+	_nasa['cnv'] = wcs.cnv('4','1'); //전환유형, 전환가치
+	wcs_do(_nasa);
+	</script>
+	<!-- NAVER SCRIPT END -->
+	";
+
+echo "
+	<!-- 카카오모먼트 상담신청완료 시작 2022-08-01 TripleHM -->
+	<script type='text/javascript' charset='UTF-8' src='//t1.daumcdn.net/kas/static/kp.js'></script>
+	<script type='text/javascript'>
+		  kakaoPixel('6658379125383413274').pageView();
+		  kakaoPixel('6658379125383413274').participation();
+	</script>
+	<!-- 카카오모먼트 상담신청완료 끝 2022-08-01 TripleHM -->
+	";
+
+
+alert("신청이 완료되었습니다.");
+}
+?>
+
+<script type="text/javascript">
+     var hpt_trace_info={'_mode':'q','_memid':''};
+</script>
+
+<!-- Smartlog -->
+<script type="text/javascript"> 
+    var hpt_info={'_account':'UHPT-18938', '_server': 'a23'};
+</script>
+<script language="javascript" src="//cdn.smlog.co.kr/core/smart.js" charset="utf-8"></script>
+<noscript><img src="//a23.smlog.co.kr/smart_bda.php?_account=18938" style="display:none;width:0;height:0;" border="0"/></noscript>
+
+
+custome_mo.js & customer_pc.js - GTM으로 문의완료 데이터 보내기
+function form_submit(f)
+{
+   if(f.wr_10.checked == false){
+	 alert("개인정보수집사항에 체크하셔야 합니다.");
+	 return false;
+    }
+	ga_date = new Date();
+	ga_time = ga_date.toLocaleString();
+	ga('send','event','상담문의','db',ga_time+'/'+f.wr_name.value+'/'+f.wr_1.value+'/'+f.wr_2.value);
+	gtag('event', 'conversion', {'send_to': 'AW-10877126719/j8BlCKqwzK8DEL-Qz8Io'});
+	fbq('track', 'Lead');
+	f.action = '/theme/kiyoung2/proc.php';
+
+	window.dataLayer = window.dataLayer || [];
+	window.dataLayer.push({
+			'event'			: 'consultingComplete',
+			'ga_userName'	: f.wr_name.value,
+			'ga_userPhone'	: f.wr_1.value,
+			'ga_userPlace'	: f.wr_2.value
+	});	
+}
+
+
+//form_submit
+function form_submit(f)
+{
+   if(f.wr_10.checked == false){
+	 alert("개인정보수집사항에 체PC크하셔야 합니다.");
+	 return false;
+    }
+
+	ga_date = new Date();
+	ga_time = ga_date.toLocaleString();
+	ga('send','event','상담문의','db',ga_time+'/'+f.wr_name.value+'/'+f.wr_1.value+'/'+f.wr_2.value);
+	gtag('event', 'conversion', {'send_to': 'AW-10877126719/j8BlCKqwzK8DEL-Qz8Io'});
+	fbq('track', 'Lead');
+	f.action = '/theme/kiyoung2/proc.php';
+	
+	//gtag('event', 'consultingComplete', {
+	//		'event_category' : '상담신청완료',
+	//		'event_label': ga_time+'/'+f.wr_name.value+'/'+f.wr_1.value+'/'+f.wr_2.value,
+	//		'non_interaction': false
+									});
+
+
+	window.dataLayer = window.dataLayer || [];
+	window.dataLayer.push({
+			'event'			: 'consultingComplete',
+			'ga_userName'	: f.wr_name.value,
+			'ga_userPhone'	: f.wr_1.value,
+			'ga_userPlace'	: f.wr_2.value
+	});	
+
+	
+}
+
+
+GTM태그는 proc.php로 안한 이유는 처음 요청이 해당 함수로 해달라고 지정해줘서 진행함

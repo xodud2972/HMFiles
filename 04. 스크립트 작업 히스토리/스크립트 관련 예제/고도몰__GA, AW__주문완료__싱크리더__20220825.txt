@@ -1,0 +1,20 @@
+고도몰__GA, AW__주문완료__싱크리더__20220825
+
+
+주문완료페이지 > 381line삽입 
+
+
+특이사항 : 무통장입금이 없어서 실제 이벤트 작동여부 확인이 불가능. 
+		ㄴ 요청자에게 이야기함.
+
+
+PC 및 MO에도 적용 완료
+<!-- Event snippet for 구매 (1) conversion page TripleHM 20220825-->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-354164726/7KeUCKXz8tgDEPa_8KgB',
+      'value': 1.0,
+      'currency': 'KRW',
+      'transaction_id': '{orderInfo.orderNo}'
+  });
+</script>

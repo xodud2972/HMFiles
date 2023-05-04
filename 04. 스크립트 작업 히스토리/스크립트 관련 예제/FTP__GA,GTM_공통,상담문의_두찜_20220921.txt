@@ -1,0 +1,53 @@
+FTP_GA,GTM_공통,상담문의_두찜_20220921
+
+작업요청내용↓
+1. 구글 태그 매니저 태그
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P9ZSWS2');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P9ZSWS2"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+2. 구글 애널리틱스 태그
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-242090947-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-242090947-1');
+</script>
+
+3. gtag
+gtag('event', 'consulting', {
+		'event_category : '상담문의',
+		'event_label' : {유저이름}, {핸드폰번호}, {창업희망지역}	
+	})
+
+
+실제작업내용↓
+공통태그 삽입위치 : www/theme/basic/head.sub.php
+상담문의완료 삽입위치 : www/theme/basic/skin/latest/contact/latest.skin.php
+상담문의완료 작업내용 : 
+ if (confirm('작성하신 내용으로 접수하시겠습니까?')) {
+									const wr_name = $('input[name="wr_name"]').val();
+									const wr_1 = $('input[name="wr_1"]').val();
+									const wr_2 = $('input[name="wr_2"]').val();
+									const wr_list = wr_name+', '+wr_1+', '+wr_2;
+                                    gtag('event', 'consulting', {
+										'event_category' : '상담문의',
+										'event_label' : wr_list
+									});
+                                    $.ajax({
+.
+.
+.
+.
+.

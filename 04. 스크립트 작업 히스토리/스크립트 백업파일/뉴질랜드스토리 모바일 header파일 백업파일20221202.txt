@@ -1,0 +1,347 @@
+{*** 상단레이아웃 | outline/_header.php ***}
+<!DOCTYPE html>
+<head>
+<meta name="description" content="{_meta_title}" />
+<meta name="keywords" content="{_meta_keywords}" />
+<meta http-equiv="Content-Type" content="text/html; charset=euc-kr" />
+<meta name="viewport" content="user-scalable=yes, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, height=device-height" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<title>{_meta_title}</title>
+
+<script src="{_cfg.rootDir}/data/skin_mobileV2/{_cfgMobileShop.tplSkinMobile}/common/js/common.js?v=201507"></script>
+<script src="../common/js/goods_list_action.js"></script>
+<script src="../common/js/jquery-1.4.2.min.js"></script>
+<script src="../common/js/jquery.mobile-1.1.1.js"></script>
+<script src="../common/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="../../../lib/js/MobileAnimationBanner.js"></script>
+<script type="text/javascript" src="../../../lib/js/MobileAnimationBannerLoader.js"></script>
+ 
+
+
+<!--{ @ mobile_script }-->
+<script src="{.script_file}"></script>
+<!--{ / }-->
+
+<script type="text/javascript">
+var GD_VERSION = 201507;
+function checkVersion(version) { return GD_VERSION >= version; }// 버전 체크
+function showSearchArea() {
+	if($(".search-area").is(':hidden') == true) {
+
+		$(".search-area").slideDown(30);
+	}
+	else {
+
+		$(".search-area").slideUp(0);
+	}
+}
+
+function showCateArea() {
+
+	var now_cate = $("[name=now_cate]").val();
+
+	if($("#cate-area").is(':hidden') == true) {
+		$("#page_title").hide();
+		$(".content").hide();
+		$(".content_goods").hide();
+		//$("body").addClass('back_bg');
+		$("#cate-area").slideDown(30);
+		getCategoryData(now_cate);
+	}
+	else {
+		$("#cate-area").hide();
+		//$("body").removeClass('back_bg');
+		$("#page_title").show();
+		$(".content").show();
+
+	}
+}
+
+function goHome() {
+	document.location.href="/" + getMobileHomepath() + "/index.php";
+}
+
+function goMenu(page_nm) {
+	switch(page_nm) {
+		case "category" :
+			document.location.href="/" + getMobileHomepath() + "/goods/category.php";
+			break;
+		case "my" :
+			document.location.href="/" + getMobileHomepath() + "/myp/menu_list.php";
+			break;
+		case "cart" :
+			document.location.href="/" + getMobileHomepath() + "/goods/cart.php";
+			break;
+		case "wish" :
+			document.location.href="/" + getMobileHomepath() + "/myp/wishlist.php";
+			break;
+		case "login" :
+			document.location.href="/" + getMobileHomepath() + "/mem/login.php";
+			break;
+		case "logout" :
+				document.location.href="/" + getMobileHomepath() + "/mem/logout.php";
+			break;
+		case "viewgoods" :
+				document.location.href="/" + getMobileHomepath() + "/myp/viewgoods.php";
+			break;
+		case "join" :
+				document.location.href="/" + getMobileHomepath() + "/mem/join.php";
+			break;
+	}
+}
+
+function searchKw() {
+	if(!$("[name=kw]").val()) {
+		alert("검색 키워드를 입력해 주시기 바랍니다");
+		return false;
+	}
+}
+
+function getMobileHomepath() {
+	//각 URL 최상위 홈PATH를 구한다. 모바일의 홈이 여러 종류일수 있으므로  2012-09-20 khs
+	var path1 = document.location.pathname;
+
+	if (path1.charAt(0) == '/')	{
+		path1 = path1.substring(1);
+	}
+	var x = path1.split("/");
+
+	return x[0];
+}
+
+function showCategoryMsg(message) {
+
+	var sec = 1000;
+
+	$("[id=goodsres-hide] .text_msg").text(message);
+	$("[id=goodsres-hide]").fadeIn(300);
+
+	setTimeout( function() {
+		$("[id=goodsres-hide]").fadeOut(300);
+	}, sec);
+}
+
+$(document).ready(function(){
+	$.ajax({
+		"url" : "{_mobileRootDir}/proc/mAjaxAction.php",
+		"type" : "post",
+		"data" : {
+			"mode" : "get_cart_item"
+		},
+		"cash" : false,
+		"dataType" : "json",
+		"success" : function(cartItem)
+		{
+			if (cartItem.quantity) {
+				$("#cart-btn .cart-item-quantity").text(" ("+cartItem.quantity.toString()+")");
+			}
+		}
+	});
+
+	try {
+		var todayGoodsMobileIdx = $.cookie('todayGoodsMobileIdx');
+		
+		if(todayGoodsMobileIdx != "undefined" && todayGoodsMobileIdx != "") {
+			
+			var goods_idx = todayGoodsMobileIdx.split(',');
+			var view_cnt = goods_idx.length - 1;
+			$("#viewgoods-btn .viewgoods-quantity").text(" ("+view_cnt.toString()+")");
+		}
+	}
+	catch(e) {}
+
+	
+
+});
+
+</script>
+<link rel="stylesheet" type="text/css" href="../common/css/reset.css" />
+<link rel="stylesheet" type="text/css" href="{_cfg.rootDir}/data/skin_mobileV2/{_cfgMobileShop.tplSkinMobile}/common/css/style.css?v=201507" />
+<link rel="stylesheet" type="text/css" href="../common/css/attendance.css" />
+<style type="text/css">
+.cart-item-quantity{font-weight:normal;}
+.viewgoods-quantity{font-weight:normal;}
+
+#goodsres-hide2 {display:none;} 
+.goodsres_wrap {position : fixed;left : 10%;width : 80%;background : #ffffff;display : block;border-radius:1em;box-shadow:2px 2px 4px #7f7f7f;z-index: 1000; bottom:20%;}
+.goodsres_wrap .goodsres_title {background:#313030;width:100%;border-top-left-radius:1em;border-top-right-radius:1em;height:45px;border-bottom:solid 1px #b2b2b2;margin-bottom:6px;}
+.goodsres_wrap .goodsres_title .title{padding-left:14px;line-height:45px;font-size:16px;font-weight:bold;color:#FFFFFF;font-family:dotum;}
+.goodsres_wrap .goodsres_msg { padding:15px; }
+.goodsres_wrap .goodsres_msg .text_msg{ font-size:12px; color:#353535;}
+
+</style>
+<!--<link rel="stylesheet" href="../style_screen.css" type="text/css" media="screen and (min-width: 321px)"  />-->
+
+<!--{ ? _cfgMobileShop.mobileShopIcon }--><link rel="apple-touch-icon-precomposed" href="{_cfg.rootDir}/data/skin_mobileV2/{_cfgMobileShop.tplSkinMobile}/{_cfgMobileShop.mobileShopIcon}" /><!--{ / }-->
+
+{=customHeader}
+	
+<!-- Facebook Pixel Code -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1928357907188101');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1928357907188101&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Facebook Pixel Code -->
+	
+</head>
+
+<body>
+
+<a name="tops"></a>
+ <div id="dynamic"></div>
+
+<div id="wrap">
+
+<header>
+<div class="gnb">
+	<div id="logo"<!--{?_cfgMobileShop.useOffCanvas}--> class="sliding-menu"<!--{/}-->>
+		<!--{ ? _cfgMobileShop.mobileShopLogo}-->
+		<a href="javascript:goHome();"><img src="../200_nstory_logo.jpg" alt="{_cfg.shopName}" title="{_cfg.shopName}" width="110px" /></a>
+		<!--{ : }-->
+		<div class="top_title"><a href="{_mobileRootDir}">{_shop_name}</a></div>
+		<!--{ / }-->
+		
+	</div>
+	<div id="logo-right">
+		<div id="search-btn" onClick="javascript:showSearchArea();"><img src="../common/img/new/seach.png" /></div>
+		<!--{ ? page_cache_enabled // USER_STATUS#PAGECACHE_PATCH_CHECKER : ☜ 삭제금지 }-->
+		<div class="top_global">
+			<span class="user-status-login" onClick="javascript:goMenu('my');">마이페이지</span>
+			<span class="user-status-login" onClick="javascript:goMenu('logout');" style="display: none;">로그아웃</span>
+			<span class="user-status-logout" onClick="javascript:goMenu('login');" style="display: none;">로그인</span>
+			<span class="user-status-logout" onClick="javascript:goMenu('join');" style="display: none;"><img src="../common/img/login/top_icon.png">회원가입</span>
+		</div>
+		<!--{ : }-->
+		<div class="top_global" >
+			<span onClick="javascript:goMenu('my');" style="border:none;">마이페이지</span><!--{ ? _sess }-->
+			<span onClick="javascript:goMenu('logout');" >로그아웃</span><!--{ : }-->
+			<span onClick="javascript:goMenu('login');" >로그인</span>
+			<span onClick="javascript:goMenu('join');" style="position:absolute; top:2px; right:110px;"><img src="../common/img/login/top_icon.png" style="position:absolute; top:0px; right:55px;">회원가입</span>
+			<!--{ / }-->
+		</div>
+		<!--{ / }-->
+		<div class="search-area">
+			<form action="{_mobileRootDir}/goods/list.php" method="get" onsubmit="return searchKw();">
+				<div id="search-box">
+					<input type="text" name="kw" placeholder=" 프로폴리스"/>
+				</div>
+					<input id="search-box-btn" type="submit" value="">
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="new-menu-area">
+	<div id="category-btn" onClick="javascript:goMenu('category');">카테고리<div class="bar_area"><img src="../common/img/new/menu_p.png" /></div></div>
+	<div id="cart-btn" onClick="javascript:goMenu('cart');">장바구니<span class="cart-item-quantity"></span><div class="bar_area"><img src="../common/img/new/menu_p.png" /></div></div>
+	<div id="viewgoods-btn" onClick="javascript:goMenu('viewgoods');">최근본상품<span class="viewgoods-quantity"></span></div>
+	<div id="more-view-btn"><div class="bar_area"><img src="../common/img/new/menu_p.png" /></div>더보기</div>
+	<div id="more-view-menu" style="display: none;">
+		<ul>
+			<li class="item wishlist">찜목록</li>
+			<li class="item goods-review">상품후기</li>
+			<li class="item goods-qna">상품문의</li>
+			<li class="item community">게시판</li>
+		</ul>
+	</div>
+</div>
+
+<!--{ ? _cfgMobileShop.useOffCanvas }-->
+<!-- 슬라이딩 메뉴 버튼 Start -->
+<div class="gd-flipcover-btn js-navtoggle">
+	<button type="button" class="btn-reset" style="background-color:#{_cfgMobileShop.offCanvasBtnColor};"><span class="sprite-icon icon-gnb">nav</span></button>
+</div>
+<!-- 슬라이딩 메뉴 버튼 End -->
+<!--{ / }-->
+
+</header>
+<!--{ ? _cfgMobileShop.useOffCanvas }-->
+<!-- 슬라이딩 메뉴 Start -->
+{#off_canvas}
+<!-- 슬라이딩 메뉴 End -->
+<!--{ / }-->
+
+<div class="clearb"></div>
+
+<section id="goodsres-hide" class="content_goods">
+	<div class="pop_back">
+		<div class="pop_effect">
+			<div class="text_msg"></div>
+		</div>
+	</div>
+</section>
+
+<section id="goodsres-hide2" class="content_goods">
+	<div class="goodsres_wrap">
+		<div class="goodsres_title"><div class="title">알림</div></div>
+		<div class="goodsres_msg"><div class="text_msg"></div></div>
+	</div>
+</section>
+
+<!-- Start : 출석체크 템플릿 -->
+<section id="attendance-popup" style="display: none;" data-root-dir="{_cfgMobileShop.mobileShopRootDir}">
+	<h1 id="attendance-title"></h1>
+	<div id="attendance-close">닫기</div>
+	<div id="attendance-info-straight" class="condition-type">
+		<div class="attendance-period">
+			<span class="attendance-start-date"></span> ~ <span class="attendance-end-date"></span> 까지
+		</div>
+		<div class="attendance-description">
+			연속 <span class="attendance-condition-period"></span>일 이상 출석하면 적립금이 차곡차곡!
+		</div>
+	</div>
+	<div id="attendance-info-sum" class="condition-type">
+		<div class="attendance-period">
+			기간 : <span class="attendance-start-date"></span> ~ <span class="attendance-end-date"></span> 안에
+		</div>
+		<div class="attendance-description">
+			<span class="attendance-condition-period"></span>일 이상 출석하면 적립금이 차곡차곡!
+		</div>
+	</div>
+	<h2 id="attendance-calendar-title">
+		<button id="attendance-calendar-previous-month">이전 달</button>
+		<span id="attendance-calendar-month">
+			<span id="attendance-calendar-month-1">January</span>
+			<span id="attendance-calendar-month-2">February</span>
+			<span id="attendance-calendar-month-3">March</span>
+			<span id="attendance-calendar-month-4">April</span>
+			<span id="attendance-calendar-month-5">May</span>
+			<span id="attendance-calendar-month-6">June</span>
+			<span id="attendance-calendar-month-7">July</span>
+			<span id="attendance-calendar-month-8">August</span>
+			<span id="attendance-calendar-month-9">September</span>
+			<span id="attendance-calendar-month-10">October</span>
+			<span id="attendance-calendar-month-11">November</span>
+			<span id="attendance-calendar-month-12">December</span>
+		</span>
+		<span id="attendance-calendar-year"></span>
+		<button id="attendance-calendar-next-month">다음 달</button>
+	</h2>
+	<table id="attendance-date-list">
+		<tbody>
+			<tr class="attendance-calendar-date-floor">
+				<td class="attendance-calendar-date-space"></td>
+				<td class="attendance-calendar-date-space"></td>
+				<td class="attendance-calendar-date-space"></td>
+				<td class="attendance-calendar-date-space"></td>
+				<td class="attendance-calendar-date-space"></td>
+				<td class="attendance-calendar-date-space"></td>
+				<td class="attendance-calendar-date-space"></td>
+			</tr>
+		</tbody>
+	</table>
+</section>
+<!-- End : 출석체크 템플릿 -->

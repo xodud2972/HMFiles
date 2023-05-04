@@ -1,0 +1,77 @@
+고도몰 슬리피캣 구글UA 전자상거래코드 20220519
+
+gag는 정의하기 나름이라는 것을 깨달았다.............
+
+<!-- 향상된 전자상거래코드 주문완료 TripleHM 20220519 -->
+<script type="text/javascript">
+  var txInfo = {
+    'transactionId': '{orderInfo.orderNo}',
+    'totalRevenue': {=orderInfo.settlePrice},
+    'shippingFee': {=gd_isset(orderInfo.totalDeliveryCharge)},
+    'firstOrder': '{=orderInfo.firstSaleFl}'
+  };
+
+  var goodsInfo = [
+    <!--{ @ orderInfo.goods }-->
+      {
+      'id': '{=.goodsNo}',
+      'name': '{=.goodsNm}',
+      'quantity': {=.goodsCnt},
+      'price': {=.goodsPrice}
+      },
+    <!--{ / }-->
+  ];
+
+gtag('event', 'purchase', {
+  "transaction_id": '{orderInfo.orderNo}',
+  "value": {=orderInfo.settlePrice},
+  "currency": "KRW",
+  "shipping": {=gd_isset(orderInfo.totalDeliveryCharge)},
+  "items": goodsInfo
+});
+</script>
+
+
+<!-- 향상된 전자상거래코드 장바구니추가 및 nPay버튼 TripleHM 20220519 -->
+<script type="text/javascript">
+	var cartBtnId = document.querySelector('#cartBtn');
+	
+	function addCartFunc(){
+			gtag('event', 'add_to_cart', {
+		  "id": "{goodsView.goodsNo}",
+		  "name": "{=goodsView['goodsNm']}",
+		  "price": '{=gd_isset(goodsView['goodsPrice'],0)}'
+		});
+	}
+	function nPayFunc(){
+	gtag('event', 'nPay_click', {
+			'event_category' : 'N폐이 버튼', 
+			'event_label' : "{goodsView.goodsNm}",
+			"value" : '{=gd_isset(goodsView['goodsPrice'],0)}'
+
+		});
+	}	
+	
+	cartBtnId.addEventListener('click', event => {
+	addCartFunc();
+		console.log(1);
+	})
+	
+	
+	var n_payBtn = document.querySelector('.npay_btn_link');
+	
+	n_payBtn.addEventListener('click', event => {
+		nPayFunc();
+		console.log(1);
+	})	
+</script>
+
+
+
+<!-- GA 회원가입완료 스크립트 TripleHM 20220519 -->
+<script>
+  gtag('event', '진입', {
+    'event_category': '회원가입',
+    'event_label': '회원가입_진입'
+  });
+</script>

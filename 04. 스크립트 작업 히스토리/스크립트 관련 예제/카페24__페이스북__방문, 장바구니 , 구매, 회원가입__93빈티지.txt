@@ -1,0 +1,58 @@
+93빈티지 카페 24 페이스북 방문, 장바구니 , 구매, 회원가입
+※ 주의 ※ 페이스북픽셀 크롬에서 확인하는데 켜놓은 상태에서 카페24 소스코드 편집창 클릭시 오류로 보임. 
+------------------------------------------------------------------------------------------------------------------------
+공통 (공통레이아웃페이지)
+
+<!-- 페이스북 공통 2022.04.25 TripleHM -->
+<!-- Meta Pixel Code -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1090525124876020');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1090525124876020&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+------------------------------------------------------------------------------------------------------------------------
+회원가입 (회원가입완료페이지)
+
+<!-- Facebook Pixel Code 회원가입완료 페이지 2022.04.25 tripleHM -->
+<script>
+    fbq('track', 'CompleteRegistration');
+</script>
+<!-- End Facebook Pixel Code -->
+------------------------------------------------------------------------------------------------------------------------
+    <!-- Facebook Pixel Code 장바구니페이지 2022.04.25 TripleHM -->
+<script>
+    var cartBtn = document.querySelector('.sub_cart');
+
+    cartBtn.addEventListener('click', event => {    
+        fbq('track', "AddToCart", {
+            content_type: 'product',
+            content_ids: ['{$product_no}'],
+            content_name: '{$name}',
+            currency: 'KRW',
+            value: '{$product_price}'
+        });
+    })
+</script>
+<!-- End Facebook Pixel Code -->  
+------------------------------------------------------------------------------------------------------------------------
+주문완료 (주문완료 페이지)
+<!-- Facebook Pixel Code 주문완료페이지 TripleHM 2022.03.14-->
+<script>
+    fbq('track', "Purchase", {
+        content_type: 'product',
+        content_ids: '{$order_id}'.replace(/[-원,\D ]/g, ''),
+        currency: 'KRW',
+        value: '{$normal_total_price_front}{$normal_total_price_front_tail}'.replace(/[원,\D ]/g, '')            
+    });
+</script> 

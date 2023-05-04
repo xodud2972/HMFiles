@@ -1,0 +1,63 @@
+
+imp_cnt		---- '노출수',
+click_cnt 		---- '클릭수', 
+ctr 		---- '클릭율(CTR)', 
+cost		---- '광고비', 
+ppc		---- '클릭당비용(PPC)', 
+conversion_cnt 	---- '전환수', 
+cvr		---- '전환율(CVR)', 
+cps 		---- '전환당 비용(CPS)', 
+conversion_amnt	---- '전환매출', 
+cpa 		-----'전환단가', 
+roas 		---- '광고 수익율(ROAS)'
+
+
+
+
+imp_cnt		---- '노출수',
+click_cnt 		---- '클릭수', 
+ctr 		---- '클릭율(CTR)', 
+ppc		---- '클릭당비용(PPC)', 
+cost		---- '광고비', 
+conversion_cnt 	---- '전환수', 
+cvr		---- '전환율(CVR)', 
+conversion_amnt	---- '전환매출', 
+cps 		---- '전환당 비용(CPS)', 
+cpa 		-----'전환단가', 
+roas 		---- '광고 수익율(ROAS)'
+
+imp_cnt, click_cnt, ctr, ppc, cost, conversion_cnt, cvr, conversion_amnt, cps, cpa, roas
+
+
+
+
+totalImpCnt		---- '노출수',
+totalClickCnt		---- '클릭수', 
+getCTR			---- '클릭율(CTR)', 
+totalCost			---- '광고비', 
+getPPC			---- '클릭당비용(PPC)', 
+totalConversionCnt		---- '전환수', 
+getCVR			---- '전환율(CVR)', 
+getCPS			---- '전환당 비용(CPS)', 
+totalConversionAmnt	---- '전환매출', 
+getConversionUnitPrice	-----'전환단가', 
+getROAS			---- '광고 수익율(ROAS)'
+
+
+
+
+totalImpCnt		---- '노출수',
+totalClickCnt		---- '클릭수', 
+getCTR			---- '클릭율(CTR)', 
+getPPC			---- '클릭당비용(PPC)', 		@@
+totalCost			---- '광고비', 			@@
+totalConversionCnt		---- '전환수', 	
+getCVR			---- '전환율(CVR)', 
+totalConversionAmnt	---- '전환매출', 			@@
+getCPS			---- '전환당 비용(CPS)', 		@@
+getConversionUnitPrice	-----'전환단가', 
+getROAS			---- '광고 수익율(ROAS)'
+
+
+
+

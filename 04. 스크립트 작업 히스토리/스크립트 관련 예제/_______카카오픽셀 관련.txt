@@ -1,0 +1,139 @@
+
+<!-- 카카오 픽셀 콘텐츠 조회 스크립트 START -->
+<script type="text/javascript">
+	kakaoPixel('키값변경').viewContent({
+		id: '{$product_no}'
+	});
+</script>  
+<!-- 카카오 픽셀 콘텐츠 조회 스크립트 END -->        
+
+
+
+<!-- 카카오픽셀 장바구니 스크립트 START -->
+<script type="text/javascript">
+	kakaoPixel('키값변경').viewCart();
+</script>
+<!-- 카카오픽셀 장바구니 스크립트 END -->
+
+
+
+/*구매완료*/
+
+<script>
+    var productJsonArray = new Array();
+    var totalProductQuantity = 0;
+    var totalProductPrice = 0;    
+
+    var objProduct = new Object();
+    objProduct.name = "{$product_name}";
+    objProduct.quantity = "{$product_quantity}";
+    objProduct.price = "{$product_price}";
+    if("{$product_name}") {
+    	productJsonArray.push(objProduct);
+	totalProductQuantity += '{$product_quantity}'*1;
+	totalProductPrice += '{$product_price}'.replace(/[원,\D ]/g, '') * '{$product_quantity}';
+    }
+
+    var resultProductList = JSON.stringify(productJsonArray);       
+    
+	kakaoPixel('키값변경').purchase({
+		total_quantity: totalProductQuantity, // 주문 내 상품 개수(optional)
+		total_price: totalProductPrice,  // 주문 총 가격(optional)
+		currency: "KRW",    // 주문 가격의 화폐 단위(optional, 기본 값은 KRW)
+        products: resultProductList          // 주문 내 상품 정보(optional)        
+	});
+</script> 
+
+
+
+
+
+<!-- 카카오 픽셀 회원가입 스트립트 START -->
+<script type="text/javascript">
+      kakaoPixel('키값변경').completeRegistration();
+</script>
+<!-- 카카오 픽셀 회원가입 스트립트 END -->
+
+
+
+
+
+
+<!-- 카카오 픽셀 검색 스크립트 START -->
+<script type="text/javascript">
+	kakaoPixel('키값변경').search({
+		keyword: getHttpParam('keyword')
+	});
+    
+	function getHttpParam(name) {
+	    var regexS = "[\\?&]" + name + "=([^&#]*)";
+	    var regex = new RegExp(regexS);
+	    var results = regex.exec(window.location.href);
+	    if (results == null) {
+		return 2;
+	    } else {
+		return decodeURIComponent(results[1]);
+	    }
+	}
+</script> 
+<!-- 카카오 픽셀 검색 스크립트 END -->
+
+
+
+
+
+<!-- 카카오 픽셀 Npay 스크립트 START -->
+<script type="text/javascript">
+try {
+  if ('addEventListener' in window) {
+    window.addEventListener('load', function () {
+      // 카카오 NPay 연동
+      kakaoPixel('<track_id>').purchaseNaverCheckout(function () {
+        var data = {
+          total_quantity: 0,   // 주문 내 상품 개수(optional)
+          total_price: 0,      // 주문 총 가격(optional)
+          currency: "KRW",     // 주문 가격의 화폐 단위(optional, 기본 값은 KRW)
+          products: []
+        }
+
+        try {
+          //
+          // NPay 버튼 누를 시에 실행할 로직으로,
+          // 해당 시점에 보낼 상품 데이터를 채워줘야 한다.
+          // 
+          // 예시) Cafe24
+          // aBasketProductData, single_content를 사용해 product를 추가한다.
+          if (typeof aBasketProductData !== 'undefined') { // PC
+            aBasketProductData.forEach(function (item) {
+              data.products.push({
+                'id': item.item_code,
+                'name': item.product_name,
+                'quantity': item.check_quantity,
+                'price': parseInt(item.product_price)
+              });
+            });
+          } else { // 모바일
+            data.products.push({
+              'id': (typeof iProductNo !== 'undefined') ? iProductNo : 'undefined',
+              'name': (typeof product_name !== 'undefined') ? product_name : 'undefined',
+              'quantity': (typeof iQuantity !== 'undefined') ? iQuantity : (typeof getQuantity !== 'undefined') ? getQuantity() : 0,
+              'price': ((typeof product_price !== 'undefined') ? product_price : '0').replace(/[^0-9]/g,'')
+              });
+            }
+            data.products.forEach(function (item) {
+              data.total_price += parseInt(item.price, 10);
+              data.total_quantity += parseInt(item.quantity, 10);
+            });
+            data.currency = SHOP.getCurrency();
+        } catch (err) {
+          console.log(err)
+        }
+        return data;
+      });
+    });
+  }
+} catch (e) {
+  /* ignore errors from kakaoPixel */
+}
+</script>
+<!-- 카카오 픽셀 Npay 스크립트 END -->

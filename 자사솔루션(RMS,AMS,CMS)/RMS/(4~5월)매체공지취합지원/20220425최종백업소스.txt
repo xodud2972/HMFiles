@@ -1,0 +1,3738 @@
+ip_work_25.php
+<?
+/**********************************************
+Author			: 김민주
+Create Date		: 2010.12.22
+Comment			: 광고주등록
+-----------------------------------------------
+Modify Author	:
+Modify date		:
+Comment			:
+***********************************************/
+?>
+<?
+
+@include_once $_SERVER['DOCUMENT_ROOT']."/cls/cls.work41.php";
+@include_once $_SERVER['DOCUMENT_ROOT'].'/function/func.response.php';
+
+//echo "<pre>";
+//print_R($_POST);
+//print_R($_GET);	
+//echo "</pre>";
+
+function funcUpdate() {
+	$_POST   = funcResponse($_POST);
+	$clsWork = new clsWork();
+	$N_RETURNVAL =  $clsWork->funcUpdProjectContent();
+
+	if ($N_RETURNVAL == 1) {
+		echo "수정되었습니다.";
+	} else {
+		echo "디비입력 오류, 다시 수정해 주세요";
+	}
+}
+
+// -----------개별 행 삭제-------------- 2022-04-08 엄태영 추가 -------------------------------
+function funcDelete() {
+	$_POST   = funcResponse($_POST);
+	$clsWork = new clsWork();
+	$N_RETURNVAL =  $clsWork->funcDelProjectContent();
+
+	if ($N_RETURNVAL == 1) {
+		echo "삭제되었습니다.";
+	} else {
+		echo "디비입력 오류, 다시 수정해 주세요";
+	}
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+switch ($_GET['submitType']) {
+	case 'insert'			: funcInsert();break;
+	case 'show'				: funcShow();break;
+	case 'update'			: funcUpdate();break;
+	case 'delete'			: funcDelete();break;
+}
+?>
+------------------------------------------------------------------------------------------------------------
+ipt_work_41.php
+<?
+/**********************************************
+Author			: 엄태영
+Create Date		: 2022.03.24
+Comment			: 매체공지/취합지원 테스트
+-----------------------------------------------
+Modify Author	:
+Modify date		:
+Comment			:
+***********************************************/
+?>
+<?
+@include_once $_SERVER['DOCUMENT_ROOT']."/cls/cls.work41.php";
+@include_once $_SERVER['DOCUMENT_ROOT'].'/function/func.response.php';
+
+/////////////////////////////////////////////////////////////////////////////
+
+//print_R($_POST);
+//print_R($_GET);
+// ------------123---------------
+function funcInsert() {
+	$_POST   = funcResponse($_POST);
+	$clsWork = new clsWork();
+	$N_RETURNVAL =  $clsWork->funcCheckForm();
+
+	//print_R($N_RETURNVAL);
+
+	if ($N_RETURNVAL == 1) {
+		echo "41등록되었습니다.";
+	} else if($N_RETURNVAL == 0){
+		echo "41해당월의 목표 데이터가 이미 등록되어 있습니다.";
+	} else {
+		echo "41디비입력 오류, 다시 수정해 주세요";
+	}
+}
+
+function funcShow() {
+	$_POST   = funcResponse($_POST);
+	$clsWork = new clsWork();
+	$N_RETURNVAL =  $clsWork->funcGetProjectHistory();
+
+	print_R($N_RETURNVAL);
+}
+
+function funcUpdate() {
+	$_POST   = funcResponse($_POST);
+	$clsWork = new clsWork();
+	$N_RETURNVAL =  $clsWork->funcUpdProjectHistory();
+
+	if ($N_RETURNVAL == 1) {
+		echo "수정되었습니다.";
+	} else {
+		echo "디비입력 오류, 다시 수정해 주세요";
+	}
+}
+
+function funcDelete() {
+	$_POST   = funcResponse($_POST);
+	$clsWork = new clsWork();
+	$N_RETURNVAL =  $clsWork->funcDelProjectHistory();
+
+	if ($N_RETURNVAL == 1) {
+		echo "삭제되었습니다.";
+	} else {
+		echo "디비입력 오류, 다시 삭제해 주세요";
+	}
+}
+
+function funcCopySetting() {
+	$_POST   = funcResponse($_POST);
+	$clsWork = new clsWork();
+	$N_RETURNVAL =  $clsWork->funcCopyTitleSetting();
+
+	if ($N_RETURNVAL == 1) {
+		echo "복사되었습니다.";
+	} else if ($N_RETURNVAL == -1) {
+		echo "디비입력 오류, 다시 수정해 주세요";
+	} else if ($N_RETURNVAL == -2) {
+		echo "현재 프로젝트와 복사 프로젝트의 항목 개수와 내용이 다릅니다. \n같은 항목의 프로젝트에만 복사 가능합니다.";
+	}
+}
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+switch ($_GET['submitType']) {
+	case 'insert'			: funcInsert();break;
+	case 'show'				: funcShow();break;
+	case 'update'			: funcUpdate();break;
+	case 'delete'			: funcDelete();break;
+	case 'copy'				: funcCopySetting();break;
+}
+?>
+-----------------------------------------------------------------------------------------------------------
+down41.php
+<?
+// ------------123---------------
+ini_set('memory_limit','-1'); // 메모리 제한 해제
+set_time_limit(0); // 시간 제한 해제 
+
+@session_start();
+ob_start(); // 출력 버퍼링을 켜는 PHP 명령어
+
+@include_once $_SERVER['DOCUMENT_ROOT'].'/PHPExcel_2022/PHPExcel.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.arrayvalues.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.common.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/cls/cls.work.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/cls/cls.employee.php';
+
+$clsWork			= new clsWork();
+
+$S_RETURNVAL_TITLE	= $clsWork->funcJoinProjectGetTitle();
+$S_RETURNVAL		= $clsWork->funcSelectProjectContent(down);
+$S_RETURNVAL_HISTORY= $clsWork->funcGetProjectHistory();
+
+$var=$S_RETURNVAL_HISTORY;
+$var1=json_decode($var,true);
+
+/*--연결항목 찾아내기--*/
+foreach($S_RETURNVAL_TITLE['connection_title'] as $k1=>$v1){
+	if($v1){
+		$arr_connection_title[$v1]		= $k1;
+		$arr_connection_value[$v1][]	= $v1.",".$k1.",".$S_RETURNVAL_TITLE['connection_option'][$k1];
+	}
+}
+
+//연결항목에, 옵션번호 합치기 위해 연결항목, 옵션값 배열로 만들기
+if($arr_connection_value){
+	foreach($arr_connection_value as $k2=>$v2){
+		foreach($v2 as $k3=>$v3){
+			$exx = explode(",",$v3);		
+			$arr_option									= $clsWork->funcArrayProjectOption($exx[2],null);	//연결항목의 옵션값 뽑아오기
+			$arr_option_value_new[$exx[0]]				= $arr_option['optoin_value'][$exx[2]];
+			$arr_get_connection_option_code[$exx[0]]	= $exx[2];										//연결항목의 옵션코드를 배열로 만들기
+			$arr_get_title[$exx[0]][$exx[3]]			= $exx[1];										//연결항목의 연결항목타이틀을 배열로 만들기
+		}
+	}
+}
+//연결항목에, 옵션번호 합치기 위해 연결항목, 옵션값 배열로 만들기
+
+//연결항목이 있을 때 옵션번호와 합치기
+if($arr_option_value_new){
+	foreach($arr_option_value_new as $k4=>$v4){
+		if(!empty($v4)) {
+		foreach($v4 as $k5=>$v5){
+			$arr_get_connection_titile[$k4]	= $arr_get_title[$k4];
+		}
+		}
+	}
+}
+//연결항목이 있을 때 옵션번호와 합치기
+/*--연결항목 찾아내기 --*/
+
+foreach($S_RETURNVAL['title'] as $k=>$v){ 
+
+	//공개일때만 뿌리기
+	if($S_RETURNVAL_TITLE['open_yn'][$v]=="Y"){
+
+		$mystring = $v;
+		$findme   = 'title';
+		$pos = strpos($mystring, $findme);
+
+		if ($pos !== false) {	//title(n) 항목 가져오기
+
+			$title[]=$v;
+
+			$title_kr_name[$v]				= $S_RETURNVAL_TITLE['title_kr_name'][$v];
+			$title_bgcolor[$v]				= $S_RETURNVAL_TITLE['bg_color'][$v];	
+			$title_memo[$v]					= $S_RETURNVAL_TITLE['title_memo'][$v];	
+			
+			//컨텐츠가 있고
+			foreach($S_RETURNVAL['content'] as $kk=>$vv){	
+				//옵션타입이고
+				if($S_RETURNVAL_TITLE['option_type'][$v]){
+					//내가 연결항목일 때
+					if($S_RETURNVAL_TITLE['connection_title'][$v]){ 
+
+						$ex1 = explode(",",$S_RETURNVAL['content'][$kk][$v]);
+						$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v],null);
+						$content[$kk][$v] = $arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]][$ex1[1]];
+					
+					//내가 연결항목이 아닐때
+					}else{
+						//연결항목이 있을때
+						if($arr_connection_title[$v]){ 
+							
+							$ex2 = explode(",",$S_RETURNVAL['content'][$kk][$v]);
+							$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v],null);
+							$content[$kk][$v] = $arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]][$ex2[5]];
+
+						//연결항목이 없을뎨
+						}else{
+							
+							$ex3 = explode(",",$S_RETURNVAL['content'][$kk][$v]);
+							$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v],null);
+							$content[$kk][$v] = $arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]][$ex3[2]];
+					
+						}
+					}
+				//옵션타입이 아니고
+				}else{
+					$content[$kk][$v] = $S_RETURNVAL['content'][$kk][$v];
+				}
+			}
+		}
+	}
+}
+
+foreach($title_kr_name as $v){
+	$tempData[] = iconv('utf8', 'euckr', $v); //한글 인코딩
+}
+
+$tempDatas[] = $tempData;
+
+for($i = 0; $i<count($content);$i++){
+	$content[$i]['title1'] = funcDiviKnm1($content[$i]['title1']);
+	$content[$i]['title2'] = funcDiviKnm1($content[$i]['title2']);
+	$content[$i]['title3'] = funSelectEmpNm($content[$i]['title3']);
+}
+
+foreach($content as $v){ 
+	foreach($v as $vv){ 
+		$vv = iconv('utf8', 'euckr', $vv); //모든 content 인코딩
+		$temp[] = $vv; // 임시배열에 저장
+	}
+	$tempDatas[] = $temp; // 임시배열에 저장된 데이터 데이터배열에 저장
+	$temp = '';	// 임시배열 초기화
+}
+
+header( 'Content-Type: text/csv' ); // csv
+header( 'Content-Disposition: attachment;filename='.iconv('utf8', 'euckr', $var1['project_nm'])."_".date("Ymd").".csv"); // csv생성
+
+$fp = fopen('php://output', 'w'); // w 모드
+
+foreach ($tempDatas as $v) { 
+	fputcsv($fp, $v, ','); // tempDatas데이터 넣기
+}
+
+fclose($fp);
+
+/**
+1. 모든 데이터 인코딩
+2. 모든 데이터 보여지는 배열 방식의 맞게 재배열
+3. header 설정 (csv, 파일명)
+4. fputcsv로 모든 배열 뿌려주기
+**/
+---------------------------------------------------------------------------------------------------------------------
+44.php
+<?
+$nOrdPagingNum = $_GET['nOrdPagingNum']?$_GET['nOrdPagingNum']:20;
+$nPage = $_GET['nPage']?$_GET['nPage']:1;
+//$nOrdPagingNum = 20;
+$nOrdPagingBlock = 10;
+
+$num =  $S_RETURNVAL['N_CNT']-($nPage-1)*$nOrdPagingNum;
+
+$filter = "&seq=".$_GET['seq']."&category=".$_GET['category']."&project_nm=".$_GET['project_nm']."&overplus1=".$_GET['overplus1'];
+?>
+
+<title>업무관리>매체공지/취합지원(내용수정)</title>
+<style type="text/css">
+
+.pageStyle {
+	background-color: #ffcc66;
+	margin: 0 auto; 
+	margin-top:410px;
+	margin-left:400px;
+	margin-bottom:20px;
+}
+
+.atable {
+	border-collapse: collapse;
+}
+
+.atable th {
+	border: 1px solid #cccccc;
+	background : #EFEFEF;
+}
+
+.atable td {
+	border: 1px solid #cccccc;
+}
+
+.ui-tooltip {
+    width: 200px;
+    text-align: center;
+    box-shadow: none;
+    padding: 0;
+	background-color: #f8f8f8;
+}
+
+.ui-tooltip-content {
+    position: relative;
+    padding: 0.5em;
+}
+
+.ui-tooltip-content::after, .ui-tooltip-content::before {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    display: block;
+    left: 90px;
+
+}
+.bottom .ui-tooltip-content::before {
+    bottom: -10px;
+    border-color: #AAA transparent;
+    border-width: 10px 10px 0;
+}
+.bottom .ui-tooltip-content::after {
+    bottom: -7px;
+    border-color: white transparent;
+    border-width: 10px 10px 0;
+}
+.top .ui-tooltip-content::before {
+    top: -10px;
+    border-color: #AAA transparent;
+    border-width: 0 10px 10px;
+}
+.top .ui-tooltip-content::after {
+    top: -7px;
+    border-color: white transparent;
+    border-width: 0 10px 10px;
+}
+</style>
+
+<script type="text/javascript">
+$(function(){
+
+var previous;
+var oldContents;
+var newContents;
+$(".getPrevious").on('focus', function () { 
+	previous = this.value; 
+
+	}).change(function() { 
+		var now = this.value; 
+
+		console.log('now::'+now);
+		console.log('previous::'+previous);
+
+		var spnow = now.split(",");
+		var spnow1 = spnow[0].split("/");
+
+		if(spnow1){
+			for(var ii in spnow1){		
+				if(spnow1[ii]){
+					if(spnow[2]==spnow[4] && spnow[3]==spnow[5]){
+						$("[name='"+spnow1[ii]+"_"+spnow[1]+"']").prop('disabled', false);						
+					}
+				}
+			}
+		}
+
+		if(!now&&previous || previous){
+			var spprevious = previous.split(",");
+			var spprevious1 = spprevious[0].split("/");
+			
+			if(spprevious1){
+				for(var iii in spprevious1){		
+					if(spprevious1[iii]){
+						
+						$("[name='"+spprevious1[iii]+"_"+spprevious[1]+"']").prop('disabled', true);
+						$("[name='"+spprevious1[iii]+"_"+spprevious[1]+"']").val('');
+						console.log("spprevious1[iii] is "+spprevious1[iii]+" "+spprevious[1]);
+
+						console.log('123');
+					}
+				}
+			}	
+		}
+		previous = this.value; 		
+	});
+});
+</script>
+
+
+<?
+$N_ChkLevelValue = 40;
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.level.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.arrayvalues.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.common.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/cls/cls.work41.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/cls/cls.employee.php';
+
+$clsWork = new clsWork();
+$clsEmp  = new clsEmp();
+
+$S_RETURNVAL		= $clsWork->funcSelectProjectContent($nOrdPagingNum);
+$S_RETURNVAL_TITLE	= $clsWork->funcJoinProjectGetTitle();
+$S_RETURNVAL_EMP	= $clsEmp->funSelectEmpAll(1);
+$S_RETURNVAL_HISTORY= $clsWork->funcGetProjectHistory();
+
+// -------------------123-----------------------
+$dir_path = $_SERVER['DOCUMENT_ROOT']."/data/work_project_etcFile/";
+$id = $_GET['seq'];
+$F_RETURNVAL		= $clsWork->funcSelectEtcFile($id);
+
+/*--연결항목 찾아내기--*/
+foreach($S_RETURNVAL_TITLE['connection_title'] as $k1=>$v1){
+	if($v1){
+		$arr_connection_title[$v1]		.= $k1;
+		$arr_connection_value[$v1][]		= $v1.",".$k1.",".$S_RETURNVAL_TITLE['connection_option'][$k1];
+	}
+}
+
+//연결항목에, 옵션번호 합치기 위해 연결항목, 옵션값 배열로 만들기
+foreach($arr_connection_value as $k2=>$v2){
+	foreach($v2 as $k3=>$v3){
+		$exx = explode(",",$v3);		
+		$arr_option									= $clsWork->funcArrayProjectOption($exx[2]);	//연결항목의 옵션값 뽑아오기
+		$arr_option_value_new[$exx[0]]				= $arr_option['optoin_value'][$exx[2]];
+		$arr_get_connection_option_code[$exx[0]]	= $exx[2];										//연결항목의 옵션코드를 배열로 만들기
+		$arr_get_title[$exx[0]][$exx[3]]			.= $exx[1]."/";								//연결항목의 연결항목타이틀을 배열로 만들기
+	}
+}
+//연결항목에, 옵션번호 합치기 위해 연결항목, 옵션값 배열로 만들기
+
+//연결항목이 있을 때 옵션번호와 합치기
+foreach($arr_option_value_new as $k4=>$v4){
+	foreach($v4 as $k5=>$v5){
+		$arr_get_connection_titile[$k4]	= $arr_get_title[$k4];
+	}
+}
+//연결항목이 있을 때 옵션번호와 합치기
+/*--연결항목 찾아내기 --*/
+
+//각 케이스에 맞는 컨텐츠 뿌리기
+foreach($S_RETURNVAL['title'] as $k=>$v){ 
+
+//공개일때만 뿌리기
+if($S_RETURNVAL_TITLE['open_yn'][$v]=="Y"){
+		
+	$mystring = $v;
+	$findme   = 'title';
+	$pos = strpos($mystring, $findme);
+
+	if ($pos !== false) {	//title(n) 항목 가져오기
+		
+		$cnt_title = count($v);
+
+		$title[]=$v;
+
+		$title_name[$v]					= $v;
+		$title_kr_name[$v]				= $S_RETURNVAL_TITLE['title_kr_name'][$v];
+		$title_bgcolor[$v]				= $S_RETURNVAL_TITLE['bg_color'][$v];	
+		$title_memo[$v]					= $S_RETURNVAL_TITLE['title_memo'][$v];	
+		$title_necessary_yn[$v]			= $S_RETURNVAL_TITLE['necessary_yn'][$v];
+		$title_activation_yn[$v]		= $S_RETURNVAL_TITLE['activation_yn'][$v];
+		
+		//echo $v.":".$title_necessary_yn[$v]."<br>"	;
+		foreach($S_RETURNVAL['content'] as $kk=>$vv){
+	
+			//seq 번호 변수에 넣기
+			$content_seq = $S_RETURNVAL['content'][$kk]['seq'];  
+
+			//필수항목 변수에 넣기
+			$title_necessary_yn[$kk][$v] = "<input type='hidden' name='necessary_yn_".$v."_".$content_seq."' value='$title_necessary_yn[$v]'>";
+			$title_activation_yn[$kk][$v] = "<input type='hidden' name='activation_yn_".$v."_".$content_seq."' value='$title_activation_yn[$v]'>";
+			
+			//활성화일때		
+			if($S_RETURNVAL_TITLE['activation_yn'][$v]=='Y'){	
+	
+				//인풋타입은 있고, 옵션타입은 없을떄,				
+				if($S_RETURNVAL_TITLE['input_type'][$v] && !$S_RETURNVAL_TITLE['option_type'][$v]){								
+
+					//연결항목이 있을때
+					if($S_RETURNVAL_TITLE['connection_title'][$v]){ 
+
+						//수정모드에서 입력값이 있을때
+						if($S_RETURNVAL['content'][$kk][$v]){
+							$content[$kk][$v] = "<input name='".$v."_".$content_seq."' type=".$S_RETURNVAL_TITLE['input_type'][$v]." class='".$S_RETURNVAL_TITLE['character_type'][$v]." input wid80' maxlength='100' value=".$S_RETURNVAL['content'][$kk][$v]." >";	
+						
+						//수정모드에서 입력값이 없을때
+						}else{
+							$content[$kk][$v] = "<input name='".$v."_".$content_seq."' type=".$S_RETURNVAL_TITLE['input_type'][$v]." class='".$S_RETURNVAL_TITLE['character_type'][$v]." input wid80' disabled maxlength='100' value=".$S_RETURNVAL['content'][$kk][$v].">";	
+						}
+					//연결항목이 없을떄
+					}else{
+							$content[$kk][$v] = "<input name='".$v."_".$content_seq."' type=".$S_RETURNVAL_TITLE['input_type'][$v]." class='".$S_RETURNVAL_TITLE['character_type'][$v]." input wid80' maxlength='100' value=".$S_RETURNVAL['content'][$kk][$v].">";	
+					}
+				
+				//인풋타입은 없고, 옵션타입은 있을떄, (옵션타입은 셀렉트박스만 잇으니 셀렉트박스로 고정)
+				}else if(!$S_RETURNVAL_TITLE['input_type'][$v] && $S_RETURNVAL_TITLE['option_type'][$v]){
+					
+					 //옵션타입이고, 연결항목일 때
+					if($S_RETURNVAL_TITLE['connection_title'][$v]){
+						//수정모드에서 입력값이 있을때
+						if($S_RETURNVAL['content'][$kk][$v]){
+
+							$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v]);	
+
+							$option_type="<select name='".$v."_".$content_seq."' ><option value=''>선택</option>";
+							foreach($arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]] as $kkk=>$vvv){
+								if($S_RETURNVAL_TITLE['option_type'][$v].",".$kkk==$S_RETURNVAL['content'][$kk][$v]){								
+									$option_type.="<option value='".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk."' selected>".$vvv."</optoin>";
+								}else{
+									$option_type.="<option value='".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk."'>".$vvv."</optoin>";					
+								}
+							}
+							$option_type .= "</select>";
+
+							$content[$kk][$v] = $option_type; 				
+						//수정모드에서 입력값이 없을때
+						}else{
+
+							$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v]);	
+
+							//$option_type="<select name='".$v."_".$content_seq."' disabled  onchange='getV(this.value)' onClick='getOldV(this.value)'><option value=''>선택</option>";
+							$option_type="<select class='getPrevious' name='".$v."_".$content_seq."' disabled ><option value=''>선택</option>";
+
+							foreach($arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]] as $kkk=>$vvv){
+								$option_type.="<option value='".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk."'>".$vvv."</optoin>";
+							}
+
+					
+							$option_type .= "</select>";
+
+							$content[$kk][$v] = $option_type; 				
+						}
+					
+					 //옵션타입이고, 연결항목이 아닐때
+					}else{
+						
+						//옵션타입이고, 연결항목이 있을때
+						if($arr_connection_title[$v]){ 
+							
+							//수정모드에서 입력값이 있을때
+							if($S_RETURNVAL['content'][$kk][$v]){
+
+								//$option_type ="<select name='".$v."_".$content_seq."' onchange='getV(this.value)' onClick='getOldV(this.value)'>";
+								$option_type ="<select name='".$v."_".$content_seq."' class='getPrevious'>";
+								$option_type.="<option value=''>선택</option>";
+
+								foreach($arr_option_value_new as $k10=>$v10){
+									//echo $v."--".$k10."<br>";
+
+									if($v==$k10){
+										foreach($v10 as $k11=>$v11){
+
+											$option_v = $arr_get_connection_titile[$v][$k11].",".$content_seq.",".$arr_get_connection_option_code[$v].",".$k11.",".$arr_get_connection_option_code[$v].",".$k11;
+											$result_v = $S_RETURNVAL['content'][$kk][$v];
+
+											//echo $option_v ." ".$result_v."<br>" ;
+
+if($option_v==$result_v){											
+	$option_type.="<option value='".$arr_get_connection_titile[$v][$k11].",".$content_seq.",".$arr_get_connection_option_code[$v].",".$k11.",".$arr_get_connection_option_code[$v].",".$k11."' selected>".$v11."</optoin>";
+}else{
+	$option_type.="<option value='".$arr_get_connection_titile[$v][$k11].",".$content_seq.",".$arr_get_connection_option_code[$v].",".$k11.",".$arr_get_connection_option_code[$v].",".$k11."' >".$v11."</optoin>";
+}
+										}
+									}
+								}
+								
+								$option_type.="</select>";
+
+								$content[$kk][$v] = $option_type;
+
+							//수정모드에서 입력값이 없을때
+							}else{
+								//$option_type="<select class='dd' name='".$v."_".$content_seq."' onchange='getV(this.value)' onClick='getOldV(this.value)'>";
+								
+								$option_type="<select class='getPrevious' name='".$v."_".$content_seq."'>";
+
+								$option_type.="<option value=''>선택</option>";								
+
+								foreach($arr_option_value_new as $k10=>$v10){
+									if($v==$k10){
+										foreach($v10 as $k11=>$v11){
+											$option_type.="<option value='".$arr_get_connection_titile[$v][$k11].",".$content_seq.",".$arr_get_connection_option_code[$v].",".$k11.",".$arr_get_connection_option_code[$v].",".$k11."' >".$v11."</optoin>";
+										}
+									}
+								}
+								
+								$option_type.="</select>";
+
+								$content[$kk][$v] = $option_type;
+							}
+
+						//옵션타입이고, 연결항목이 없을떄
+						}else{
+
+							//수정모드에서 입력값이 있을때
+							if($S_RETURNVAL['content'][$kk][$v]){
+								$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v]);
+								
+								$option_type="<select name='".$v."_".$content_seq."'><option value=''>선택</option>";
+								foreach($arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]] as $kkk=>$vvv){
+
+									$kkk_k = $content_seq.",".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk;
+									if($kkk_k==$S_RETURNVAL['content'][$kk][$v]){
+										$option_type.="<option value='".$content_seq.",".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk."' selected>".$vvv."</optoin>";
+									}else{
+										$option_type.="<option value='".$content_seq.",".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk."'>".$vvv."</optoin>";
+									}
+
+								}
+								$option_type.="</select>";
+
+								$content[$kk][$v] = $option_type; 
+
+							//수정모드에서 입력값이 없을때
+							}else{
+							
+								$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v]);
+								
+								$option_type="<select name='".$v."_".$content_seq."'><option value=''>선택</option>";
+								foreach($arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]] as $kkk=>$vvv){
+								
+									$option_type.="<option value='".$content_seq.",".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk."'>".$vvv."</optoin>";
+
+								}
+								$option_type.="</select>";
+
+								$content[$kk][$v] = $option_type;
+								
+							}
+						}
+					}
+				}
+			//비활성화일때		
+			}else{		
+				if($S_RETURNVAL_TITLE['character_type'][$v]=="numeric"){$val = number_format($S_RETURNVAL['content'][$kk][$v]);}else{$val = ($S_RETURNVAL['content'][$kk][$v]);}
+				$content[$kk][$v] = $val;
+			}
+
+		}
+	$i++;} 
+	}
+}
+?>
+<div style="float:left; width:100%;">
+	<div style=" margin:5px;">업무관리 > 매체공지/취합지원목록</div>
+<div>
+<div style=" width:100%;">
+	<button style="float:right;" type="button" id="regBtn">등록</button>
+</div>
+<br><br>
+
+
+<div class="container_12" style="float:left;margin-top:10px;">
+    <div class="grid_13 height400">
+		<table class="fancyTable" id="myTable05" cellpadding="0" cellspacing="0" >
+			<thead>
+				<tr>
+					<?foreach($title as $k=>$v){?>			
+						<th bgcolor="<?=$title_bgcolor[$v]?>" class='title_tooltip' title='<?=($title_memo[$v])?>'><?=$title_memo[$v]?"<span class='ui-icon ui-icon-info'></span><br/>":""?><?=$title_kr_name[$v]?></th>
+					<?}?>
+				</tr>
+			</thead>
+			<tbody>
+				<?for($i=0; $i<5; $i++){ ?>
+				<tr bgcolor="#ffffff">
+
+					<?foreach($title as $k=>$v){?>
+					<td align="center"  bgcolor="#ffffff">
+						<span style='display:inline-block; width:100px; word-break:break-all;'><input type='text' style='width:100%; height:20' /></span>
+					</td>
+					<?} ?>
+			</tr>
+			<? } ?>
+		</tbody>
+	</table>
+
+</div>
+
+</form>
+
+</div>
+<link href="/thema/Fixed-Header-Table-master/demo/css/960.css" rel="stylesheet" media="screen" />
+<link href="/thema/Fixed-Header-Table-master/css/defaultTheme.css" rel="stylesheet" media="screen" />
+<link href="/thema/Fixed-Header-Table-master/demo/css/myTheme1.css?ver=3" rel="stylesheet" media="screen" />
+<script src="/thema/Fixed-Header-Table-master/jquery.fixedheadertable.js"></script>
+<script src="/thema/Fixed-Header-Table-master/demo/demo.js?ver=1"></script>
+<script type="text/javascript">
+	$('#myTable05').fixedHeaderTable({
+		fixedColumns: 0,
+	});
+
+var Btn = document.querySelector('#regBtn');
+Btn.addEventListener('click', event => {
+	alert('등록되었습니다');
+	window.location.href='http://rms.hmcorp.co.kr/work/?nc=42&category=3&seq=1373';
+})
+</script>
+
+------------------------------------------------------------------------------------------------------------------
+43.php
+<?
+/**********************************************
+Author				: 김민주
+Create Date			: 2018.05.16
+Comment				: 매체공지/취합
+-----------------------------------------------
+Modify Author		:
+Modify date			:
+Comment				:
+***********************************************/
+?>
+<title>업무관리>매체공지/취합지원>공지/취합목록</title>
+<?
+$N_ChkLevelValue = 40;
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.level.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.arrayvalues.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.common.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/cls/cls.work41.php';
+
+$nOrdPagingNum = $_GET['nOrdPagingNum']?$_GET['nOrdPagingNum']:20;
+$nPage = $_GET['nPage']?$_GET['nPage']:1;
+//$nOrdPagingNum = 20;
+$nOrdPagingBlock = 10;
+
+$clsWork = new clsWork();
+$S_RETURNVAL = $clsWork->funcListProjectHistory($nOrdPagingNum);
+//echo "<pre>";
+//print_r($S_RETURNVAL);
+//echo "</pre>";
+
+//echo "nPage:".$nPage;
+//echo "<br>nOrdPagingNum:".$nOrdPagingNum;
+//echo "<br>S_RETURNVAL['N_CNT']:".$S_RETURNVAL['N_CNT'];
+
+$num =  $S_RETURNVAL['N_CNT']-($nPage-1)*$nOrdPagingNum;
+
+//echo "<br>num:".$num;
+
+$page_check_type = "&type=".$_GET['type'];
+
+$category = $_GET['category'];
+$filter = "&seq=".$_GET['seq']."&category=".$_GET['category']."&project_nm=".$_GET['project_nm'];
+?>
+<style type="text/css">
+	.atable {
+    border-collapse: collapse;
+	}
+
+	.atable th {
+		border: 1px solid #cccccc;
+		background : #EFEFEF;
+	}
+
+	.atable td {
+		border: 1px solid #cccccc;
+	}
+</style>
+
+<script type="text/javascript">
+function frm2Check(){
+	//if((!frm2.sdate.value || !frm2.edate.value) && !frm2.s_string.value){alert ("검색어를 입력해주세요.");return false;}
+}
+//-->
+</script>
+
+<table width='100%' border='0' cellpadding='0' cellspacing='0'>
+<tr>
+	<td colspan="4">
+		<div style="float:left; margin-top:5px;">업무관리 > 매체공지/취합지원 > 공지/취합목록</div>
+	</td>
+</tr>
+<tr>
+	<td colspan="4">&nbsp;</td>
+</tr>
+<tr>
+	<td>
+		<table width="100%" border="0" cellpadding="5" cellspacing="1" align="left" class="atable">
+		<form name="frm2" method="GET" onsubmit="return frm2Check();">
+		<input type="hidden" name="nc" value="<?=$_GET['nc']?>">
+		<input type="hidden" name="category" value="<?=$_GET['category']?>">
+			<tr>
+				<td width="15%" class="conTitle">조회기간</td>
+				<td>
+				<input type="hidden" name="d_item" value="reg_date">
+				<input type="text" class="input datepicker" name="sdate" readonly="readonly" value="<?=$_GET['sdate']?>"><span class="ui-button-icon ui-icon ui-icon-calendar"></span> ~ 
+				<input type="text" class="input datepicker" name="edate" readonly="readonly" value="<?=$_GET['edate']?>"><span class="ui-button-icon ui-icon ui-icon-calendar"></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="conTitle">조회기준</td>
+				<td><select name="s_item"><option value="project_nm">프로젝트명</option></select> <input type="text" class="input wid300" name="s_string" value="<?=$_GET['s_string']?>"></td>
+			</tr>
+			<tr>
+				<td class="conTitle">카테고리</td>
+				<td>
+					<select name="project_type2">
+						<option value="">카테고리</option>
+						<option value="1">정산</option>
+						<option value="2">매체</option>
+					</select> 
+				</td>
+			</tr>				
+			<tr>
+				<td bgcolor="#ffffff" colspan="6" align="center">
+				<button class="button ui-button ui-widget ui-corner-all" type="submit"><span class="ui-button-icon ui-icon ui-icon-search"></span> 조 회</button>
+				</td>
+			</tr>
+		</form>
+		</table>
+	</td>
+</tr>
+<tr>
+	<td>
+	<span style="float:left;vertical-align:middle;line-height: 30px;">
+		<b>총 : <?=$S_RETURNVAL['N_CNT']?> 건</b>
+	</span>
+	</td>
+</tr>
+<tr>
+	<td colspan="2">
+		<table width="100%" border="0" cellpadding="5" cellspacing="1" align="left" class="atable">
+		<form name="frm3" method="post">
+		<input type='hidden' name='nc' value='<?=$_GET['nc']?>'>
+			<tr class="conTitle">
+				<td width="5%">번호</td>
+				<td width="5%">구분</td>		
+				<td width="5%">카테고리</td>	
+				<td width="5%">중요도</td>
+				<td width="30%">프로젝트명</td>
+				<td width="15%">공지/취합기간</td>
+				<td width="5%">공개여부</td>
+				<td width="5%">기타파일</td>	
+				<td width="5%">마감여부</td>
+				<td width="7%">등록일</td>
+				<td width="7%">등록자</td>				
+			</tr>
+<?if($S_RETURNVAL['nListCnt']<1){?>
+			<tr>
+				<td colspan="10" class="conConTxtC">데이타가 없습니다.</td>
+			</tr>
+<?}?>
+<input type="hidden" name="seq">
+<?for($i=0;$i<$S_RETURNVAL['nListCnt'];$i++){?>
+			<tr>
+				<a href='/include/download.php?path=/data/work_project_file/&file_new=<?=$S_RETURNVAL['etc_file_nm_new'][$i]?>&file_real=<?=$S_RETURNVAL['etc_file_nm_new'][$i]?>'></a>
+				<td class="conConTxtC"><?=$num?></td>				
+				<td class="conConTxtC"><?=$S_RETURNVAL['project_type'][$i]=='1'?"<font color='#009933'>공지</font>":"<font color='#0080ff'>취합</font>"?></td>	<td class="conConTxtC"><!-- ------------123------------ -->
+					<?php if($S_RETURNVAL['project_type2'][$i]=='1'){ ?>
+						<font color='#820099'>정산</font>
+					<?php }else if($S_RETURNVAL['project_type2'][$i]=='2'){ ?>
+						<font color='#DC6089'>매체</font>
+					<?php } ?>
+				</td>	
+				<td class="conConTxtC"><?=$S_RETURNVAL['import_is'][$i]?"<span class='ui-state-default ui-corner-all ui-button-icon ui-icon ui-icon-star'></span>":""?></td>
+				<td class="conConTxtL">
+				<?if($S_RETURNVAL['end_date'][$i]<date('Y-m-d') || $S_RETURNVAL['project_type'][$i]=="1"){?>
+					<a href="?nc=29&category=<?= $_GET['category'] ?>&seq=<?=$S_RETURNVAL['seq'][$i]?>" title="내용보기"><?=$S_RETURNVAL['project_nm'][$i]?> </a>
+				<?}else{?>
+					<a href="?nc=25&category=<?= $_GET['category'] ?>&seq=<?=$S_RETURNVAL['seq'][$i]?>" title="내용보기"><?=$S_RETURNVAL['project_nm'][$i]?> </a>		
+				<?}?>
+				</td>
+				<td class="conConTxtC"><?=$S_RETURNVAL['start_date'][$i]?>~<?=$S_RETURNVAL['end_date'][$i]?> <?=$S_RETURNVAL['end_time'][$i]?></td>				
+				<td class="conConTxtC"><?=$S_RETURNVAL['open_yn'][$i]?></td>
+				<td class="conConTxtC">
+				<?=$S_RETURNVAL['etc_file_nm'][$i]?"<a href='?nc=42&category=3&seq=".$S_RETURNVAL['seq'][$i]."'><span class='ui-state-default ui-corner-all ui-button-icon ui-icon ui-icon-disk'></span></a>":""?><!-- ------------123------------ -->
+				</td>
+				
+				<td class="conConTxtC"><?=$S_RETURNVAL['end_date'][$i]<date('Y-m-d')?"<span class='ui-state-default ui-corner-all ui-button-icon ui-icon ui-icon-locked'></span>":"<span class='ui-state-default ui-corner-all ui-button-icon ui-icon ui-icon-unlocked'></span>"?></td>
+				<td class="conConTxtC"><?=$S_RETURNVAL['reg_date'][$i]?></td>
+				<td class="conConTxtC"><?=funSelectEmpNm($S_RETURNVAL['reg_emp'][$i])?></td>
+			</tr>
+<?$num--;}?>		<tr>
+				<td align='center' bgcolor='#FFFFFF' height=30 class=p_txt colspan='11'>
+				<!--페이징 처리 시작 --------------------------------------------->
+				<?include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.page.php';?>
+				<!--페이징 처리 끗 ----------------------------------------------->
+				</td>
+			</tr>
+		</form>
+		</table>
+	</td>
+</tr>
+
+<tr>
+	<td>&nbsp;</td>
+</tr>
+</table>
+
+
+
+
+<script>
+$(function() {
+	$('#loading').hide();
+	//$('#basicExample').timepicker();
+
+	$('.datepicker').datepicker(); 
+	$.datepicker.setDefaults({
+
+			inline: true,
+			closeText: '닫기',
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			prevText: '이전 달',
+			nextText: '다음 달',
+			monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+			monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+			dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+			dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+			dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+			showMonthAfterYear: true,
+			yearSuffix: '년'
+	});
+
+	$('.month-picker').datepicker( {
+		inline: true,
+		closeText: '선택',
+		currentText: '이번 달',
+		changeMonth: true,
+		changeYear: true,
+		showButtonPanel: true,
+		dateFormat: 'yy-mm-dd',
+		prevText: '이전 달',
+		nextText: '다음 달',
+		monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+		monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+		yearSuffix: '년',
+		showMonthAfterYear: true,
+		onClose: function(dateText, inst) { 
+			var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+			var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+			$(this).datepicker('setDate', new Date(year, month, 1));
+			//$(".ui-datepicker-calendar").hide();
+		}
+	});
+
+	$('.year-picker').datepicker( {        
+		changeYear: true,
+		showButtonPanel: true,
+		dateFormat: 'yy',
+		onClose: function(dateText, inst) {            
+			var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+			$(this).datepicker('setDate', new Date(year,1, 1));
+		}
+	});
+});
+</script>
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------
+
+42.php
+<?
+/**********************************************
+Author				: 김민주
+Create Date			: 2018.05.16
+Comment				: 매체공지/취합
+-----------------------------------------------
+Modify Author		:
+Modify date			:
+Comment				:
+***********************************************/
+$nOrdPagingNum = $_GET['nOrdPagingNum']?$_GET['nOrdPagingNum']:20;
+$nPage = $_GET['nPage']?$_GET['nPage']:1;
+//$nOrdPagingNum = 20;
+$nOrdPagingBlock = 10;
+
+$num =  $S_RETURNVAL['N_CNT']-($nPage-1)*$nOrdPagingNum;
+
+$filter = "&seq=".$_GET['seq']."&category=".$_GET['category']."&project_nm=".$_GET['project_nm']."&overplus1=".$_GET['overplus1'];
+?>
+<!--
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+-->
+<title>업무관리>매체공지/취합지원(내용수정)</title>
+<!-- <meta charset="EUC-KR" /> -->
+<style type="text/css">
+
+.pageStyle {
+	background-color: #ffcc66;
+	margin: 0 auto; 
+	margin-top:410px;
+	margin-left:400px;
+	/*width: 255%;
+	margin-top:410px;
+	margin-left:50%;*/
+	/*padding-left:100%;*/
+	margin-bottom:20px;
+}
+
+.atable {
+	border-collapse: collapse;
+}
+
+.atable th {
+	border: 1px solid #cccccc;
+	background : #EFEFEF;
+}
+
+.atable td {
+	border: 1px solid #cccccc;
+}
+
+.ui-tooltip {
+    width: 200px;
+    text-align: center;
+    box-shadow: none;
+    padding: 0;
+	background-color: #f8f8f8;
+}
+
+.ui-tooltip-content {
+    position: relative;
+    padding: 0.5em;
+}
+
+.ui-tooltip-content::after, .ui-tooltip-content::before {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    display: block;
+    left: 90px;
+
+}
+.bottom .ui-tooltip-content::before {
+    bottom: -10px;
+    border-color: #AAA transparent;
+    border-width: 10px 10px 0;
+}
+.bottom .ui-tooltip-content::after {
+    bottom: -7px;
+    border-color: white transparent;
+    border-width: 10px 10px 0;
+}
+.top .ui-tooltip-content::before {
+    top: -10px;
+    border-color: #AAA transparent;
+    border-width: 0 10px 10px;
+}
+.top .ui-tooltip-content::after {
+    top: -7px;
+    border-color: white transparent;
+    border-width: 0 10px 10px;
+}
+</style>
+
+<script type="text/javascript">
+$(function(){
+
+var previous;
+var oldContents;
+var newContents;
+$(".getPrevious").on('focus', function () { 
+	// Store the current value on focus and on change 
+	previous = this.value; 
+
+	}).change(function() { 
+		// Do something with the previous value after the change 
+		var now = this.value; 
+
+		console.log('now::'+now);
+		console.log('previous::'+previous);
+
+		var spnow = now.split(",");
+		var spnow1 = spnow[0].split("/");
+
+		if(spnow1){
+			for(var ii in spnow1){		
+				if(spnow1[ii]){
+					if(spnow[2]==spnow[4] && spnow[3]==spnow[5]){
+						//alert(spnow1[ii]);
+						//console.log(spnow1[ii]);
+						$("[name='"+spnow1[ii]+"_"+spnow[1]+"']").prop('disabled', false);						
+					}
+				}
+			}
+		}
+
+		if(!now&&previous || previous){
+			//alert("previous is ::"+previous);
+			var spprevious = previous.split(",");
+			var spprevious1 = spprevious[0].split("/");
+			
+			if(spprevious1){
+				for(var iii in spprevious1){		
+					if(spprevious1[iii]){
+						
+						$("[name='"+spprevious1[iii]+"_"+spprevious[1]+"']").prop('disabled', true);
+						$("[name='"+spprevious1[iii]+"_"+spprevious[1]+"']").val('');
+						console.log("spprevious1[iii] is "+spprevious1[iii]+" "+spprevious[1]);
+
+						console.log('123');
+					}
+				}
+			}	
+		}
+	
+		// Make sure the previous value is updated 
+		previous = this.value; 		
+
+		//console.log("previous3::"+previous);
+		//alert("previous3::"+previous); 
+	});
+});
+
+function frm2Check(){
+	if((!frm2.sdate.value || !frm2.edate.value) && !frm2.s_string.value){alert ("검색어를 입력해주세요.");return false;}
+}
+
+function funcSearch() {
+	/*
+	if(frm2.division1.value=="" && frm2.em_seq.value==""){
+		alert("본부를 선택하세요.");
+		return false;
+	}
+	*/
+	frm2.submit();
+}
+
+$(function(){
+
+    $("input:checkbox[name='check_all']").click(function(){
+
+        var chk = $(this).is(":checked");//.attr('checked');
+		var nn = $("input[type='checkbox']").length;
+		if(chk){
+			$("input[type='checkbox']").each(function( index ) {
+			  	$("input:checkbox[name='check_list[]']").prop('checked', true);
+			});
+		}else{
+			$("input[type='checkbox']").each(function( index ) {
+				$("input:checkbox[name='check_list[]']").prop('checked', false);
+			});
+		}		
+    });
+});
+
+function getDivision2(obj,row,target){
+	console.log(obj+target);
+	if(obj.value!=''){
+		$.ajax({
+			type:'POST',
+			url:'/include/inc.select_division2.php',
+			data:'division1='+obj,
+			dataType : 'json' ,
+			success:function(response){
+			//alert(response);
+				var list = eval(response);
+				//$('#division2').find('option').each(function(){
+				$('#'+target+'').find('option').each(function(){
+
+					$(this).remove();
+				});
+
+				var str = "";
+					str += "<option value=''>선택</option>";
+				$.each(list,function(key,val) { 
+					//$.each(response[key], function(k, v) { 
+						//alert(key + " -> " + val); 
+					str += "<option value="+key+">"+val+"</option>";
+					//}); 
+				}); 
+				$('#'+target+'').append(str);
+			}
+		});
+	}
+}
+
+function getEmseq(obj,row,target){
+	console.log(obj+target);
+	if(obj.value!=''){
+		$.ajax({
+			type:'POST',
+			url:'/include/inc.select_em_seq.php',
+			data:'division2='+obj,
+			dataType : 'json' ,
+			success:function(response){
+				console.log(response);
+				var list = eval(response);
+				//$('#division2').find('option').each(function(){
+				$('#'+target+'').find('option').each(function(){
+					$(this).remove();
+				});
+
+				var str = "";
+					str += "<option value=''>선택</option>";
+				$.each(list,function(key,val) { 
+					//$.each(response[key], function(k, v) { 
+						//alert(key + " -> " + val); 
+					str += "<option value="+key+">"+val+"</option>";
+					//}); 
+				}); 
+
+
+				$('#'+target+'').append(str);
+			}
+		});
+	}
+}
+
+// --------------123--------------
+function funcSubmit(submitType,seq,fn,gfh_seq) {
+
+	console.log(submitType);
+	console.log(seq);
+	
+	if(submitType=="download"){
+		//location.href="/work/?nc="+seq+"&category=3";
+		frm2.action="down_media_list41.php";
+		frm2.target="_blank";
+		frm2.submit();
+		//history.go(0);
+		setTimeout(function(){ history.go(0); }, 10);
+	}
+
+	if(submitType=="list"){
+		location.href="/work/?nc="+seq+"&category=3";
+	}
+	if(submitType=="update"){
+		var check_cnt = $("input[type='checkbox']:checked").length;
+		if(check_cnt<1){
+			alert("하나 이상 선택하십시오.");return false;
+		}
+
+		//return false;
+		//var nn = $("input:checkbox[name='check_list[]']").length;
+
+		var cnt_pos_title = $("input[name='cnt_pos_title']").val();
+		//console.log("cnt_pos_title::"+cnt_pos_title);
+
+		var cnt_target=0;
+		var returnNow = false;
+		
+		if(seq>10){ //관리자는 패스
+			for(var nn=1;nn<=cnt_pos_title;nn++){
+				$("input:checkbox[name='check_list[]']:checked").each(function(index,obj) {
+					this.checked == true;
+					var n = this.value;
+
+					if($("input[name='necessary_yn_title"+nn+"_"+n+"']").val()=="Y") {
+						console.log("n::"+n+" "+nn);
+						
+						if(!$("[name='title"+nn+"_"+n+"']").val()){
+							
+							//return false;
+
+							if($("[name='title"+nn+"_"+n+"']").prop("disabled") == false ){
+								//console.log('necessary_yn_title'+nn+'_'+n+'::');
+								//alert($("input[name='necessary_yn_title"+nn+"_"+n+"']").val());
+
+								alert("해당값을 입력하세요.");
+								$("[name='title"+nn+"_"+n+"']").focus();
+								//console.log("title"+nn+"_"+n);
+								
+								returnNow = true;
+								return false;
+							}
+						}
+					}
+				}); 
+
+				if (returnNow) {
+					return;
+					// return immediately
+				}
+			}
+		}
+
+		var params = $("form[name='frm1']").serializeArray(); 
+		//console.table(params);
+
+		$.ajax({
+			type: "POST",
+			url: "/input/work/ipt_work_25.php?submitType="+submitType,
+			data:params,
+			//context: document.body,
+			//dataType : "text",
+			success:function(result){ 		
+				console.log(result);
+				alert(result);
+				//return false;
+				//alert(result);
+				location.reload();
+				//location.href="/work/?nc=25&category=3&seq="+"<?=$_GET['seq']?>&nPage="+"<?=$nPage?>";
+				//setTimeout("location.reload()", 100);
+				//$("#result").html(result);
+		  },
+			error:function(){
+				alert("실패");
+		  }
+
+		});
+
+	}
+// ----------------------------개별행 삭제123----------------------------------------
+	if(submitType=="delete"){
+		var check_cnt = $("input[type='checkbox']:checked").length;
+		if(check_cnt<1){ alert("하나 이상 선택하십시오."); return false; }
+		var cnt_pos_title = $("input[name='cnt_pos_title']").val();
+		var cnt_target=0;
+		var returnNow = false;
+
+		if(seq>10){ //관리자는 패스
+			for(var nn=1;nn<=cnt_pos_title;nn++){
+				$("input:checkbox[name='check_list[]']:checked").each(function(index,obj) {
+					this.checked == true;
+					var n = this.value;
+					if($("input[name='necessary_yn_title"+nn+"_"+n+"']").val()=="Y") {
+						if(!$("[name='title"+nn+"_"+n+"']").val()){
+							if($("[name='title"+nn+"_"+n+"']").prop("disabled") == false ){
+								alert("해당값을 입력하세요.");
+								$("[name='title"+nn+"_"+n+"']").focus();
+								returnNow = true;
+								return false;
+							}
+						}
+					}
+				}); 
+				if (returnNow) {
+					return;
+				}
+			}
+		}
+		var params = $("form[name='frm1']").serializeArray(); 
+		$.ajax({
+			type: "POST",
+			url: "/input/work/ipt_work_25.php?submitType="+submitType,
+			data:params,
+			success:function(result){ 		
+				console.log(result);
+				alert(result);
+				location.reload();
+		  },
+			error:function(){ alert("실패"); }
+		});
+	}
+	if(submitType=="reset"){
+		$('#myfomr').reset();
+	}
+}
+//-->
+</script>
+<?
+
+$N_ChkLevelValue = 40;
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.level.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.arrayvalues.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.common.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/cls/cls.work41.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/cls/cls.employee.php';
+
+$clsWork = new clsWork();
+$clsEmp  = new clsEmp();
+
+$S_RETURNVAL		= $clsWork->funcSelectProjectContent($nOrdPagingNum);
+$S_RETURNVAL_TITLE	= $clsWork->funcJoinProjectGetTitle();
+$S_RETURNVAL_EMP	= $clsEmp->funSelectEmpAll(1);
+$S_RETURNVAL_HISTORY= $clsWork->funcGetProjectHistory();
+
+
+
+
+// -------------------123-----------------------
+$dir_path = $_SERVER['DOCUMENT_ROOT']."/data/work_project_etcFile/";
+$id = $_GET['seq'];
+$F_RETURNVAL		= $clsWork->funcSelectEtcFile($id);
+
+//echo '<pre>';
+//print_r($S_RETURNVAL_HISTORY);
+//echo '</pre>';
+//echo '<br>';
+
+
+//echo "cnt_title::".$cnt_title;
+
+/*--연결항목 찾아내기--*/
+foreach($S_RETURNVAL_TITLE['connection_title'] as $k1=>$v1){
+	if($v1){
+		$arr_connection_title[$v1]		.= $k1;
+		$arr_connection_value[$v1][]		= $v1.",".$k1.",".$S_RETURNVAL_TITLE['connection_option'][$k1];
+	}
+}
+
+//연결항목에, 옵션번호 합치기 위해 연결항목, 옵션값 배열로 만들기
+foreach($arr_connection_value as $k2=>$v2){
+	foreach($v2 as $k3=>$v3){
+		$exx = explode(",",$v3);		
+		$arr_option									= $clsWork->funcArrayProjectOption($exx[2]);	//연결항목의 옵션값 뽑아오기
+		$arr_option_value_new[$exx[0]]				= $arr_option['optoin_value'][$exx[2]];
+		$arr_get_connection_option_code[$exx[0]]	= $exx[2];										//연결항목의 옵션코드를 배열로 만들기
+		$arr_get_title[$exx[0]][$exx[3]]			.= $exx[1]."/";								//연결항목의 연결항목타이틀을 배열로 만들기
+	}
+}
+//연결항목에, 옵션번호 합치기 위해 연결항목, 옵션값 배열로 만들기
+
+//연결항목이 있을 때 옵션번호와 합치기
+foreach($arr_option_value_new as $k4=>$v4){
+	foreach($v4 as $k5=>$v5){
+		$arr_get_connection_titile[$k4]	= $arr_get_title[$k4];
+	}
+}
+//연결항목이 있을 때 옵션번호와 합치기
+/*--연결항목 찾아내기 --*/
+
+//echo "<pre>arr_value:";
+//print_R($arr_connection_title);
+//print_R($arr_get_title);
+//print_R($arr_option_value);
+//print_R($arr_option_value_new);
+//print_R($arr_get_connection_titile);
+//echo "</pre>";
+
+
+// s_returnval 에서 title관련 array만 넘어어고 content관련 array는 넘어오지 않았다.
+// 25.php 에서 확인 한 결과 content array가 정상적으로 넘어온다.
+
+//echo "<pre>content_value:";
+//print_R($S_RETURNVAL);	
+//echo "</pre>";
+
+//각 케이스에 맞는 컨텐츠 뿌리기
+foreach($S_RETURNVAL['title'] as $k=>$v){ 
+
+//공개일때만 뿌리기
+if($S_RETURNVAL_TITLE['open_yn'][$v]=="Y"){
+		
+	$mystring = $v;
+	$findme   = 'title';
+	$pos = strpos($mystring, $findme);
+
+	if ($pos !== false) {	//title(n) 항목 가져오기
+		
+		$cnt_title = count($v);
+
+		$title[]=$v;
+
+		$title_name[$v]					= $v;
+		$title_kr_name[$v]				= $S_RETURNVAL_TITLE['title_kr_name'][$v];
+		$title_bgcolor[$v]				= $S_RETURNVAL_TITLE['bg_color'][$v];	
+		$title_memo[$v]					= $S_RETURNVAL_TITLE['title_memo'][$v];	
+		$title_necessary_yn[$v]			= $S_RETURNVAL_TITLE['necessary_yn'][$v];
+		$title_activation_yn[$v]		= $S_RETURNVAL_TITLE['activation_yn'][$v];
+		
+		//echo $v.":".$title_necessary_yn[$v]."<br>"	;
+		foreach($S_RETURNVAL['content'] as $kk=>$vv){
+	
+			//seq 번호 변수에 넣기
+			$content_seq = $S_RETURNVAL['content'][$kk]['seq'];  
+
+			//필수항목 변수에 넣기
+			$title_necessary_yn[$kk][$v] = "<input type='hidden' name='necessary_yn_".$v."_".$content_seq."' value='$title_necessary_yn[$v]'>";
+			$title_activation_yn[$kk][$v] = "<input type='hidden' name='activation_yn_".$v."_".$content_seq."' value='$title_activation_yn[$v]'>";
+			
+			//활성화일때		
+			if($S_RETURNVAL_TITLE['activation_yn'][$v]=='Y'){	
+	
+				//인풋타입은 있고, 옵션타입은 없을떄,				
+				if($S_RETURNVAL_TITLE['input_type'][$v] && !$S_RETURNVAL_TITLE['option_type'][$v]){								
+
+					//연결항목이 있을때
+					if($S_RETURNVAL_TITLE['connection_title'][$v]){ 
+
+						//수정모드에서 입력값이 있을때
+						if($S_RETURNVAL['content'][$kk][$v]){
+							$content[$kk][$v] = "<input name='".$v."_".$content_seq."' type=".$S_RETURNVAL_TITLE['input_type'][$v]." class='".$S_RETURNVAL_TITLE['character_type'][$v]." input wid80' maxlength='100' value=".$S_RETURNVAL['content'][$kk][$v]." >";	
+						
+						//수정모드에서 입력값이 없을때
+						}else{
+							$content[$kk][$v] = "<input name='".$v."_".$content_seq."' type=".$S_RETURNVAL_TITLE['input_type'][$v]." class='".$S_RETURNVAL_TITLE['character_type'][$v]." input wid80' disabled maxlength='100' value=".$S_RETURNVAL['content'][$kk][$v].">";	
+						}
+					//연결항목이 없을떄
+					}else{
+							$content[$kk][$v] = "<input name='".$v."_".$content_seq."' type=".$S_RETURNVAL_TITLE['input_type'][$v]." class='".$S_RETURNVAL_TITLE['character_type'][$v]." input wid80' maxlength='100' value=".$S_RETURNVAL['content'][$kk][$v].">";	
+					}
+				
+				//인풋타입은 없고, 옵션타입은 있을떄, (옵션타입은 셀렉트박스만 잇으니 셀렉트박스로 고정)
+				}else if(!$S_RETURNVAL_TITLE['input_type'][$v] && $S_RETURNVAL_TITLE['option_type'][$v]){
+					
+					 //옵션타입이고, 연결항목일 때
+					if($S_RETURNVAL_TITLE['connection_title'][$v]){
+						//수정모드에서 입력값이 있을때
+						if($S_RETURNVAL['content'][$kk][$v]){
+
+							$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v]);	
+
+							$option_type="<select name='".$v."_".$content_seq."' ><option value=''>선택</option>";
+							foreach($arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]] as $kkk=>$vvv){
+								if($S_RETURNVAL_TITLE['option_type'][$v].",".$kkk==$S_RETURNVAL['content'][$kk][$v]){								
+									$option_type.="<option value='".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk."' selected>".$vvv."</optoin>";
+								}else{
+									$option_type.="<option value='".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk."'>".$vvv."</optoin>";					
+								}
+							}
+							$option_type .= "</select>";
+
+							$content[$kk][$v] = $option_type; 				
+						//수정모드에서 입력값이 없을때
+						}else{
+
+							$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v]);	
+
+							//$option_type="<select name='".$v."_".$content_seq."' disabled  onchange='getV(this.value)' onClick='getOldV(this.value)'><option value=''>선택</option>";
+							$option_type="<select class='getPrevious' name='".$v."_".$content_seq."' disabled ><option value=''>선택</option>";
+
+							foreach($arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]] as $kkk=>$vvv){
+								$option_type.="<option value='".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk."'>".$vvv."</optoin>";
+							}
+
+					
+							$option_type .= "</select>";
+
+							$content[$kk][$v] = $option_type; 				
+						}
+					
+					 //옵션타입이고, 연결항목이 아닐때
+					}else{
+						
+						//옵션타입이고, 연결항목이 있을때
+						if($arr_connection_title[$v]){ 
+							
+							//수정모드에서 입력값이 있을때
+							if($S_RETURNVAL['content'][$kk][$v]){
+
+								//$option_type ="<select name='".$v."_".$content_seq."' onchange='getV(this.value)' onClick='getOldV(this.value)'>";
+								$option_type ="<select name='".$v."_".$content_seq."' class='getPrevious'>";
+								$option_type.="<option value=''>선택</option>";
+
+								foreach($arr_option_value_new as $k10=>$v10){
+									//echo $v."--".$k10."<br>";
+
+									if($v==$k10){
+										foreach($v10 as $k11=>$v11){
+
+											$option_v = $arr_get_connection_titile[$v][$k11].",".$content_seq.",".$arr_get_connection_option_code[$v].",".$k11.",".$arr_get_connection_option_code[$v].",".$k11;
+											$result_v = $S_RETURNVAL['content'][$kk][$v];
+
+											//echo $option_v ." ".$result_v."<br>" ;
+
+if($option_v==$result_v){											
+	$option_type.="<option value='".$arr_get_connection_titile[$v][$k11].",".$content_seq.",".$arr_get_connection_option_code[$v].",".$k11.",".$arr_get_connection_option_code[$v].",".$k11."' selected>".$v11."</optoin>";
+}else{
+	$option_type.="<option value='".$arr_get_connection_titile[$v][$k11].",".$content_seq.",".$arr_get_connection_option_code[$v].",".$k11.",".$arr_get_connection_option_code[$v].",".$k11."' >".$v11."</optoin>";
+}
+										}
+									}
+								}
+								
+								$option_type.="</select>";
+
+								$content[$kk][$v] = $option_type;
+
+							//수정모드에서 입력값이 없을때
+							}else{
+								//$option_type="<select class='dd' name='".$v."_".$content_seq."' onchange='getV(this.value)' onClick='getOldV(this.value)'>";
+								
+								$option_type="<select class='getPrevious' name='".$v."_".$content_seq."'>";
+
+								$option_type.="<option value=''>선택</option>";								
+
+								foreach($arr_option_value_new as $k10=>$v10){
+									if($v==$k10){
+										foreach($v10 as $k11=>$v11){
+											$option_type.="<option value='".$arr_get_connection_titile[$v][$k11].",".$content_seq.",".$arr_get_connection_option_code[$v].",".$k11.",".$arr_get_connection_option_code[$v].",".$k11."' >".$v11."</optoin>";
+										}
+									}
+								}
+								
+								$option_type.="</select>";
+
+								$content[$kk][$v] = $option_type;
+							}
+
+						//옵션타입이고, 연결항목이 없을떄
+						}else{
+
+							//수정모드에서 입력값이 있을때
+							if($S_RETURNVAL['content'][$kk][$v]){
+								$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v]);
+								
+								$option_type="<select name='".$v."_".$content_seq."'><option value=''>선택</option>";
+								foreach($arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]] as $kkk=>$vvv){
+
+									$kkk_k = $content_seq.",".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk;
+									if($kkk_k==$S_RETURNVAL['content'][$kk][$v]){
+										$option_type.="<option value='".$content_seq.",".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk."' selected>".$vvv."</optoin>";
+									}else{
+										$option_type.="<option value='".$content_seq.",".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk."'>".$vvv."</optoin>";
+									}
+
+								}
+								$option_type.="</select>";
+
+								$content[$kk][$v] = $option_type; 
+
+							//수정모드에서 입력값이 없을때
+							}else{
+							
+								$arr_option_value = $clsWork->funcArrayProjectOption($S_RETURNVAL_TITLE['option_type'][$v]);
+								
+								$option_type="<select name='".$v."_".$content_seq."'><option value=''>선택</option>";
+								foreach($arr_option_value['optoin_value'][$S_RETURNVAL_TITLE['option_type'][$v]] as $kkk=>$vvv){
+								
+									$option_type.="<option value='".$content_seq.",".$S_RETURNVAL_TITLE['option_type'][$v].",".$kkk."'>".$vvv."</optoin>";
+
+								}
+								$option_type.="</select>";
+
+								$content[$kk][$v] = $option_type;
+								
+							}
+						}
+					}
+				}
+			//비활성화일때		
+			}else{		
+				if($S_RETURNVAL_TITLE['character_type'][$v]=="numeric"){$val = number_format($S_RETURNVAL['content'][$kk][$v]);}else{$val = ($S_RETURNVAL['content'][$kk][$v]);}
+				$content[$kk][$v] = $val;
+				//$content[$kk][$v] =  "<input readonly name='".$v."_".$content_seq."' type='text' class='wid100' maxlength='50' value=".$S_RETURNVAL['content'][$kk][$v]." >";	
+			}
+
+		}
+	$i++;} 
+	}
+}
+//echo '<pre>';
+//print_r($S_RETURNVAL);
+//echo '</pre>';
+?>
+
+<div style="float:left; width:100%;">
+		<div style=" margin:5px;">업무관리 > 매체공지/취합지원목록</div>
+<div>
+
+<form name="frm2" method="get">
+<input type="hidden" name="sc" value=<?=$_GET['sc']?>>
+<input type="hidden" name="nc" value=<?=$_GET['nc']?>>
+<input type="hidden" name="seq" value=<?=$_GET['seq']?>>
+<input type="hidden" name="category" value=<?=$_GET['category']?>>
+<?if($_SESSION['em_level']==10){?>
+		<table width="100%" border="0" cellpadding="5" cellspacing="1" class="atable">
+		<tr bgcolor="#FFFFFF" height="40">
+			<td width="10%" bgcolor="#EFEFEF" class="center b">소속구분</td>
+			<td width="40%" >
+				<select name="division1" class="select wid100" onchange="getDivision2(this.value,'','division2');">
+					<option value="">본부선택</option>
+					<?foreach(funSelectCom('1','','1','Y') as $key => $val) {?>
+					<option value="<?=$key?>" <?=$_GET['division1']==$key?"selected":""?>><?=$val?></option>
+					<?}?>
+				</select>
+					
+				<select name="division2" class="select wid100" onchange="getEmseq(this.value);" id="division2">
+					<option value="">선택</option>
+					<?foreach(funSelectCom1('2',$_GET['division1']) as $key => $val) {?>
+					<option value="<?=$key?>" <?=$_GET['division2']==$key?"selected":""?>><?=$val?></option>
+					<?}?>
+				</select>
+			</td>
+			<td width="10%" bgcolor="#EFEFEF" class="center b">담당자</td>
+			<td width="40%">
+				<select name="em_seq" class="select" tabindex="20" onchange="goEmpChange(this.value)">
+					<option value="">직원명</option>
+					<?foreach($S_RETURNVAL_EMP as $key => $val) {?>
+					<option value="<?=$key?>" <?=$_GET['em_seq']==$key?"selected":"";?>><?=$val?></option>
+					<?}?>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td width="10%" bgcolor="#EFEFEF" class="center b">다운로드</td>
+			<td><button class="button ui-button ui-widget ui-corner-all" onclick="funcSubmit('download');return false;" id="export"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> 다운로드</button></td>
+			<td width="10%" bgcolor="#EFEFEF" class="center b">조회구분</td>
+			<td>확인여부 : <select name="overplus1"><option value="">선택</option>
+			<option value="Y" <?=$_GET['overplus1']=="Y"?"selected":"";?>>확인</option>
+			<option value="N" <?=$_GET['overplus1']=="N"?"selected":"";?>>미확인</option>
+			</select>
+			</td>
+		</tr>
+		<tr>
+			<td bgcolor="#ffffff" align="center" colspan="4">
+			<button class="button ui-button ui-widget ui-corner-all " onclick="funcSearch();return false;"><span class="ui-button-icon ui-icon ui-icon-search"></span> 조 회</button>
+			</td>
+		</tr>
+		</table>
+<?}?>
+</form>
+</div>
+
+
+<div class="ui-widget ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">			
+<?	
+		$var=$S_RETURNVAL_HISTORY;
+		$var1=json_decode($var,true);
+?>
+<h3>[<?=$var1['project_nm']?>]</h3> 
+<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span> 
+<?	
+		if($var1['start_date']&&$var1['end_date']){
+			echo "<b>기간 : ".$var1['start_date']."~".$var1['end_date']."</b>";
+		}
+		if($var1['end_time']){
+			echo "<b> (".$var1['end_time'].")</b>";
+		}
+		echo "<br/>".(nl2br($var1['project_memo']));
+?>
+</div>
+
+<?if($_SESSION['em_level']>10){?>
+<div style="float:left;margin:10 0 0 0;width:100%;" >
+<button class="button ui-button ui-widget ui-corner-all" onclick="funcSubmit('download');return false;" id="export"><span class="ui-icon ui-icon-arrowthickstop-1-s"></span> 다운로드</button>
+</div>
+<?}?>
+
+<form name="frm1" method="POST" enctype="multipart/form-data">
+<input type="hidden" name="seq" value="<?=$_GET['seq']?>">
+<input type="hidden" name="cnt_pos_title" value="<?=count($title)?>">
+
+<div style="float:left;margin:10 0 10 0;width:100%;">
+<span style="float:left;vertical-align:middle;line-height: 30px;">
+	<b>총 : <?=$S_RETURNVAL['N_CNT']?> 건</b>
+</span>
+
+
+
+<span style="float:right;">
+<!-- -----------123------------- -->
+<font size="2.5"><b>기타 첨부파일 목록 :</b></font>
+<?php 
+$fCnt = count($F_RETURNVAL['seq']);
+// print_r($F_RETURNVAL);
+for($i=0; $i<$fCnt; $i++){  
+?>
+<!-- -----------123------------- -->
+<?=$F_RETURNVAL['file_nm'][$i]?"<a href='/include/download.php?path=/data/work_project_etcFile/&file_new=".$F_RETURNVAL['file_tmp_nm'][$i]."&file_real=".$F_RETURNVAL['file_nm'][$i]."'><span class='ui-state-default ui-corner-all ui-button-icon ui-icon ui-icon-disk' style='margin-right:5px';></span></a>":""?>
+<?php }?>
+	<button class="button ui-button ui-widget ui-corner-all" onclick="funcSubmit('update','<?=$_SESSION['em_level']?>');return false;" id="update"><span class="ui-button-icon ui-icon ui-icon-pencil"></span> 수 정</button>
+<!-- 	<button class="button ui-button ui-widget ui-corner-all" onclick="funcSubmit('update','<?=$_SESSION['em_level']?>');return false;" id="insert"><span class="ui-button-icon ui-icon ui-icon-pencil"></span> 등 록</button> -->
+<!-- -----------123------------- -->
+	<button class="button ui-button ui-widget ui-corner-all" onclick="funcSubmit('delete','<?=$_SESSION['em_level']?>');return false;" id="delete"><span class="ui-button-icon ui-icon ui-icon-pencil"></span> 삭 제</button>
+<?if($_SESSION['em_level']==10){?>
+	<button class="button ui-button ui-widget ui-corner-all" onclick="funcSubmit('list','23');return false;"><span class="ui-button-icon ui-icon ui-icon-document"></span> 목 록</button>
+<?}else{?>
+	<button class="button ui-button ui-widget ui-corner-all" onclick="funcSubmit('list','28');return false;"><span class="ui-button-icon ui-icon ui-icon-document"></span> 목 록</button>
+<?}?>
+</span>
+</div>
+
+
+<div class="container_12" style="float:left;margin-top:10px;">
+    		<div class="grid_13 height400">
+        		<table class="fancyTable" id="myTable05" cellpadding="0" cellspacing="0" >
+<thead>
+	<tr>
+		<th bgcolor="#efefef"><input type="checkbox" name="check_all"></th>
+		<?foreach($title as $k=>$v){?>			
+		<th bgcolor="<?=$title_bgcolor[$v]?>" class='title_tooltip' title='<?=($title_memo[$v])?>'><?=$title_memo[$v]?"<span class='ui-icon ui-icon-info'></span><br/>":""?>  <?=$title_kr_name[$v]?></th>
+		<?}?>
+<?if($_SESSION['em_level']==10){?>
+		<th bgcolor="#efefef"><span style='display:inline-block; width:70px;'>확인여부</span></th>				
+<?}?>
+	</tr>
+	<?if(!$S_RETURNVAL['content']){?>
+	<tr>
+		<th colspan="3">데이터가 없습니다.</th>
+	</tr>
+	<?}?>
+</thead>
+<tbody>
+
+	<?foreach($S_RETURNVAL['content'] as $kk=>$vv){ ?>
+	<tr bgcolor="#ffffff">
+		<td align="center" bgcolor="#ffffff"><input type="checkbox" value="<?=$S_RETURNVAL['content'][$kk]['seq']?>" name="check_list[]" class="check_list"></td>
+		<?foreach($title as $k=>$v){?>
+		<td align="center"  bgcolor="#ffffff">
+<?		
+		if($v=="title1"){
+			echo $title_necessary_yn[$kk][$v];
+			$division1 = $content[$kk][$v];
+			if($_SESSION['em_level']>10) {
+				echo "<span style='display:inline-block; width:100px;'>".funcDiviKnm1($content[$kk][$v])."</span>";
+			}else{ 
+?>
+				<select name="title1_<?=$S_RETURNVAL['content'][$kk]['seq']?>" class="select wid100" onchange="getDivision2(this.value,'','target2_<?=$S_RETURNVAL['content'][$kk]['seq']?>');">
+				<option value="">본부선택</option>
+				<?foreach(funSelectCom('1','','1','Y') as $key => $val) {?>
+				<option value="<?=$key?>" <?=$content[$kk][$v]==$key?"selected":""?>><?=$val?></option>
+				<?}?>
+				</select>
+<?
+			}
+		}else if($v=='title2'){
+			echo $title_necessary_yn[$kk][$v];
+			$division2 = $content[$kk][$v];
+			if($_SESSION['em_level']>10) {
+				echo "<span style='display:inline-block; width:100px;'>".funcDiviKnm1($content[$kk][$v])."</span>";
+			}else{ 
+?>
+				<select name="title2_<?=$S_RETURNVAL['content'][$kk]['seq']?>" class="select wid100" onchange="getEmseq(this.value,'','target3_<?=$S_RETURNVAL['content'][$kk]['seq']?>');" id="target2_<?=$S_RETURNVAL['content'][$kk]['seq']?>">
+				<option value="">선택</option>
+				<?foreach(funSelectCom1('2',$division1) as $key => $val) {?>
+				<option value="<?=$key?>" <?=$content[$kk][$v]==$key?"selected":""?>><?=$val?></option>
+				<?}?>
+				</select>
+<?
+			}
+		}else if($v=='title3'){
+			echo $title_necessary_yn[$kk][$v];
+			if($_SESSION['em_level']>10) {
+				echo "<span style='display:inline-block; width:100px;'>".funSelectEmpNm($content[$kk][$v])."</span>";
+			}else{ 
+?>
+				<select name="title3_<?=$S_RETURNVAL['content'][$kk]['seq']?>" class="select wid100" id="target3_<?=$S_RETURNVAL['content'][$kk]['seq']?>">
+				<?foreach(funListEmpNm($division1,$division2) as $key55 => $val55) {?>
+				<option value="<?=$key55?>" <?=$content[$kk][$v]==$key55?"selected":""?>><?=$val55?></option>
+				<?}?>
+				</select>
+<?
+			}
+		}
+		else{
+			echo "<span style='display:inline-block; width:100px;word-break:break-all;'>".$content[$kk][$v]."</span>";
+			echo $title_necessary_yn[$kk][$v];
+			echo $title_activation_yn[$kk][$v];
+		}
+?>	
+		</td>
+<?}?>
+<?if($_SESSION['em_level']==10){?>
+		<td align="center">
+			<?=$S_RETURNVAL['content'][$kk]['upd_emp']?"Y":"N";?>
+		</td>
+<?}?>
+	</tr>
+<?$num--;}?>
+</tbody>
+					
+
+</table>
+
+</div>
+
+</form>
+
+
+<div class="clear"></div>
+
+
+<div class="pageStyle">	
+	<!--페이징 처리 시작 --------------------------------------------->
+	<?include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.page.php';?>
+	<!--페이징 처리 끗 ----------------------------------------------->
+
+</div>
+
+</div>
+
+<script type="text/javascript">
+
+function getOptionValue(v,v1,v2){//연결항목옵션한글명,연결항목옵션key값,연결항목i값
+	 //alert(v);
+	console.log(v+" "+v1+" "+v2);
+
+	var arrayValue = (v1).split(",");
+
+	var listCnt = "<?=$S_RETURNVAL['nListCnt']?>";
+	var optionCodeValue = "";	
+	var optionList = "<?=json_encode($S_RETURNVAL_OPTION['optoin_value'])?>";	
+
+	console.log(arrayValue[1]);
+
+	for(var i=0; i<listCnt; i++){   
+	optionCodeValue = $("select[name='option_type"+i+"']").val(); 
+		if(i==arrayValue[0]){	
+			$("select[name='connection_option"+v2+"']").children('option').remove();
+			$.each(optionList, function(nn, field){ 												
+						if(nn==optionCodeValue){							
+							$.each(field, function(n1, field1){ 
+								$("select[name='connection_option"+v2+"']").append('<option value='+nn+","+n1+'>'+field1+'</option>');
+							});
+						}		
+			});
+		}
+
+	}
+}
+
+</script>
+
+<script>
+
+$(document).ready(function(){
+//$.noConflict(); 
+/*
+	$('.numeric').keyup(keyup(e){
+    regNumber = /^[0-9]*$/; 
+    var str = $(this).val(); 
+		
+		if(!regNumber.test(str)) {
+			console.log(str);
+
+			var res = str.substring(0, str.length-1); 
+			console.log(res);
+			$(this).val(res);
+			
+		}
+	});
+*/
+	$('.numeric').keyup(function () { 
+		this.value = this.value.replace(/[^0-9\.]/g,'');
+	});
+
+	$('.string').keyup(function () { 
+		//this.value = this.value.replace(/[^ㄱ-ㅎ가-힣0-9a-zA-Z\.]/g,'');
+		this.value = this.value.replace(/[\{\}\[\]\/?;:|\*\-_+<>\#$&\\\=\(\'\"]/g,'');
+	});
+	
+	$('.datepicker').datepicker(); 
+	$.datepicker.setDefaults({
+	//$('.datepicker').datepicker( { 
+			inline: true,
+			closeText: '닫기',
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			prevText: '이전 달',
+			nextText: '다음 달',
+			monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+			monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+			dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+			dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+			dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+			showMonthAfterYear: true,
+			yearSuffix: '년'
+	});
+
+
+	$('.monthpicker').datepicker( {
+		changeMonth: true,
+		inline: true,
+		closeText: '선택',
+		currentText: '이번 달',
+		changeMonth: true,
+		changeYear: true,
+		showButtonPanel: true,
+		dateFormat: 'yy-mm',
+		prevText: '이전 달',
+		nextText: '다음 달',
+		buttonText:'선택',
+		monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+		monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+		yearSuffix: '년',
+		showMonthAfterYear: true,
+		/*
+		onClose: function(dateText, inst) { 
+			var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+			var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+			$(this).datepicker('setDate', new Date(year, month, 1));
+			$(".ui-datepicker-calendar").hide();
+		}
+		*/
+
+		onClose: function(dateText, inst) {
+        if($('#ui-datepicker-div').html().indexOf('ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all ui-state-hover') > -1) {
+            $(this).datepicker(
+                'setDate',
+                new Date(
+                    $("#ui-datepicker-div .ui-datepicker-year :selected").val(),
+                    $("#ui-datepicker-div .ui-datepicker-month :selected").val(),
+                    1
+                )
+            ).trigger('change');
+            $('.date-picker').focusout();
+        }
+        //$("#ui-datepicker-div").removeClass("month_year_datepicker");
+		$(".ui-datepicker-calendar").hide();
+    },
+		/*
+    beforeShow : function(input, inst) {
+        if((datestr = $(this).val()).length > 0) {
+            year = datestr.substring(datestr.length-4, datestr.length);
+            month = datestr.substring(0, 2);
+            $(this).datepicker('option', 'defaultDate', new Date(year, month-1, 1));
+            $(this).datepicker('setDate', new Date(year, month-1, 1));
+            $("#ui-datepicker-div").addClass("month_year_datepicker");
+        }
+    }
+	*/
+
+	});
+	
+	$(".monthpicker").focus(function () {		
+		$(".ui-datepicker-calendar").hide();
+		/*
+        $("#ui-datepicker-div").position({
+            my: "center top",
+            at: "center bottom",
+            of: $(this)
+        });
+		*/
+	});
+
+
+	$('.yearpicker').datepicker( {        
+		changeYear: true,
+		showButtonPanel: true,
+		dateFormat: 'yy',
+		onClose: function(dateText, inst) {            
+			var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+			$(this).datepicker('setDate', new Date(year,1, 1));
+		}
+	});
+
+
+	$( ".title_tooltip" ).tooltip({
+		position: {
+        my: "center bottom",
+        at: "center top-10",
+        collision: "flip",
+        using: function( position, feedback ) {
+            $( this ).addClass( feedback.vertical )
+                .css( position );
+        }
+    }
+	});
+
+});
+
+
+</script>
+
+<!--
+<script src="/thema/Fixed-Header-Table-master/jquery.fixedheadertable.js"></script>
+<script src="/thema/Fixed-Header-Table-master/demo/demo.js?ver=3"></script>
+<link href="/thema/Fixed-Header-Table-master/demo/css/960.css?ver=5" rel="stylesheet" media="screen" />
+<link href="/thema/Fixed-Header-Table-master/css/defaultTheme.css" rel="stylesheet" media="screen" />
+<link href="/thema/Fixed-Header-Table-master/demo/css/myTheme1.css?ver=3" rel="stylesheet" media="screen" />
+-->
+
+<link href="/thema/Fixed-Header-Table-master/demo/css/960.css" rel="stylesheet" media="screen" />
+<link href="/thema/Fixed-Header-Table-master/css/defaultTheme.css" rel="stylesheet" media="screen" />
+<link href="/thema/Fixed-Header-Table-master/demo/css/myTheme1.css?ver=3" rel="stylesheet" media="screen" />
+
+
+<script src="/thema/Fixed-Header-Table-master/jquery.fixedheadertable.js"></script>
+<script src="/thema/Fixed-Header-Table-master/demo/demo.js?ver=1"></script>
+
+<script type="text/javascript">
+<!--
+
+	$('#myTable05').fixedHeaderTable({
+	//altClass: '1',
+	//footer: true,
+	fixedColumns: 0,
+
+	});
+
+
+</script>
+--------------------------------------------------------------------------------------------------------------
+41.php
+<?
+/**********************************************
+Author				: 엄태영
+Create Date			: 2022.03.24
+Comment				: 매체공지/취합
+-----------------------------------------------
+Modify Author		:
+Modify date			:
+Comment				:
+***********************************************/
+
+?>
+<title>업무관리>매체공지/취합지원</title>
+<?
+$N_ChkLevelValue = 10;
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.level.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.arrayvalues.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.common.php';
+@include_once $_SERVER['DOCUMENT_ROOT'].'/cls/cls.work41.php';
+
+$nOrdPagingNum = $_GET['nOrdPagingNum']?$_GET['nOrdPagingNum']:20;
+$nPage = $_GET['nPage']?$_GET['nPage']:1;
+$nOrdPagingBlock = 10;
+
+$clsWork = new clsWork();
+$S_RETURNVAL = $clsWork->funcListProjectHistory($nOrdPagingNum);
+$num =  $S_RETURNVAL['N_CNT']-($nPage-1)*$nOrdPagingNum;
+
+$page_check_type = "&type=".$_GET['type'];
+
+$category = $_GET['category'];
+?>
+
+<div id="loading" style=" position:absolute; width:82%;text-align:center;top:20%"><img src="/images/common/loading6.gif"></div>
+
+<style type="text/css">
+	.atable {
+    border-collapse: collapse;
+	}
+
+	.atable th {
+		border: 1px solid #cccccc;
+		background : #EFEFEF;
+	}
+
+	.atable td {
+		border: 1px solid #cccccc;
+	}
+</style>
+
+<script type="text/javascript">
+function frm2Check(){
+	if((!frm2.sdate.value || !frm2.edate.value) && !frm2.s_string.value && !frm2.p_string.value){alert ("검색어를 입력해주세요.");return false;}
+}
+
+function funcCopySetting(seq){
+	url = "pop_copy_setting.php?seq="+seq;
+	window.open(url,'a','width=550,height=350');
+}
+
+function funcSubmit(submitType,seq,fn,gfh_seq) {
+submitContents(this);
+	if(submitType=="show"){
+		$.ajax({
+				type: "POST",
+				url: "/input/work/ipt_work_41.php?submitType="+submitType, // -------------------123------------------------
+				data:{"seq":  seq},
+				success:function(result){ 
+					var data = JSON.parse(result);
+					console.log(data);
+					oEditors.getById["project_memo"].exec("SET_IR", [""]); //내용초기화------------------123------------------------
+					oEditors.getById["project_memo"].exec("PASTE_HTML", [data.project_memo]); // -------------------123------------------------
+					$("input[name=seq]").val(data.seq);
+					$("input[name=project_nm]").val(data.project_nm);
+
+					$("div[id=hidden_file_nm]").html("<a href=/include/download.php?path=/data/work_project_file/&file_new="+encodeURIComponent(data.file_nm_new)+"&file_real="+encodeURIComponent(data.file_nm)+">"+data.file_nm+"</a>");
+
+					$("div[id=hidden_etc_file_nm]").html("<a href='?nc=42&category=3&seq="+encodeURIComponent(data.seq)+"'>"+data.etc_file_nm+" ...더보기</a>"); 
+					// -------------------123------------------------
+
+					$("input[name=start_date]").val(data.start_date);
+					$("input[name=end_date]").val(data.end_date);
+					$("input[name=end_time]").val(data.end_time);
+					if(data.import_is){$('input:checkbox[name=import_is]').prop("checked", true)}else{$('input:checkbox[name=import_is]').prop("checked", false)};
+					if(data.project_type){$('input:radio[name=project_type]:input[value='+data.project_type+']').prop("checked", true);}
+					if(data.project_type2){$('input:radio[name=project_type2]:input[value='+data.project_type2+']').prop("checked", true);}
+					if(data.open_yn){$('input:radio[name=open_yn]:input[value='+data.open_yn+']').prop("checked", true);}
+					$("textarea[name=project_memo]").val(data.project_memo); // -------------------123------------------------
+					$("#insert").hide();
+					$("#update").show();
+					$("#delete").show();
+					$("#reset").show();
+				}
+		});
+
+	}
+
+	if(submitType=="insert" || submitType=="update"  || submitType=="delete" ){
+		
+		var regEmail = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i; 
+		var regTell = /^\d{3}-\d{3,4}-\d{4}$/;
+		
+		if(submitType=="insert" ){
+			if(frm1.project_nm.value==""){alert("프로젝트명을 입력하세요.");frm1.project_nm.focus();return false;	}		
+			if(frm1.start_date.value==""){alert("시작일을 입력하세요.");frm1.start_date.focus();return false;	}
+			if(frm1.end_date.value==""){alert("종료일을 입력하세요.");frm1.end_date.focus();return false;	}
+			if(frm1.project_type[0].checked==false && frm1.project_type[1].checked==false){alert("구분을 선택하세요.");return false;	}
+			if(frm1.project_type2[0].checked==false && frm1.project_type2[1].checked==false){alert("구분2 선택하세요.");return false;	}
+			if(frm1.open_yn[0].checked==false && frm1.open_yn[1].checked==false){alert("공개여부를 선택하세요.");return false;	}
+			if(frm1.file_nm.value==""){alert("파일업로드를 하세요.");frm1.file_nm.focus();return false;	}
+			$('#loading').show();   
+		}
+		
+		if(submitType=="delete" ){
+			if(confirm("정말 삭제하시겠습니까?? \n해당 데이터도 함께 삭제됩니다.") == true){}
+		}
+
+		var data = new FormData(document.getElementById("frm1")); 
+		
+		$.ajax({
+		  type: "POST",
+		  url: "/input/work/ipt_work_41.php?submitType="+submitType, // -------------------123------------------------
+		  data:data,
+		  processData: false,  // file전송시 필수
+          contentType: false,  // file전송시 필수
+		  success:function(result){ 		
+			console.log('result'+result);
+			alert(result);
+			location.reload();
+		  },
+		  error:function(){
+						alert("실패");
+			}
+		});
+
+	}
+	
+	if(submitType=="reset"){
+		$('#myfomr').reset();
+	}
+}
+
+</script>
+
+<table width='100%' border='0' cellpadding='0' cellspacing='0'>
+<tr>
+	<td><div style="float:left; margin-top:5px;">업무관리 > 매체공지/취합지원 > 공지/취합등록</div></td>
+</tr>
+<tr>
+	<td colspan="4">&nbsp;</td>
+</tr>
+<tr>
+	<td width="100%" valign="top" colspan="2">
+		<table width="100%" border="0" cellpadding="5" cellspacing="1" align="left" class="atable">
+		<form name="frm1" method="post" enctype="multipart/form-data" id="frm1">
+		<input type="hidden" name="seq" >
+			<tr>
+				<td width="15%" class="conTitle">√ 프로젝트명</td>	
+				<td width="35%"><input type="text" class="input wid400" name="project_nm"></td>
+				<td width="15%" class="conTitle">√ 기간</td>
+				<td width="35%">
+				<input type="text" class="input datepicker" name="start_date" readonly="readonly" value="<?=$sdate?>"><span class="ui-button-icon ui-icon ui-icon-calendar"></span> ~ 
+				<input type="text" class="input datepicker" name="end_date" readonly="readonly" value="<?=$edate?>"><span class="ui-button-icon ui-icon ui-icon-calendar"></span>
+				<input type="text" class="input wid50 time" id="basicExample" name="end_time">
+				</td>
+			</tr>					
+			<tr>				
+				<td class="conTitle">√ 구분</td>
+				<td><input type="radio" name="project_type" value="1"> 공지 <input type="radio" name="project_type" value="2"> 취합
+				<td class="conTitle">√ 공개여부</td>
+				<td><input type="radio" name="open_yn" value="Y"> 공개 <input type="radio" name="open_yn" value="N"> 비공개</td>
+			</tr>
+			<tr>				
+				<td class="conTitle">√ 카테고리</td>
+				<td colspan="4">
+					<input type="radio" name="project_type2" value="1"> 정산 
+					<input type="radio" name="project_type2" value="2"> 매체
+				</td>
+			</tr>
+			<tr>
+				<td class="conTitle">√ 공지/취합파일 업로드</td>
+				<td><input type="file" class="input wid120" name="file_nm"> <div id="hidden_file_nm"></div></td>
+				<td class="conTitle">기타파일 업로드</td>
+				<td><input type="file" class="input wid120" name="etc_file_nm[]" multiple> <!-- ------------123------------ -->
+				
+				<div id="hidden_etc_file_nm"></div>
+				</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="conTitle">중요도</td>
+				<td colspan="4" ><input type="checkbox" name="import_is" value="Y"></td>
+			</tr>
+			<tr>
+				<td class="conTitle">프로젝트 설명</td>
+				<td colspan="3" align="left" >
+					<textarea rows='5' cols='150' name="project_memo" id="project_memo"></textarea>
+				</td>
+
+			</tr>	
+			<tr>
+				<td bgcolor="#ffffff" colspan="4" align="center">
+				<button class="button ui-button ui-widget ui-corner-all" onclick="funcSubmit('insert');return false;" id="insert"><span class="ui-button-icon ui-icon ui-icon-check"></span>등 록</button>
+				<button class="button ui-button ui-widget ui-corner-all" onclick="funcSubmit('update');return false;" style="display:none" id="update"><span class="ui-button-icon ui-icon ui-icon-pencil"></span> 수 정</button>
+				<button class="button ui-button ui-widget ui-corner-all" onclick="funcSubmit('delete');return false;" style="display:none" id="delete"><span class="ui-button-icon ui-icon ui-icon-trash"></span> 삭 제</button>
+				<button class="button ui-button ui-widget ui-corner-all" onclick="funcSubmit('reset');return false;" style="display:none" id="reset"><span class="ui-button-icon ui-icon ui-icon-refresh"></span> 초기화</button>
+				</td>
+			</tr>
+		</form>
+		</table>
+	</td>
+</tr>
+<tr>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td>
+		<table width="100%" border="0" cellpadding="5" cellspacing="1" align="left" class="atable">
+		<form name="frm2" method="GET" onsubmit="return frm2Check();">
+		<input type="hidden" name="nc" value="<?=$_GET['nc']?>">
+		<input type="hidden" name="category" value="<?=$_GET['category']?>">
+			<tr>
+				<td width="15%" class="conTitle">조회기간</td>
+				<td>
+				<input type="hidden" name="d_item" value="reg_date">
+				<input type="text" class="input datepicker" name="sdate" readonly="readonly" value="<?=$_GET['sdate']?>"><span class="ui-button-icon ui-icon ui-icon-calendar"></span> ~ 
+				<input type="text" class="input datepicker" name="edate" readonly="readonly" value="<?=$_GET['edate']?>"><span class="ui-button-icon ui-icon ui-icon-calendar"></span>
+				</td>
+			</tr>
+			<tr>
+				<td class="conTitle">조회기준</td>
+				<td>
+					<select name="s_item">
+						<option value="project_nm">프로젝트명</option>
+					</select> 
+					<input type="text" class="input wid300" name="s_string" value="<?=$_GET['s_string']?>"></td>
+			</tr>	
+			<tr>
+				<td class="conTitle">카테고리</td>
+				<td>
+					<select name="project_type2">
+						<option value="">카테고리</option>
+						<option value="1">정산</option>
+						<option value="2">매체</option>
+					</select> 
+				</td>
+			</tr>				
+			<tr>
+				<td bgcolor="#ffffff" colspan="6" align="center">
+				<button class="button ui-button ui-widget ui-corner-all" type="submit"><span class="ui-button-icon ui-icon ui-icon-search"></span> 조 회</button>
+				</td>
+			</tr>
+		</form>
+		</table>
+	</td>
+</tr>
+<tr>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td colspan="2">
+		<table width="100%" border="0" cellpadding="5" cellspacing="1" align="left" class="atable">
+		<form name="frm3" method="post">
+		<input type='hidden' name='nc' value='<?=$_GET['nc']?>'>
+			<tr class="conTitle">
+				<td width="5%">번호</td>
+				
+				<td width="5%">구분</td>		
+				<td width="5%">카테고리</td>
+				<td width="5%">중요도</td>
+				<td width="30%">프로젝트명</td>
+				<td width="8%">관리</td>
+				<td width="12%">기간</td>
+				<td width="5%">공개여부</td>
+				<td width="5%">기타파일</td>	
+					
+				<td width="5%">마감여부</td>
+				<td width="7%">등록일</td>
+				<td width="7%">등록자</td>				
+			</tr>
+<?if($S_RETURNVAL['nListCnt']<1){?>
+			<tr>
+				<td colspan="10" class="conConTxtC">데이타가 없습니다.</td>
+			</tr>
+<?}?>
+<input type="hidden" name="seq">
+<?for($i=0;$i<$S_RETURNVAL['nListCnt'];$i++){?>
+			<tr>
+				<a href='/include/download.php?path=/data/work_project_file/&file_new=<?=$S_RETURNVAL['etc_file_nm_new'][$i]?>&file_real=<?=$S_RETURNVAL['etc_file_nm_new'][$i]?>'></a>
+				<td class="conConTxtC"><?=$num?></td>				
+				<td class="conConTxtC">
+					<?php if($S_RETURNVAL['project_type'][$i]=='1'){ ?>
+						<font color='#009933'>공지</font>
+					<?php }else if($S_RETURNVAL['project_type'][$i]=='2'){ ?>
+						<font color='#0080ff'>취합</font>
+					<?php } ?>
+				</td>	
+				<td class="conConTxtC"><!-- ------------123------------ -->
+					<?php if($S_RETURNVAL['project_type2'][$i]=='1'){ ?>
+						<font color='#820099'>정산</font>
+					<?php }else if($S_RETURNVAL['project_type2'][$i]=='2'){ ?>
+						<font color='#DC6089'>매체</font>
+					<?php } ?>
+				</td>					
+				<td class="conConTxtC"><?=$S_RETURNVAL['import_is'][$i]?"<span class='ui-state-default ui-corner-all ui-button-icon ui-icon ui-icon-star'></span>":""?></td>					
+				<td class="conConTxtL"><?=$S_RETURNVAL['project_nm'][$i]?></td>
+				<td class="conConTxtC">
+				
+				<span class='ui-state-default ui-corner-all ui-icon ui-icon-pencil' title="수정.삭제.초기화" onclick="funcSubmit('show',<?=$S_RETURNVAL['seq'][$i]?>);return false;" style="cursor:hand"></span>
+				<a href="?nc=24&category=3&seq=<?=$S_RETURNVAL['seq'][$i]?>"><span class='ui-state-default ui-corner-all ui-icon ui-icon-gear' title="설정보기"></span></a>
+
+				<span class="ui-state-default ui-corner-all ui-icon ui-icon-transferthick-e-w" title="설정복사"onclick="funcCopySetting(<?=$S_RETURNVAL['seq'][$i]?>);return false;" style="cursor:hand"></span>
+
+				<a href="?nc=42&category=3&seq=<?=$S_RETURNVAL['seq'][$i]?>"><span class='ui-state-default ui-corner-all ui-icon ui-icon-document' title="내용보기" ></span></a>
+				
+				</td>
+				<td class="conConTxtC"><?=$S_RETURNVAL['start_date'][$i]?>~<?=$S_RETURNVAL['end_date'][$i]?> <?=$S_RETURNVAL['end_time'][$i]?></td>				
+				<td class="conConTxtC"><?=$S_RETURNVAL['open_yn'][$i]?></td>
+				<td class="conConTxtC">
+<?=$S_RETURNVAL['etc_file_nm'][$i]?"<a href='?nc=42&category=3&seq=".$S_RETURNVAL['seq'][$i]."'><span class='ui-state-default ui-corner-all ui-button-icon ui-icon ui-icon-disk'></span></a>":""?><!-- ------------123------------ -->
+				</td>
+
+				
+				<td class="conConTxtC"><?=$S_RETURNVAL['end_date'][$i]<date('Y-m-d')?"<span class='ui-state-default ui-corner-all ui-button-icon ui-icon ui-icon-locked'></span>":"<span class='ui-state-default ui-corner-all ui-button-icon ui-icon ui-icon-unlocked'></span>"?></td>
+				<td class="conConTxtC"><?=$S_RETURNVAL['reg_date'][$i]?></td>
+				<td class="conConTxtC"><?=funSelectEmpNm($S_RETURNVAL['reg_emp'][$i])?></td>
+			</tr>
+<?$num--;}?>		<tr>
+				<td align='center' bgcolor='#FFFFFF' height=30 class=p_txt colspan='11'>
+				<!--페이징 처리 시작 --------------------------------------------->
+				<?
+				$searchPage .= "&category=3";
+				include_once $_SERVER['DOCUMENT_ROOT'].'/include/inc.page.php';?>
+				<!--페이징 처리 끗 ----------------------------------------------->
+				</td>
+			</tr>
+		</form>
+		</table>
+	</td>
+</tr>
+
+<tr>
+	<td>&nbsp;</td>
+</tr>
+</table>
+<!-- ------------123------------ -->
+<script type="text/javascript" src="../se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
+<!-- ------------123------------ -->
+<script>
+	var oEditors = [];
+
+	nhn.husky.EZCreator.createInIFrame({
+		oAppRef: oEditors,
+		elPlaceHolder: "project_memo",
+		sSkinURI: "../se2/SmartEditor2Skin.html",
+		fCreator: "createSEditor2"
+	});
+
+	function submitContents(elClickedObj) {
+		oEditors.getById["project_memo"].exec("UPDATE_CONTENTS_FIELD", []);
+	}
+</script>
+
+
+<script>
+$(document).ready(function () {
+	$('#loading').hide();   
+	$('.datepicker').datepicker(); 
+	$.datepicker.setDefaults({
+
+			inline: true,
+			closeText: '닫기',
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			prevText: '이전 달',
+			nextText: '다음 달',
+			monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+			monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+			dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+			dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+			dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+			showMonthAfterYear: true,
+			yearSuffix: '년'
+	});
+
+	$('.month-picker').datepicker( {
+		inline: true,
+		closeText: '선택',
+		currentText: '이번 달',
+		changeMonth: true,
+		changeYear: true,
+		showButtonPanel: true,
+		dateFormat: 'yy-mm-dd',
+		prevText: '이전 달',
+		nextText: '다음 달',
+		monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+		monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+		yearSuffix: '년',
+		showMonthAfterYear: true,
+		onClose: function(dateText, inst) { 
+			var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+			var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+			$(this).datepicker('setDate', new Date(year, month, 1));
+		}
+	});
+
+	$('.year-picker').datepicker( {        
+		changeYear: true,
+		showButtonPanel: true,
+		dateFormat: 'yy',
+		onClose: function(dateText, inst) {            
+			var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+			$(this).datepicker('setDate', new Date(year,1, 1));
+		}
+	});
+
+	$('#basicExample').timepicker();
+});
+</script>
+
+<script type="text/javascript" src="/thema/jquery-timepicker/jquery.timepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="/thema/jquery-timepicker/jquery.timepicker.css" />
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+cls41 (3395~4594)
+// ------------123---------------
+	//----매체공지.취합 히스토리 등록 시작----
+	public function funcCheckForm(){
+
+		ini_set('memory_limit','-1'); // 메모리 제한 해제 
+
+		ob_start(); 
+
+		setlocale(LC_CTYPE, "ko_KR.eucKR");
+//		setlocale(LC_CTYPE, "ko_KR.utf-8");
+
+		$dir_path = $_SERVER['DOCUMENT_ROOT']."/data/work_project_file/";
+
+		if(preg_match("/(\.(csv|CSV))$/i", $_FILES['file_nm']['name'])){
+			if($_FILES){		
+				/*공지, 취합파일 업로드*/
+				if( $_FILES['file_nm']) {
+					$files_upload_tmp	= $_FILES['file_nm']['tmp_name'];
+					$files_upload_nm	= $_FILES['file_nm']['name'];				
+					$files_upload_size	= $_FILES['file_nm']['size'];
+
+					$file_info = pathinfo($files_upload_nm);
+
+					$file_name_real = preg_replace( '/,/', '_', $file_info['basename']);
+					$file_name_real = preg_replace( '/\s+/', '', $file_name_real);
+					$file_name_real = $files_upload_nm;	
+					$file_name_new	= strtotime("now").".".$file_info['extension'];
+					
+					move_uploaded_file($files_upload_tmp,$dir_path.$file_name_new);
+
+					if($_FILES['file_nm']){
+
+						$B_RETURNVAL = 1;
+					
+						$handle = fopen($dir_path.$file_name_new, "r"); // 파일읽기
+
+						while($data = fgetcsv($handle, 1000)){
+							foreach($data as $val){
+								$val = iconv("euckr", "utf8", $val);
+								$datas[] = $val;
+							}
+							$temp[] = $datas; //임시배열 데이터 넣어주기
+							$datas = ''; // 임시배열 비워주기
+						}
+					}else{
+						$B_RETURNVAL = -1;
+						exit();
+					}
+	//print_r($temp);
+				}
+				/*공지, 취합파일 업로드*/
+				$upload_path = $_SERVER['DOCUMENT_ROOT']."/data/work_project_etcFile/";			
+				if( $_FILES['etc_file_nm']){	
+						$etc_files_upload_tmp	= $_FILES['etc_file_nm']['tmp_name'][0];
+						$etc_files_upload_nm	= $_FILES['etc_file_nm']['name'][0];				
+						$etc_files_upload_size	= $_FILES['etc_file_nm']['size'][0];
+						$etc_file_info = pathinfo($etc_files_upload_nm[0]);
+						$etc_file_name_real = preg_replace( '/,/', '_', $etc_file_info['basename']);
+						$etc_file_name_real = preg_replace( '/\s+/', '', $etc_file_name_real);
+						$etc_file_name_real = $etc_files_upload_nm;
+						$etc_file_name_new	= strtotime("now").".".$etc_file_info['extension'];
+					/*기타파일 업로드 1번째 파일 업로드*/
+						move_uploaded_file($_FILES['etc_file_nm']['tmp_name'][0], $upload_path.iconv("UTF-8","EUC-KR",basename($_FILES['etc_file_nm']['tmp_name'][0])));
+					/*기타파일 업로드 1번째 파일 업로드*/
+				}
+			}
+			//t_project_history insert
+			$Qry = "INSERT INTO t_project_history (
+						project_nm,
+						file_nm,
+						file_nm_new,
+						etc_file_nm,
+						etc_file_nm_new,
+						start_date,
+						end_date,
+						end_time,
+						import_is,
+						project_type,
+						project_type2,
+						open_yn,
+						project_memo,
+						reg_date,
+						reg_time,
+						reg_emp
+					) VALUES (
+						'".$_POST['project_nm']."',
+						'".$file_name_real."',	
+						'".$file_name_new."',		
+						'".$etc_file_name_real."',	
+						'".$etc_file_name_new."',		
+						'".$_POST['start_date']."',
+						'".$_POST['end_date']."',
+						'".$_POST['end_time']."',
+						'".$_POST['import_is']."',
+						'".$_POST['project_type']."',
+						'".$_POST['project_type2']."',
+						'".$_POST['open_yn']."',
+						'".$_POST['project_memo']."',
+						CURDATE(),
+						CURTIME(),
+						'".$_SESSION['s_em_seq']."')";	
+			$Rst = que($Qry);
+			$ph_seq = mysql_insert_id();
+
+			//t_project_title_setting INSERT
+	// ------------123---------------
+			if($_FILES['etc_file_nm']){
+				$upload_path = $_SERVER['DOCUMENT_ROOT']."/data/work_project_etcFile/";
+
+				for($i=0; $i < count($_FILES['etc_file_nm']['name']); $i++){
+					$etc_tmp	= $_FILES['etc_file_nm']['tmp_name'][$i];
+					$etc_nm		= $_FILES['etc_file_nm']['name'][$i];		
+					$name = basename($etc_nm);
+					$tmp_name = basename($etc_tmp);
+					/*기타파일 업로드 2번째 이후 파일 업로드*/
+					move_uploaded_file($_FILES['etc_file_nm']['tmp_name'][$i], $upload_path.iconv("UTF-8","EUC-KR",basename($_FILES['etc_file_nm']['tmp_name'][$i])));
+					/*기타파일 업로드 2번째 이후 파일 업로드*/
+					
+					$QryEtc = "INSERT INTO t_project_history_etcfile (
+											project_history_seq,
+											file_nm,
+											file_tmp_nm,
+											file_regdate,
+											file_regtime
+										) VALUES (
+											'".$ph_seq."',
+											'".$etc_nm."',
+											'".$tmp_name."',
+											CURDATE(),
+											CURTIME())";
+
+					$RstEtc = que($QryEtc);
+				}
+	}
+
+			//exit();
+
+			//1열을 제목으로 인서트
+	$titleCnt = 1;
+			foreach($temp[0]  as $k=>$v){
+	// utf-8 인것으로 확인 되었음
+				$title_kr_name = $v;
+
+				$Qry1 = "INSERT INTO t_project_title_setting (
+							ph_seq,
+							title,
+							title_kr_name,
+							open_yn,
+							reg_date,
+							reg_time,
+							reg_emp
+						) VALUES (
+							'".$ph_seq."',
+							'title$titleCnt',
+							'$title_kr_name',
+							'Y',
+							CURDATE(),
+							CURTIME(),
+							'".$_SESSION['s_em_seq']."')";
+				//echo $Qry1;
+				$Rst1 = que($Qry1);
+
+				$title_create .= "`title$titleCnt`  varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,";
+				$title_value  .= "title$titleCnt,  ";		
+				$titleCnt++;
+			}	
+			//추가항목 10개 만들기	
+			
+			for($i=($k+2);$i<=($k+11);$i++){
+				$Qry1_3 = "INSERT INTO t_project_title_setting (
+							ph_seq,
+							title,
+							open_yn,
+							reg_date,
+							reg_time,
+							reg_emp
+						) VALUES (
+							'".$ph_seq."',
+							'title$i',
+							'N',
+							CURDATE(),
+							CURTIME(),
+							'".$_SESSION['s_em_seq']."')";
+				//echo $i.'<br>';
+				$Qry1_3 = que($Qry1_3);
+				$title_create .= "title$i  varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,";
+				//$title_value  .= "title$i,  ";	
+				//echo $title_create;
+			}
+
+
+			//t_project_content_(n) CREATE
+			$Qry2 = "CREATE TABLE t_project_content_$ph_seq (
+						`seq` int(11) NOT NULL AUTO_INCREMENT,
+						`ph_seq` int(11) DEFAULT NULL,
+						`pts_seq` int(11) DEFAULT NULL,
+						 $title_create
+						`overplus1`	char(1) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT 'N' COMMENT 'Y:활성화,N:비활성화',
+						`reg_date` date DEFAULT NULL,
+						`reg_time` time DEFAULT NULL,
+						`reg_emp` int(11) DEFAULT NULL,
+						`upd_date` date DEFAULT NULL,
+						`upd_time` time DEFAULT NULL,
+						`upd_emp` int(11) DEFAULT NULL,
+						PRIMARY KEY (`seq`))
+					ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+			if(que($Qry2)===TRUE){
+
+				foreach($temp as $k=>$v){			
+					foreach($v as $k1=>$v1){
+						$value[$k] .=  "'".addslashes($v1)."',";
+					}
+				}
+				//t_project_content_(n) INSERT
+				foreach($temp as $k=>$v){
+					$Qry3 = "INSERT INTO t_project_content_$ph_seq (
+								ph_seq,
+								$title_value
+								reg_date,
+								reg_time,
+								reg_emp
+							) VALUES (
+								'".$ph_seq."',
+								".$value[$k+1]."
+								CURDATE(),
+								CURTIME(),
+								'".$_SESSION['s_em_seq']."'
+								)";
+					que($Qry3);
+				//echo '$k : '.$k.'<br>';
+				}
+	//print_r($temp);
+			}else{echo "F";}
+
+		//**----------------------------------------------------------------------------------------------------------------------------
+		}else{
+			die('확장자가 csv 인 경우만 업로드가 가능합니다.');
+		}
+
+		if($Rst){
+				$N_RETURNVAL = "1";
+		}else{
+			$N_RETURNVAL = "-1";
+		}
+
+		return $N_RETURNVAL;
+ 
+		que_close();
+
+	//**----------------------------------------------------------------------------------------------------------------------------
+	}
+
+function isDate($value) 
+{
+    if (!$value) {
+        return false;
+    }
+
+    try {
+        new \DateTime($value);
+        return true;
+    } catch (\Exception $e) {
+        return false;
+    }
+}
+
+	//----등록 끝----
+
+	//----매체공지.취합 히스토리 리스트 시작----
+	public function funcListProjectHistory($nOrdPagingNum){
+
+		if(!$_GET['nPage']) $_GET['nPage'] = 1;
+		$nOrdStart = ($_GET['nPage'] -1 ) * $nOrdPagingNum;
+
+		if($nOrdPagingNum=="copy_setting"){}else{$limit = "LIMIT ".$nOrdStart.", ".$nOrdPagingNum."";}
+
+		if($_GET['d_item'] && $_GET['sdate'] && $_GET['edate']){
+			$where_d_item = "AND ".$_GET['d_item']." between '".$_GET['sdate']."' AND '".$_GET['edate']."'";
+		}
+
+		if($_SESSION['em_level']>10){$where_open_yn = "AND open_yn='Y'";}
+
+		if($_GET['s_item'] && $_GET['s_string']){
+			$where__item = "AND ".$_GET['s_item']." like '%".$_GET['s_string']."%'";
+		}
+
+		if($_GET['project_type2']){
+			$where_poject_type2 = "AND project_type2 like '%".$_GET['project_type2']."%'";
+		}
+
+		$Qry = "SELECT SQL_CALC_FOUND_ROWS * FROM t_project_history 
+				WHERE del_date IS NULL
+				$where_s_item
+				$where_d_item
+				$where_open_yn
+				$where_poject_type2
+				ORDER BY seq DESC 
+				$limit";
+//		echo $Qry;
+		$Rst = que($Qry);
+
+		while ($Row = @mysql_fetch_assoc($Rst)) {
+			$S_RETURNVAL['seq'][]				= $Row['seq'];
+			$S_RETURNVAL['project_nm'][]		= $Row['project_nm'];
+			$S_RETURNVAL['file_nm'][]			= $Row['file_nm'];
+			$S_RETURNVAL['file_nm_new'][]		= $Row['file_nm_new'];
+			$S_RETURNVAL['etc_file_nm'][]		= $Row['etc_file_nm'];
+			$S_RETURNVAL['etc_file_nm_new'][]	= $Row['etc_file_nm_new'];
+			$S_RETURNVAL['start_date'][]		= $Row['start_date'];
+			$S_RETURNVAL['end_date'][]			= $Row['end_date'];
+			$S_RETURNVAL['end_time'][]			= $Row['end_time'];
+			$S_RETURNVAL['import_is'][]			= $Row['import_is'];
+			$S_RETURNVAL['project_type'][]		= $Row['project_type'];
+			$S_RETURNVAL['project_type2'][]		= $Row['project_type2'];
+			$S_RETURNVAL['open_yn'][]			= $Row['open_yn'];
+			$S_RETURNVAL['project_memo'][]		= $Row['project_memo'];
+			$S_RETURNVAL['reg_date'][]			= $Row['reg_date'];
+			$S_RETURNVAL['reg_time'][]			= $Row['reg_time'];
+			$S_RETURNVAL['reg_emp'][]			= $Row['reg_emp'];
+			$nListCnt ++;
+		}
+
+		$S_RETURNVAL['nListCnt'] = $nListCnt;
+
+		$Qry1 = 'SELECT FOUND_ROWS() N_CNT ';
+		$Rst1 = que($Qry1);
+		$Row1 = @mysql_fetch_assoc($Rst1);
+
+		$S_RETURNVAL['N_CNT'] = $Row1['N_CNT'];
+
+		if(!$S_RETURNVAL['seq']){
+			$S_RETURNVAL = -1;
+		}else{
+			return $S_RETURNVAL;
+		}
+
+		que_close();
+		return $S_RETURNVAL;
+
+		
+	}
+	//----매체공지.취합 히스토리 리스트 끝----
+
+public function funcSelectEtcFile($id){
+	$Qry = "SELECT * FROM t_project_history_etcfile WHERE project_history_seq = '".$id."'";
+
+		$Rst = que($Qry);
+
+		while ($Row = @mysql_fetch_assoc($Rst)) {
+			$F_RETURNVAL['seq'][]						= $Row['seq'];
+			$F_RETURNVAL['project_history_seq'][]		= $Row['project_history_seq'];
+			$F_RETURNVAL['file_nm'][]					= $Row['file_nm'];
+			$F_RETURNVAL['file_tmp_nm'][]				= $Row['file_tmp_nm'];
+		}
+		
+		return $F_RETURNVAL;
+}
+
+
+
+	//----매체공지.취합 히스토리 셀렉트 시작----
+	public function funcGetProjectHistory(){
+
+		if(!$_GET['nPage']) $_GET['nPage'] = 1;
+		$nOrdStart = ($_GET['nPage'] -1 ) * $nOrdPagingNum;
+
+		if($_GET['d_item'] ){
+			$where_d_item = "AND ".$_GET['d_item']." between '".$_GET['sdate']."' AND '".$_GET['edate']."'";
+		}
+
+		if($_GET['s_item'] && $_GET['s_string']){
+			$where_s_item = "AND ".$_GET['s_item']." like '%".$_GET['s_string']."%'";
+		}
+
+		$seq = $_POST['seq']?$_POST['seq']:$_GET['seq'];
+
+		$Qry = "SELECT SQL_CALC_FOUND_ROWS * FROM t_project_history WHERE del_date IS NULL AND seq='".$seq."'";
+		//echo $Qry;
+		$Rst = que($Qry);
+		$Row = @mysql_fetch_assoc($Rst);
+
+		$S_RETURNVAL['seq']				= $Row['seq'];
+		$S_RETURNVAL['project_nm']		= $Row['project_nm'];
+		$S_RETURNVAL['file_nm']			= $Row['file_nm'];
+		$S_RETURNVAL['file_nm_new']		= $Row['file_nm_new'];
+		$S_RETURNVAL['etc_file_nm']		= $Row['etc_file_nm'];
+		$S_RETURNVAL['etc_file_nm_new']	= $Row['etc_file_nm_new'];
+		$S_RETURNVAL['start_date']		= $Row['start_date']<>'0000-00-00'?$Row['start_date']:'';
+		$S_RETURNVAL['end_date']		= $Row['end_date']<>'0000-00-00'?$Row['end_date']:'';
+		$S_RETURNVAL['end_time']		= $Row['end_time'];
+		$S_RETURNVAL['import_is']		= $Row['import_is'];
+		$S_RETURNVAL['project_type']	= $Row['project_type'];
+		$S_RETURNVAL['project_type2']	= $Row['project_type2'];
+		$S_RETURNVAL['open_yn']			= $Row['open_yn'];
+		$S_RETURNVAL['project_memo']	= $Row['project_memo'];
+		$S_RETURNVAL['reg_date']		= $Row['reg_date'];
+		$S_RETURNVAL['reg_time']		= $Row['reg_time'];
+		$S_RETURNVAL['reg_emp']			= $Row['reg_emp'];
+
+		$resultData						= $S_RETURNVAL;		
+
+		$jsonTable = json_encode($resultData);
+		return $jsonTable;
+
+		que_close();
+	}
+	//----매체공지.취합 히스토리 셀렉트 끝----
+
+	//----매체공지.취합 히스토리 삭제 시작----
+	public function funcDelProjectHistory(){
+
+		$Qry = "UPDATE t_project_history SET del_date = CURDATE(), del_time = CURTIME(), del_emp = '".$_SESSION['s_em_seq']."' WHERE seq='".$_POST['seq']."'";
+		$Qry1 = "DROP TABLE t_project_content_".$_POST['seq']."";
+
+		//echo $Qry;
+		$Rst = que($Qry);
+		que($Qry1);
+
+		if($Rst){
+			$N_RETURNVAL = "1";
+		}else{
+			$N_RETURNVAL = "-1";
+		}
+
+		return $N_RETURNVAL;
+		que_close();
+	}
+	//----매체공지.취합 히스토리 삭제 끝----
+
+	//----매체공지.취합 히스토리 수정 시작----
+	public function funcUpdProjectHistory(){
+// ------------123---------------
+		require_once $_SERVER['DOCUMENT_ROOT'].'/phpExcelReader/Excel/reader.php';
+		$data = new Spreadsheet_Excel_Reader();
+		$data->setOutputEncoding('CP949');
+		$dir_path = $_SERVER['DOCUMENT_ROOT']."/data/work_project_file/";
+		
+		//print_R($_FILES);
+
+		if($_FILES){
+			$upload_path = $_SERVER['DOCUMENT_ROOT']."/data/work_project_etcFile/";
+			/*기타파일 업로드*/
+			if( $_FILES['etc_file_nm']){
+				$etc_files_upload_tmp	= $_FILES['etc_file_nm']['tmp_name'][0];
+				$etc_files_upload_nm	= $_FILES['etc_file_nm']['name'][0];				
+				$etc_files_upload_size	= $_FILES['etc_file_nm']['size'][0];
+				$etc_file_info = pathinfo($etc_files_upload_nm[0]);
+				$etc_file_name_real = preg_replace( '/,/', '_', $etc_file_info['basename']);
+				$etc_file_name_real = preg_replace( '/\s+/', '', $etc_file_name_real);
+				$etc_file_name_real = $etc_files_upload_nm;
+				$etc_file_name_new	= strtotime("now").".".$etc_file_info['extension'];
+				move_uploaded_file($_FILES['etc_file_nm']['tmp_name'][0], $upload_path.iconv("UTF-8","EUC-KR",basename($_FILES['etc_file_nm']['tmp_name'][0])));
+				$QryEtc2 = "INSERT INTO t_project_history_etcfile (
+							project_history_seq,
+							file_nm,
+							file_tmp_nm,
+							file_regdate,
+							file_regtime
+						) VALUES (
+							'".$_POST['seq'] ."',
+							'".$_FILES['etc_file_nm']['tmp_name'][0]."',
+							'".$_FILES['etc_file_nm']['size'][0]."',
+							CURDATE(),
+							CURTIME())";
+
+				que($QryEtc2);
+			/*기타파일 업로드*/	
+			}
+		}
+
+
+
+
+		if($file_name_real)		{$is_file_nm = "file_nm		= '".$file_name_real."', file_nm_new		= '".$file_name_new."',";}
+		if($etc_file_name_real)	{$is_etc_file_nm = "etc_file_nm	= '".$etc_file_name_real."',					etc_file_nm_new	= '".$etc_file_name_new."',";}
+
+		
+
+		$Qry = "UPDATE t_project_history SET 
+					project_nm		= '".$_POST['project_nm']."',
+					$is_file_nm
+					$is_etc_file_nm
+					start_date		= '".$_POST['start_date']."',
+					end_date		= '".$_POST['end_date']."',
+					end_time		= '".$_POST['end_time']."',
+					import_is		= '".$_POST['import_is']."',
+					project_type	= '".$_POST['project_type']."',
+					project_type2	= '".$_POST['project_type2']."',
+					open_yn			= '".$_POST['open_yn']."',
+					project_memo	= '".$_POST['project_memo']."',
+					upd_date		= CURDATE(),
+					upd_time		= CURTIME(),
+					upd_emp			= '".$_SESSION['s_em_seq']."'
+				WHERE seq='".$_POST['seq']."'";
+
+		//echo $Qry;
+		$Rst = que($Qry);
+		
+
+// ------------123---------------
+if($_FILES['etc_file_nm']){
+
+	$upload_path = $_SERVER['DOCUMENT_ROOT']."/data/work_project_etcFile/";
+
+	$QryEtc1 = "DELETE FROM t_project_history_etcfile WHERE project_history_seq = '".$_POST['seq']."'";
+	que($QryEtc1);	
+
+	for($i=0; $i < count($_FILES['etc_file_nm']['name']); $i++){
+		$etc_tmp	= $_FILES['etc_file_nm']['tmp_name'][$i];
+		$etc_nm		= $_FILES['etc_file_nm']['name'][$i];		
+		$name = basename($etc_nm);
+		$tmp_name = basename($etc_tmp);
+		/*기타파일 업로드 2번째 이후 파일 업로드*/
+				move_uploaded_file($_FILES['etc_file_nm']['tmp_name'][$i], $upload_path.iconv("UTF-8","EUC-KR",basename($_FILES['etc_file_nm']['tmp_name'][$i])));
+		/*기타파일 업로드 2번째 이후 파일 업로드*/
+
+	
+
+		$QryEtc2 = "INSERT INTO t_project_history_etcfile (
+								project_history_seq,
+								file_nm,
+								file_tmp_nm,
+								file_regdate,
+								file_regtime
+							) VALUES (
+								'".$_POST['seq'] ."',
+								'".$etc_nm."',
+								'".$tmp_name."',
+								CURDATE(),
+								CURTIME())";
+
+		que($QryEtc2);
+
+//없데이트가 아니라 delete후 insert로 수정
+	}
+}
+
+
+
+		if($Rst){
+			$N_RETURNVAL = "1";
+		}else{
+			$N_RETURNVAL = "-1";
+		}
+
+		return $N_RETURNVAL;
+		que_close();
+	}
+	//----매체공지.취합 히스토리 수정 끝----
+
+
+	//----매체공지.취합 항목 설정 시작----
+	public function funcSelectProjectTitleSetting(){
+		$Qry = "SELECT * FROM t_project_title_setting WHERE ph_seq='".$_GET['seq']."'";
+		//echo $Qry;
+		$Rst = que($Qry);
+
+		while ($Row = @mysql_fetch_assoc($Rst)) {
+			$S_RETURNVAL['seq'][]				= $Row['seq'];
+			$S_RETURNVAL['ph_seq'][]			= $Row['ph_seq'];
+			$S_RETURNVAL['title'][]				= $Row['title'];
+			$S_RETURNVAL['title_memo'][]		= $Row['title_memo'];
+			$S_RETURNVAL['title_kr_name'][]		= $Row['title_kr_name'];
+			$S_RETURNVAL['open_yn'][]			= $Row['open_yn'];
+			$S_RETURNVAL['activation_yn'][]		= $Row['activation_yn'];
+			$S_RETURNVAL['input_type'][]		= $Row['input_type'];
+			$S_RETURNVAL['character_type'][]	= $Row['character_type'];
+			$S_RETURNVAL['option_type'][]		= $Row['option_type'];
+			$S_RETURNVAL['necessary_yn'][]		= $Row['necessary_yn'];
+			$S_RETURNVAL['bg_color'][]			= $Row['bg_color'];
+			$S_RETURNVAL['connection_title'][]	= $Row['connection_title'];
+			$S_RETURNVAL['connection_option'][]	= $Row['connection_option'];
+			$S_RETURNVAL['reg_date'][]			= $Row['reg_date'];
+			$S_RETURNVAL['reg_time'][]			= $Row['reg_time'];
+			$S_RETURNVAL['reg_emp'][]			= $Row['reg_emp'];
+			$nListCnt ++;
+		}
+		$S_RETURNVAL['nListCnt'] = $nListCnt;
+
+		if(!$S_RETURNVAL['seq']){
+			$S_RETURNVAL = -1;
+		}else{
+			return $S_RETURNVAL;
+		}
+		return $S_RETURNVAL;
+
+		que_close();
+	}
+	//----매체공지.취합 항목 설정 끝----
+	
+
+	//----매체공지.취합 옵션 리스트 시작----
+	public function funcListProjectOption($nOrdPagingNum){
+
+		if(!$_GET['nPage']) $_GET['nPage'] = 1;
+		$nOrdStart = ($_GET['nPage'] -1 ) * $nOrdPagingNum;
+		
+		if($_GET['d_item'] && $_GET['sdate']  && $_GET['d_edateitem'] ){
+			$where_d_item = "AND ".$_GET['d_item']." between '".$_GET['sdate']."' AND '".$_GET['edate']."'";
+		}
+
+		if($_GET['s_item'] && $_GET['s_string']){
+			$where_s_item = "AND ".$_GET['s_item']." like '%".$_GET['s_string']."%'";
+		}
+
+		$Qry = "SELECT SQL_CALC_FOUND_ROWS * FROM t_project_option WHERE del_date IS NULL
+				$where_s_item
+				$where_d_item
+				ORDER BY seq DESC LIMIT ".$nOrdStart.", ".$nOrdPagingNum."";
+		//echo $Qry;
+		$Rst = que($Qry);
+
+		while ($Row = @mysql_fetch_assoc($Rst)) {
+			$S_RETURNVAL['seq'][]				= $Row['seq'];
+			$S_RETURNVAL['option_code'][]		= $Row['option_code'];
+			$S_RETURNVAL['option_code_nm'][]	= $Row['option_code_nm'];
+			$S_RETURNVAL['option_value'][]		= $Row['option_value'];
+			$S_RETURNVAL['reg_date'][]			= $Row['reg_date'];
+			$S_RETURNVAL['reg_time'][]			= $Row['reg_time'];
+			$S_RETURNVAL['reg_emp'][]			= $Row['reg_emp'];
+			
+			$nListCnt ++;
+		}
+
+		$S_RETURNVAL['nListCnt'] = $nListCnt;
+
+		$Qry1 = 'SELECT FOUND_ROWS() N_CNT ';
+		$Rst1 = que($Qry1);
+		$Row1 = @mysql_fetch_assoc($Rst1);
+
+		$S_RETURNVAL['N_CNT'] = $Row1['N_CNT'];
+
+
+		if(!$S_RETURNVAL['seq']){
+			$S_RETURNVAL = -1;
+		}else{
+			return $S_RETURNVAL;
+		}
+		return $S_RETURNVAL;
+
+		que_close();
+	}
+	//----매체공지.취합 옵션 리스트 끝----
+
+	//----매체공지.취합 옵션 셀렉트 시작----
+	public function funcSelectProjectOption(){
+		
+		$Qry = "SELECT SQL_CALC_FOUND_ROWS * FROM t_project_option WHERE seq='".$_POST['seq']."'";
+		//echo $Qry;
+		$Rst = que($Qry);
+		$Row = @mysql_fetch_assoc($Rst);
+
+		$S_RETURNVAL['seq']				= $Row['seq'];
+		$S_RETURNVAL['option_code']		= $Row['option_code'];
+		$S_RETURNVAL['option_code_nm']	= $Row['option_code_nm'];
+		$S_RETURNVAL['option_value']	= $Row['option_value'];
+		$S_RETURNVAL['reg_date']		= $Row['reg_date'];
+		$S_RETURNVAL['reg_time']		= $Row['reg_time'];
+		$S_RETURNVAL['reg_emp']			= $Row['reg_emp'];
+
+		$resultData						= $S_RETURNVAL;		
+
+		$jsonTable = json_encode($resultData);
+		return $jsonTable;
+
+		que_close();
+	}
+	//----매체공지.취합 옵션 셀렉트 끝----
+
+	//----매체공지.취합 옵션 수정 시작----
+	public function funcUpdProjectOption(){
+
+		$Qry = "UPDATE t_project_option SET
+				option_code		='".$_POST['option_code']."', 
+				option_code_nm	='".$_POST['option_code_nm']."', 
+				option_value	='".$_POST['option_value']."', 
+				upd_date		= CURDATE(),
+				upd_time		= CURTIME(),
+				upd_emp			= '".$_SESSION['s_em_seq']."'
+				WHERE seq='".$_POST['seq']."'";
+		
+		//echo $Qry;
+		$Rst = que($Qry);
+
+		if($Rst){
+			$N_RETURNVAL = "1";
+		}else{
+			$N_RETURNVAL = "-1";
+		}
+
+		return $N_RETURNVAL;
+		que_close();
+	}
+	//----매체공지.취합 옵션 수정 끝----
+
+	//----매체공지.취합 옵션 삭제 시작----
+	public function funcDelProjectOption(){
+
+		$Qry = "UPDATE t_project_option SET
+				del_date		= CURDATE(),
+				del_time		= CURTIME(),
+				del_emp			= '".$_SESSION['s_em_seq']."'
+				WHERE seq='".$_POST['seq']."'";
+		
+		$Rst = que($Qry);
+
+		if($Rst){
+			$N_RETURNVAL = "1";
+		}else{
+			$N_RETURNVAL = "-1";
+		}
+
+		return $N_RETURNVAL;
+		que_close();
+	}
+	//----매체공지.취합 옵션 삭제 끝----
+
+	//----매체공지.취합 옵션 등록 시작----
+	public function funcIptProjectOption(){
+
+		if($_POST['option_value']){
+			if(strpos($_POST['option_value'],",")!==false){ //콤마포함
+				$option_value = explode(",",$_POST['option_value']);
+			}else{
+				$option_value = $_POST['option_value'];
+			}
+		}
+
+		if(is_array($option_value)){
+			foreach($option_value as $v){
+				$Qry = "INSERT INTO t_project_option
+						(option_code, option_code_nm, option_value, reg_date, reg_time, reg_emp)
+						VALUES 
+						('".$_POST['option_code']."','".$_POST['option_code_nm']."','".$v."',CURDATE(), CURTIME(),'".$_SESSION['s_em_seq']."')";
+					
+				//echo $Qry;
+				$Rst = que($Qry);
+			}
+		}else{
+			$Qry = "INSERT INTO t_project_option
+				(option_code, option_code_nm, option_value, reg_date, reg_time, reg_emp)
+				VALUES 
+				('".$_POST['option_code']."','".$_POST['option_code_nm']."','".$_POST['option_value']."',CURDATE(), CURTIME(),'".$_SESSION['s_em_seq']."')";
+			//echo $Qry;
+			$Rst = que($Qry);	
+		}
+
+		if($Rst){
+				$N_RETURNVAL = "1";
+		}else{
+			$N_RETURNVAL = "-1";
+		}
+
+		return $N_RETURNVAL;
+
+		que_close();
+	}
+	//----매체공지.취합 옵션 등록 끝----
+
+
+	//----매체공지.취합 옵션 리스트 시작----
+	public function funcArrayProjectOption($code,$value){
+
+		if($code){$code="AND option_code=".$code."";}
+		if($value){$value="AND option_code_num=".$value."";}
+
+		$Qry = "SELECT * FROM t_project_option WHERE del_date IS NULL $code $value";
+		//echo $Qry;
+		$Rst = que($Qry);
+
+		while ($Row = @mysql_fetch_assoc($Rst)) {
+			$S_RETURNVAL['optoin_value'][$Row['option_code']][$Row['seq']] = $Row['option_value'];
+			//$S_RETURNVAL['optoin_code'][$Row['option_code']] = $Row['option_code']." ".$Row['option_code_nm'];
+			$S_RETURNVAL['option_code_nm'][$Row['option_code']] = $Row['option_code_nm'];
+
+			$S_RETURNVAL['optoin_code'][$Row['option_code']][] = $Row['option_code'].",".$Row['seq'].",".$Row['option_value'];
+		}
+
+		$S_RETURNVAL['code_cnt'] = count($S_RETURNVAL['optoin_value']);
+		return $S_RETURNVAL;
+
+		que_close();
+	}
+	//----매체공지.취합 옵션 리스트 끝----
+
+
+	//----매체공지.취합 항목 설정 수정 시작----
+	public function funcUptProjectTitleSetting(){
+		
+		for($i=0;$i<$_POST['cnt'];$i++){
+
+		$connection_title =	explode(",",$_POST['connection_title'.$i]);
+
+		$Qry = "UPDATE t_project_title_setting SET 
+				title_memo			= '".$_POST['title_memo'.$i]."',
+				title_kr_name		= '".$_POST['title_kr_name'.$i]."',
+				open_yn				= '".$_POST['open_yn'.$i]."',
+				activation_yn		= '".$_POST['activation_yn'.$i]."',
+				input_type			= '".$_POST['input_type'.$i]."',
+				character_type		= '".$_POST['character_type'.$i]."',
+				option_type			= '".$_POST['option_type'.$i]."',
+				necessary_yn		= '".$_POST['necessary_yn'.$i]."',
+				bg_color			= '".$_POST['bg_color'.$i]."',
+				connection_title	= '".$connection_title[1]."',
+				connection_option	= '".$_POST['connection_option'.$i]."'
+				WHERE seq			= '".$_POST['seq'.$i]."'";
+		//echo $Qry;
+		$Rst = que($Qry);
+
+		}
+		
+		if($Rst){
+			$N_RETURNVAL = "1";
+		}else{
+			$N_RETURNVAL = "-1";
+		}
+
+		que_close();
+
+		return $N_RETURNVAL; 
+	}
+
+	//----매체공지.취합 항목 설정 수정 끝----
+
+
+	//----매체공지.취합 항목 내용 시작----
+	public function funcSelectProjectContent($nOrdPagingNum){
+
+		if($_GET['overplus1']=="Y")	{$where_overplus1		= "AND upd_emp IS NOT NULL";}else if($_GET['overplus1']=="N") {$where_overplus1		= "AND upd_emp IS NULL";}
+		
+		if($nOrdPagingNum!="down"){
+			if(!$_GET['nPage']) $_GET['nPage'] = 1;
+			$nOrdStart = ($_GET['nPage'] -1 ) * $nOrdPagingNum;
+
+			$limit = "LIMIT ".$nOrdStart.", ".$nOrdPagingNum."";
+		}
+
+		if($_SESSION['em_level']==10){
+			if($_GET["type_member"]=="2"){
+				if($_GET['em_nm'])		{$where_em_seq		= "AND title3    ='".$_GET['em_nm']."'";}
+				if($_GET['em_seq1'])	{$where_em_seq1		= "AND title3    ='".$_GET['em_seq1']."'";}
+
+				if($_GET['division1']){
+				$division1 = implode(",",$_GET["division1"]);
+				$where_division1 = "AND title1 IN (".$division1.")";
+				}
+
+				if($_GET['division2']){
+					$division2 = implode(",",$_GET["division2"]);
+					$where_division2 = "AND title2 IN (".$division2.")";
+				}
+
+			}else{
+
+				$get_emseq	= funGetEmSeq($_GET['division1'],$_GET['division2']);
+				$join_emseq = join($get_emseq,",");
+
+				$where_division1 = "";
+				$where_division2 = "";
+				$_GET['em_seq']==""?$where_em_seq = "AND title3 IN (".$join_emseq.")":$where_em_seq= "AND title3 ='".$_GET['em_seq']."'";
+				//$_GET['em_seq']==""?$where_em_seq1 = "":$where_em_seq1= "AND title3 ='".$_GET['em_seq']."'";
+				
+			}
+		/*
+		}else if($_SESSION['em_level']==20){
+			if($_GET["type_member"]=="2"){		
+				$where_division1 = "AND division1 ='".$_SESSION['em_division1']."'";
+				
+				if($_GET['division2'])	{$where_division2	= "AND division2 ='".$_GET['division2']."'";}
+				if($_GET['em_nm'])		{$where_em_seq		= "AND em_seq    ='".$_GET['em_nm']."'";}
+				if($_GET['em_seq1'])	{$where_em_seq1		= "AND em_seq    ='".$_GET['em_seq1']."'";}
+			}else{
+				$get_emseq	= funGetEmSeq($_SESSION['em_division1'],$_GET['division2']);
+				$join_emseq = join($get_emseq,",");
+
+				$where_division1 = "";
+				$where_division2 = "";
+				$_GET['em_nm']==""?$where_em_seq = "AND em_seq IN (".$join_emseq.")":$where_em_seq= "AND em_seq ='".$_GET['em_seq1']."'";
+				$_GET['em_seq']==""?$where_em_seq1 = "":$where_em_seq1= "AND em_seq ='".$_GET['em_seq']."'";
+			}
+		*/
+		}else if($_SESSION['em_level']==30){
+			if($_GET["type_member"]=="2"){
+				$where_division2 = "AND title1 ='".$_SESSION['em_division1']."' 
+									AND title2 ='".$_SESSION['em_division2']."'";
+
+				if($_GET['em_seq'])		{$where_em_seq		= "AND title3    ='".$_GET['em_seq']."'";}
+				if($_GET['em_seq1'])	{$where_em_seq1		= "AND title3    ='".$_GET['em_seq1']."'";}
+
+				//$get_emseq	= funGetEmSeq($_SESSION['em_division1'],$_SESSION['em_division2']);
+				
+			}else{
+				$get_emseq	= funGetEmSeq($_SESSION['em_division1'],$_SESSION['em_division2']);
+				$join_emseq = join($get_emseq,",");
+
+				$where_division1 = "";
+				$where_division2 = "";
+				$_GET['em_seq']==""?$where_em_seq = "AND title3 IN (".$join_emseq.")":$where_em_seq= "AND title3 ='".$_GET['em_seq']."'";
+				//$_GET['em_seq']==""?$where_em_seq1 = "":$where_em_seq1= "AND title3 ='".$_GET['em_seq']."'";
+
+			}
+		/*
+		}else if($_SESSION['em_level']==40){
+			*/
+		
+		//3본부는 팀장이 전체 열람 가능
+		/*
+		}else if($_SESSION['em_level']=='30' && $_SESSION['em_division1']=='618'){
+			/*
+			$get_emseq	= funGetEmSeq($_SESSION['em_division1'],null);
+			$join_emseq = join($get_emseq,",");
+
+			$where_division1 = "";
+			$where_division2 = "";
+			$_GET['em_seq']==""?$where_em_seq = "AND title3 IN (".$join_emseq.")":$where_em_seq= "AND title3 ='".$_GET['em_seq']."'";
+			*/
+			/*
+			$where_division2 = "AND title1 ='".$_SESSION['em_division1']."' AND title2 ='".$_SESSION['em_division2']."'";
+
+			if($_GET['em_seq'])		{$where_em_seq		= "AND title3    ='".$_GET['em_seq']."'";}
+			if($_GET['em_seq1'])	{$where_em_seq1		= "AND title3    ='".$_GET['em_seq1']."'";}
+		*/
+		}else{
+			$where_em_seq = "AND title3 = '".$_SESSION['s_em_seq']."'";
+		}	
+//				".$where_em_seq."
+		$Qry = "SELECT SQL_CALC_FOUND_ROWS * FROM t_project_content_".$_GET['seq']." WHERE 1=1
+				".$where_division1."
+				".$where_division2."
+				".$where_em_seq1."
+				".$where_overplus1."
+				order by title3 ASC
+				".$limit." ";
+		
+		//echo $Qry."<br/>";
+		$Rst = que($Qry);    
+
+		$numfields = mysql_num_fields($Rst);
+
+		for ($i = 0; $i<$numfields; $i += 1) {
+			$field = mysql_fetch_field($Rst, $i);
+			//echo '<th>' . $field->name . '</th>';
+			$resultData['title'][$field->name] = $field->name;
+		}
+
+		while ($fielddata = mysql_fetch_array($Rst)) {
+			for ($i = 0; $i<$numfields; $i += 1) {
+				$field = mysql_fetch_field($Rst, $i);			
+				$new_row[$resultData['title'][$field->name]] = $fielddata[$field->name];
+			}
+			$resultData['content'][]=$new_row; 
+		}
+		
+		$Qry1 = 'SELECT FOUND_ROWS() N_CNT ';
+		$Rst1 = que($Qry1);
+		$Row1 = @mysql_fetch_assoc($Rst1);
+
+		$resultData['N_CNT'] = $Row1['N_CNT'];
+
+		return $resultData; 
+
+		que_close();
+
+	}
+
+	//----매체공지.취합 항목 내용 끝----
+
+	//----매체공지.취합 항목 설정 가져오기 시작----
+	public function funcJoinProjectGetTitle(){
+		$Qry = "SELECT * FROM t_project_title_setting WHERE ph_seq = '".$_GET['seq']."'";
+
+		//echo $Qry."<br>".$Qry2;
+
+		$Rst = que($Qry);    
+		
+		while ($Row = @mysql_fetch_assoc($Rst)) {
+			$S_RETURNVAL['seq'][$Row['title']]				= $Row['seq'];
+			$S_RETURNVAL['ph_seq'][]						= $Row['ph_seq'];
+			$S_RETURNVAL['title'][]							= $Row['title'];
+			$S_RETURNVAL['title_memo'][$Row['title']]		= $Row['title_memo'];
+			$S_RETURNVAL['title_kr_name'][$Row['title']]	= $Row['title_kr_name'];
+			$S_RETURNVAL['open_yn'][$Row['title']]			= $Row['open_yn'];
+			$S_RETURNVAL['activation_yn'][$Row['title']]	= $Row['activation_yn'];
+			$S_RETURNVAL['input_type'][$Row['title']]		= $Row['input_type'];
+			$S_RETURNVAL['character_type'][$Row['title']]	= $Row['character_type'];
+			$S_RETURNVAL['option_type'][$Row['title']]		= $Row['option_type'];
+			$S_RETURNVAL['necessary_yn'][$Row['title']]		= $Row['necessary_yn'];
+			$S_RETURNVAL['bg_color'][$Row['title']]			= $Row['bg_color'];
+			$S_RETURNVAL['connection_title'][$Row['title']]	= $Row['connection_title'];
+			$S_RETURNVAL['connection_option'][$Row['title']]= $Row['connection_option'];
+			
+			//$resultData[]=$S_RETURNVAL; 
+		}
+		
+		return $S_RETURNVAL; 
+		que_close();
+	}
+	//----매체공지.취합 항목 설정 가져오기 끝----
+
+
+	//----매체공지.취합 내용 수정 시작----
+	public function funcUpdProjectContent(){
+
+		//echo "title3_4::".$_POST['title3_4'];
+		//print_R($_POST);
+
+		$Qry = "SELECT * FROM t_project_content_".$_POST['seq']."";
+		
+		//echo $Qry."<br/>";
+		$Rst = que($Qry);    
+
+		$numfields = mysql_num_fields($Rst);
+
+		for ($i = 0; $i<$numfields; $i += 1) {
+			$field = mysql_fetch_field($Rst, $i);
+			//echo '<th>' . $field->name . '</th>';
+			$resultData['title'][$field->name] = $field->name;
+			//$resultData['title'][] = $field->name;
+		}
+		
+		//체크된 수만큼 돌리기
+		foreach($_POST['check_list'] as $k=>$v){		
+			//echo "k::".$k;
+			//echo "v::".$v;			
+
+			//어드민 수정시
+			if($_POST['title1_'.$v]){
+				$i=4;
+				while ($i <= $_POST['cnt_pos_title']) {	
+					
+					//활성화되어 있는 항목만 업데이트
+					if($_POST['activation_yn_title'.$i."_".$v]=="Y"){
+						$Qry = "UPDATE t_project_content_".$_POST['seq']."
+								SET title".$i." = '".$_POST['title'.$i."_".$v]."'
+								WHERE seq='".$v."'";
+
+						//echo $Qry;
+						$Rst = que($Qry);    
+					}
+						
+				$i++;
+				}
+
+				for($ii=1;$ii<=3;$ii++){
+						$Qry = "UPDATE t_project_content_".$_POST['seq']."
+								SET title".$ii." = '".$_POST['title'.$ii."_".$v]."'
+								WHERE seq='".$v."'";
+
+						//echo $Qry;
+						$Rst = que($Qry);    
+				}
+
+			//마케터 수정시
+			} else {
+				$i=4;
+				while ($i <= $_POST['cnt_pos_title']) {	
+
+					if($_POST['activation_yn_title'.$i."_".$v]=="Y"){
+						$Qry = "UPDATE t_project_content_".$_POST['seq']."
+								SET title".$i." = '".$_POST['title'.$i."_".$v]."'
+								WHERE seq='".$v."'";
+
+						//echo $Qry;
+						$Rst = que($Qry);    
+					}
+						
+				$i++;
+				}
+
+			}
+
+			//마케터 수정시
+/*
+
+			//어드민이 수정시 i=1, 마케터가 수정시 i=4
+			if($_POST['title1_'.$v]){$i=1;}else{$i=4;}
+			$i=4;
+			while ($i <= $_POST['cnt_pos_title']) {	
+
+				if($_POST['activation_yn_title'.$i."_".$v]=="Y"){
+					$Qry = "UPDATE t_project_content_".$_POST['seq']."
+							SET title".$i." = '".$_POST['title'.$i."_".$v]."'
+							WHERE seq='".$v."'";
+
+					echo $Qry;
+					$Rst = que($Qry);    
+				}
+					
+			$i++;
+			}
+*/
+
+			if($_POST['overplus1'."_".$v]){$overplus1 = ",overplus1 = '".$_POST['overplus1'."_".$v]."'";}
+			$Qry1 = "UPDATE t_project_content_".$_POST['seq']." 
+						SET
+						upd_date = CURDATE()
+						,upd_time = CURTIME()
+						,upd_emp = '".$_SESSION['s_em_seq']."'
+						$overplus1
+						WHERE seq='".$v."'";
+			//echo $Qry1;
+			$Rst1 = que($Qry1);
+
+		}
+
+		if($Rst){
+			$N_RETURNVAL = "1";
+		}else{
+			$N_RETURNVAL = "-1";
+		}
+
+		que_close();
+
+		return $N_RETURNVAL; 
+	}
+	//----매체공지.취합 내용 수정 끝----
+
+
+// ------------123---------------
+//------------------개별행 삭제 매체공지.취합내용-------------------------------
+	public function funcDelProjectContent(){
+		
+		$Qry = "SELECT * FROM t_project_content_".$_POST['seq']."";
+		$Rst = que($Qry);    
+		$numfields = mysql_num_fields($Rst);
+		for ($i = 0; $i<$numfields; $i += 1) {
+			$field = mysql_fetch_field($Rst, $i);
+			$resultData['title'][$field->name] = $field->name;
+		}
+		foreach($_POST['check_list'] as $k=>$v){		
+			$Qry1 = "DELETE FROM t_project_content_".$_POST['seq']." 
+						WHERE seq='".$v."'";
+			$Rst1 = que($Qry1);
+		}
+
+
+		if($Rst){
+			$N_RETURNVAL = "1";
+		}else{
+			$N_RETURNVAL = "-1";
+		}
+
+		que_close();
+
+		return $N_RETURNVAL; 
+	}
+
+
+	//----매체공지.취합 항목 설정 복사 시작----
+	public function funcCopyTitleSetting(){
+		
+		$Qry1  = "SELECT * FROM (
+					SELECT 1 AS t, title, title_kr_name FROM t_project_title_setting WHERE ph_seq='".$_POST['copy_seq']."'
+					UNION ALL
+					SELECT 2 AS t, title, title_kr_name FROM t_project_title_setting WHERE ph_seq='".$_POST['now_seq']."'
+				) AS aa";
+
+		$Qry2 = "UPDATE t_project_title_setting as t1, 
+					(SELECT seq, ph_seq, title, title_kr_name, title_memo, open_yn, activation_yn, input_type, character_type, option_type, necessary_yn, bg_color, connection_title, connection_option 
+						FROM t_project_title_setting 
+						WHERE ph_seq='".$_POST['copy_seq']."') as t2
+				SET t1.open_yn=t2.open_yn, 
+					t1.activation_yn=t2.activation_yn, 
+					t1.input_type=t2.input_type, 
+					t1.character_type=t2.character_type, 
+					t1.option_type=t2.option_type, 
+					t1.necessary_yn=t2.necessary_yn, 
+					t1.bg_color=t2.bg_color, 
+					t1.connection_title=t2.connection_title, 
+					t1.connection_option=t2.connection_option,
+					t1.title_memo=t2.title_memo,
+					t1.title_kr_name=t2.title_kr_name
+				WHERE t1.ph_seq = '".$_POST['now_seq']."' AND t1.title=t2.title";
+
+		//echo $Qry;
+		$Rst1 = que($Qry1);
+		
+		while ($Row1 = @mysql_fetch_assoc($Rst1)) {
+			$resultData[$Row1['t']][] = $Row1['title'].$Row1['title_kr_name'];
+		}
+
+		$intersect = array_diff($resultData[1],$resultData[2]);
+
+		if($intersect){ //현재 프로젝트와 복사 프로젝트의 차이가 있으면,
+			$N_RETURNVAL = "-2";
+		}else{
+			$Rst2 = que($Qry2);
+			if($Rst2){
+				$N_RETURNVAL = "1";
+			}else{
+				$N_RETURNVAL = "-1";
+			}
+		}
+
+		que_close();
+
+		return $N_RETURNVAL; 
+
+	}
+	//----매체공지.취합 항목 설정 복사 끝----

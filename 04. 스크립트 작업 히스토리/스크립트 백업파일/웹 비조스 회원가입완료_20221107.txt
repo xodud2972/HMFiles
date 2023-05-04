@@ -1,0 +1,63 @@
+<!--/script_scroll(1)/-->
+    <div id="wrap">
+        <!--/include_header(1)/-->
+        <div id="contentWrapper">
+            <div id="contentWrap">
+                <!--/include_menu(1)/-->
+                <div id="content">
+                <div id="join-complete">
+                    <dl class="loc-navi">
+                        <dt class="blind">현재 위치</dt>
+                        <dd>
+                            <a href="/">home</a> > 회원가입
+                        </dd>
+                    </dl>
+                    <h2 class="tit-page"><img src="/images/d3/modern_simple/terms_page_tit.gif" alt="join us"  title="join us" /></h2>
+                    <h1 class="tit-join-complete">회원가입 완료</h1>
+                    <div class="complete-box">
+                        <dl>
+                            <dt><!--/user_name/-->님의 회원가입이 성공적으로 이루어졌습니다.</dt>
+                            <dd><!--/shop_name/--> 안에서 즐거운 쇼핑 되세요.</dd>
+                            <!--/if_user_reserve/-->
+                            <dd class="font-rb"><!--/user_name/-->님의 축하적립금은 <span class="join-point"><!--/user_reserve/-->원</span> 입니다.</dd>
+                            <!--/end_if/-->
+                            <!--/if_coupon_count/-->
+                            <dd class="font-b"><!--/user_name/-->님의 회원가입시 지급해 드린 쿠폰은 총 <!--/coupon_count/-->장 입니다.</dd>
+                            <!--/end_if/-->
+                            <dd class="font-b">감사합니다.</dd>
+                            <!--/if_link_order_join/-->
+                            <dd><a href="<!--/link_order_join/-->"><img src="/images/d3/modern_simple/btn/btn_order_link.gif" alt="주문계속하기" /></a></dd>
+                            <!--/end_if/-->
+                        </dl>
+                    </div>
+                </div>
+                 </div><!-- #content -->
+            </div><!-- #contentWrap -->
+        </div><!-- #contentWrapper-->
+        <hr />
+
+<!---- snappush  start contact mail: support@snapvi.co.kr --->
+<div id='spm_page_type' style='display:none'>sq_join_complete_page</div>
+<script async type="text/javascript" src="//cdn.snapfit.co.kr/js/spm_f_common.js" charset="utf-8"></script>
+<div id="spm_banner_main"></div>
+<!---- snappush  end -->
+
+        <!--/include_footer(1)/-->
+    </div><!-- #wrap -->
+
+<!-- 전환페이지 설정 -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script>  
+<script type="text/javascript">
+if (!wcs_add) var wcs_add={}; 
+wcs_add["wa"] = "s_3df7abbf6883"; 
+if (!_nasa) var _nasa={};
+_nasa["cnv"] = wcs.cnv("2","9900"); 
+wcs_do(_nasa);
+</script>
+<!-- 카카오키워드 스크립트 시작 -->
+<script type="text/javascript" charset="UTF-8" src="//t1.daumcdn.net/adfit/static/kp.js"></script>
+<script type="text/javascript">
+      kakaoPixel('8655716178076415135').pageView();
+      kakaoPixel('8655716178076415135').completeRegistration();
+</script>
+<!-- 카카오키워드 스크립트 끝 -->

@@ -1,0 +1,35 @@
+<!-- Event snippet for 무료레벨테스트 conversion page
+In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+<!-- 구글태그 무료레벨테스트신청 버튼 클릭 2021-12-22 TripleHM -->
+<script>
+let btnSubmit = document.querySelector('.point_btn');
+let inputName = document.querySelector('#tf_name');
+let inputPhone = document.querySelector('input[name=phone]');
+let inputEmail = document. querySelector('#tf_email');
+let inputDate = document. querySelectorAll('.tf_textbox');
+    
+function gtag_report_conversion(url) {
+    var callback = function () {
+        if (typeof(url) != 'undefined') {
+        window.location = url;
+        }
+    };
+    gtag('event', 'conversion', {
+        'send_to': 'AW-342325976/nmAqCI3Jn-sCENj1naMB',
+        'event_callback': callback
+    });
+    return false;
+}
+
+btnSubmit.addEventListener('click', event => {
+        if(inputName.value != '' && inputPhone.value != '' && inputEmail.value != '' && inputDate[0].value != '' && inputDate[1].value != ''){
+            var regEmail = /@/;
+            var regPhone = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+            if (regEmail.test(inputEmail.value) === true && regPhone.test(inputPhone.value) === true){
+                gtag_report_conversion();
+            }
+			
+        }
+    });
+    
+</script>
